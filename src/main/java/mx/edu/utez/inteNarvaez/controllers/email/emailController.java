@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/email")
 public class emailController {
     private final emailService service;
@@ -20,7 +19,8 @@ public class emailController {
 
     @PostMapping("/send")
     public ResponseEntity<ApiResponse> sendEmail(@RequestBody Emails emails) throws MessagingException {
-        return service.sendMail(emails);
+        System.out.println("Llegamos");
+        return service.sendEmail(emails);
     }
 
 }
