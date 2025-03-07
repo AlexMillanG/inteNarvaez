@@ -1,6 +1,6 @@
 package mx.edu.utez.inteNarvaez.services.security.services;
 
-import mx.edu.utez.inteNarvaez.models.user.UserEnitity;
+import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
 import mx.edu.utez.inteNarvaez.models.dtos.ResponseDTO;
@@ -29,7 +29,7 @@ public class AuthServiceImpl implements IAuthService {
     public HashMap<String,String> login(LoginDTO loginDTO) throws Exception {
         try {
             HashMap<String,String> jwt = new HashMap<>();
-            Optional<UserEnitity> user =userRepository.findByEmail(loginDTO.getEmail());
+            Optional<UserEntity> user =userRepository.findByEmail(loginDTO.getEmail());
 
             if (user.isEmpty()){
                 jwt.put("error","user not register!");
@@ -54,7 +54,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
 
-    public ResponseDTO register(UserEnitity user) throws Exception {
+    public ResponseDTO register(UserEntity user) throws Exception {
         try {
 
             ResponseDTO responseDTO = usersValidations.validate(user);
@@ -63,7 +63,7 @@ public class AuthServiceImpl implements IAuthService {
                 return  responseDTO;
             }
 
-         Optional<UserEnitity> getUsers =userRepository.findByEmail(user.getEmail());
+         Optional<UserEntity> getUsers =userRepository.findByEmail(user.getEmail());
 
 
 

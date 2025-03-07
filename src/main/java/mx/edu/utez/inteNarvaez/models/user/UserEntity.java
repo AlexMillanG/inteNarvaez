@@ -1,10 +1,14 @@
 package mx.edu.utez.inteNarvaez.models.user;
 
 import jakarta.persistence.*;
+import mx.edu.utez.inteNarvaez.models.role.RoleBean;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class UserEnitity {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,4 +58,8 @@ public class UserEnitity {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
+    @ManyToMany(mappedBy = "userEntities")
+    private Set<RoleBean> roleBeans = new HashSet<>();
 }
