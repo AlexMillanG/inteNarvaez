@@ -5,6 +5,7 @@ import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -17,6 +18,22 @@ public class ChannelCategory {
 
     private String name;
 
+    private UUID uuid;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChannelBean> channels;
+
+
+    public ChannelCategory() {
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID();
+        }
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID();
+        }
+    }
 }

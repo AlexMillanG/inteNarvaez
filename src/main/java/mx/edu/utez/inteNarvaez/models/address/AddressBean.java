@@ -7,6 +7,7 @@ import mx.edu.utez.inteNarvaez.models.contract.ContractBean;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Table(name = "addresses")
@@ -29,10 +30,26 @@ public class AddressBean {
 
     private Integer zipCode;
 
+    private UUID uuid;
+
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private ClientBean client;
 
     @OneToMany(mappedBy = "address")
     private Set<ContractBean> contracts = new HashSet<>();
+
+    public AddressBean() {
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID();
+        }
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID();
+        }
+    }
+
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Table(name = "clients")
@@ -30,6 +31,24 @@ public class ClientBean {
     @Column(length = 100, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "client", orphanRemoval = true)
+
+    private UUID uuid;
+
+    @OneToMany(mappedBy = "client")
     private List<AddressBean> addresses;
+
+
+
+    public ClientBean() {
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID();
+        }
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID();
+        }
+    }
 }
