@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 @Table(name = "clients")
+@Entity
 public class ClientBean {
 
     @Id
@@ -23,15 +24,12 @@ public class ClientBean {
     @Column(length = 50)
     private String Surname;
 
-    @Column(length = 13,unique = true)
+    @Column(length = 13, unique = true)
     private String rfc;
 
     @Column(length = 100, unique = true)
     private String email;
 
-
-
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "client", orphanRemoval = true)
     private List<AddressBean> addresses;
-
 }
