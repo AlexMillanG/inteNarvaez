@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "channel_categories")
-public class ChannelCategory {
+public class ChannelCategoryBean {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class ChannelCategory {
     private Set<ChannelBean> channels;
 
 
-    public ChannelCategory() {
+    public ChannelCategoryBean() {
         if (this.uuid == null) {
             this.uuid = UUID.randomUUID();
         }

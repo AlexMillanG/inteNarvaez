@@ -2,7 +2,7 @@ package mx.edu.utez.inteNarvaez.models.channel;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategory;
+import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 
 import java.util.HashSet;
@@ -46,7 +46,7 @@ public class ChannelBean {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private ChannelCategory category;
+    private ChannelCategoryBean category;
 
 
     @ManyToMany(mappedBy = "channels")

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,16 +21,20 @@ public class ClientBean {
     private String name;
 
     @Column(length = 50)
-    private String lastname;
+    private String lastName;
 
     @Column(length = 50)
-    private String Surname;
+    private String surname;
 
     @Column(length = 13, unique = true)
     private String rfc;
 
     @Column(length = 100, unique = true)
     private String email;
+
+    private String phone;
+
+    private LocalDate birthdate;
 
 
     private UUID uuid;
