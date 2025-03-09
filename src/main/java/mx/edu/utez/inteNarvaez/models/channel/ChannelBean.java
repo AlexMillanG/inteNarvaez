@@ -30,6 +30,15 @@ public class ChannelBean {
     private String image;
 
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private ChannelCategoryBean category;
+
+
+    @ManyToMany(mappedBy = "channels")
+    private Set<ChannelPackageBean> channelPackages = new HashSet<>();
+
+
     public ChannelBean() {
         if (this.uuid == null) {
             this.uuid = UUID.randomUUID();
@@ -42,14 +51,5 @@ public class ChannelBean {
             this.uuid = UUID.randomUUID();
         }
     }
-
-
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private ChannelCategoryBean category;
-
-
-    @ManyToMany(mappedBy = "channels")
-    private Set<ChannelPackageBean> channelPackages = new HashSet<>();
 
 }
