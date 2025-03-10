@@ -3,7 +3,7 @@ package mx.edu.utez.inteNarvaez.models.contract;
 import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
-import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageBean;
+import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -30,7 +30,7 @@ public class ContractBean {
 
     @ManyToOne
     @JoinColumn(name = "sales_package_id", nullable = false)
-    private SalesPackageBean salesPackageBean;
+    private SalesPackageEntity salesPackageEntity;
 
 
     public ContractBean() {

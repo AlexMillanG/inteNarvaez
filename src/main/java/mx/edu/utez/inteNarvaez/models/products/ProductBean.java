@@ -2,7 +2,7 @@ package mx.edu.utez.inteNarvaez.models.products;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageBean;
+import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 
 import java.util.Set;
 import java.util.UUID;
@@ -29,7 +29,7 @@ public class ProductBean {
 
 
     @OneToMany(mappedBy = "productBean")
-    private Set<SalesPackageBean> salesPackageBeans;
+    private Set<SalesPackageEntity> salesPackageEntities;
 
 
     public ProductBean() {

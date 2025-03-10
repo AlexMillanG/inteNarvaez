@@ -3,7 +3,7 @@ package mx.edu.utez.inteNarvaez.models.channelPackage;
 import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
-import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageBean;
+import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +28,7 @@ public class ChannelPackageBean {
 
 
     @OneToMany(mappedBy = "channelPackage")
-    private Set<SalesPackageBean> salesPackages = new HashSet<>();
+    private Set<SalesPackageEntity> salesPackages = new HashSet<>();
 
 
     @ManyToMany

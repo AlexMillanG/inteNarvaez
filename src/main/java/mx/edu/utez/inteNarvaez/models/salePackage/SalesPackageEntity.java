@@ -13,7 +13,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "sales_packages")
-public class SalesPackageBean {
+public class SalesPackageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,7 @@ public class SalesPackageBean {
     private Set<ContractBean> contracts = new HashSet<>();
 
 
-    public SalesPackageBean() {
+    public SalesPackageEntity() {
         if (this.uuid == null) {
             this.uuid = UUID.randomUUID();
         }
