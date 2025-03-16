@@ -52,6 +52,8 @@ public class ChannelCategoryService {
         if (categoryBean.getName().equals("") || categoryBean.getName() == null) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la categoria no puede ser nulo", true));
         }
+
+        categoryBean.setUuid(foundCategory.get().getUuid());
         return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.save(categoryBean), HttpStatus.OK, "Categoria actualizada correctamente", false));
     }
 

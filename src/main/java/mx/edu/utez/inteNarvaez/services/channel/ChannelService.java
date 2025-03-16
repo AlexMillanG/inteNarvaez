@@ -86,6 +86,10 @@ public class ChannelService {
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> updateChannel(ChannelBean channelBean){
 
+        if (channelBean.getId() == null) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id del canal no puede ser nulo", true));
+        }
+
         Optional<ChannelBean> foundChannel = channelRepository.findById(channelBean.getId());
 
         if (foundChannel.isEmpty()) {
@@ -136,7 +140,7 @@ public class ChannelService {
 
         channelBean.setName(capitalize(channelBean.getName()));
 
-
+        channelBean.setUuid(foundChannel.get().getUuid());
 
 
         return ResponseEntity.ok(new ApiResponse(channelRepository.save(channelBean), HttpStatus.OK, "Canal guardado correctamente", false));

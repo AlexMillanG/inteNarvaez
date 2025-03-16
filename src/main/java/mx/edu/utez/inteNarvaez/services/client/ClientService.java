@@ -30,7 +30,6 @@ public class ClientService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> saveClient(ClientBean clientBean) {
-        System.err.println("en el fakin servicio");
 
         if (StringUtils.isBlank(clientBean.getName())) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre del cliente no puede ser nulo o vacío", true));
@@ -106,6 +105,7 @@ public class ClientService {
 
         }
 
+        clientBean.setUuid(foundClient.get().getUuid());
         clientBean.setName(capitalize(clientBean.getName()));
         clientBean.setLastName(capitalize(clientBean.getLastName()));
         clientBean.setEmail(clientBean.getEmail().toLowerCase());
