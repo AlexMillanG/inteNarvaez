@@ -82,7 +82,17 @@
 			<version>2.21.1</version>
 		</dependency>
 		<!-- Fin Log4j -->
+		<!-- bucket4j -->
 
+
+		<dependency>
+			<groupId>com.github.vladimir-bukhtoyarov</groupId>
+			<artifactId>bucket4j-core</artifactId>
+			<version>8.0.1</version>
+		</dependency>
+
+
+		<!-- Fin bucket4j -->
 		<!-- Dependencia thymeleaf -->
 
 		<dependency>

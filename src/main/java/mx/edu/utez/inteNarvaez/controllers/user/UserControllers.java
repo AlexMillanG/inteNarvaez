@@ -14,9 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserControllers {
+    private final IUserServiceImpl userService;
+    public UserControllers(IUserServiceImpl userService) {
+        this.userService = userService;
+    }
 
-    @Autowired
-    IUserServiceImpl userService;
     @GetMapping("/find-all")
     private ResponseEntity<List<UserEnitity>> getAllUsers(){
         return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);

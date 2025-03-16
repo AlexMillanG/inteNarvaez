@@ -18,7 +18,7 @@ import static mx.edu.utez.inteNarvaez.config.ResponseError.ResponseErrors;
 
 @RestControllerAdvice
 public class GlobalErrorController {
-
+/*
     // 404 - Recurso no encontrado
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -73,4 +73,6 @@ public class GlobalErrorController {
     public ResponseEntity<Map<String, Object>> handleDatabaseException500(SQLException ex) {
         return ResponseErrors(HttpStatus.INTERNAL_SERVER_ERROR, "No podemos conectarnos a la DB", "COE05");
     }
+
+ */
 }
