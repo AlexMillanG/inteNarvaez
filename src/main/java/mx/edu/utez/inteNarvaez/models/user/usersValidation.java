@@ -1,11 +1,10 @@
 package mx.edu.utez.inteNarvaez.models.user;
 
 import mx.edu.utez.inteNarvaez.models.dtos.ResponseDTO;
-import mx.edu.utez.inteNarvaez.models.user.UserEnitity;
 
 public class usersValidation {
 
-    public ResponseDTO validate(UserEnitity user){
+    public ResponseDTO validate(UserEntity user){
 
         ResponseDTO responseDTO =  new ResponseDTO();
         responseDTO.setNumErrors(0);

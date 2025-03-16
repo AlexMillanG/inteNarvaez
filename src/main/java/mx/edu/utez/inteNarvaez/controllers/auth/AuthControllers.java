@@ -1,6 +1,6 @@
 package mx.edu.utez.inteNarvaez.controllers.auth;
 
-import mx.edu.utez.inteNarvaez.models.user.UserEnitity;
+import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.services.security.repository.IAuthService;
 import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
 import mx.edu.utez.inteNarvaez.models.dtos.ResponseDTO;
@@ -26,7 +26,7 @@ public class AuthControllers {
 
 
     @PostMapping("/register")
-    private ResponseEntity<ResponseDTO> regsiter(@RequestBody UserEnitity user) throws Exception {
+    private ResponseEntity<ResponseDTO> regsiter(@RequestBody UserEntity user) throws Exception {
         return new ResponseEntity<>(authService.register(user), HttpStatus.OK);
 
     }
