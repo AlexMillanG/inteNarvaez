@@ -20,9 +20,12 @@ public class ChannelPackageBean {
 
     private String name;
 
+    private String description;
+
     private Double amount;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ChannelPackageStatus status;
 
     private UUID uuid;
 
