@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.models.address;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.client.ClientBean;
@@ -32,6 +33,7 @@ public class AddressBean {
 
     private UUID uuid;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private ClientBean client;

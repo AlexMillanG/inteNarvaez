@@ -35,7 +35,7 @@ public class SalesPackageEntity {
     private ProductBean productBean;
 
 
-    @OneToMany(mappedBy = "salesPackageBean")
+    @OneToMany(mappedBy = "salesPackageEntity")
     private Set<ContractBean> contracts = new HashSet<>();
 
 
