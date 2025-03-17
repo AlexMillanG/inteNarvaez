@@ -20,12 +20,12 @@ import static mx.edu.utez.inteNarvaez.config.ResponseError.ResponseErrors;
 public class GlobalErrorController {
 /*
     // 404 - Recurso no encontrado
-    @ExceptionHandler(NoHandlerFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Map<String, Object>> handleNotFound404(NoHandlerFoundException ex) {
-        return ResponseErrors(HttpStatus.NOT_FOUND, "¡Ups! El recurso no se encuentra disponible intenta mas tarde", "COE04");
+   // @ExceptionHandler(NoHandlerFoundException.class)
+    //@ResponseStatus(HttpStatus.NOT_FOUND)
+    //public ResponseEntity<Map<String, Object>> handleNotFound404(NoHandlerFoundException ex) {
+      //  return ResponseErrors(HttpStatus.NOT_FOUND, "¡Ups! El recurso no se encuentra disponible intenta mas tarde", "COE04");
     }
-
+77
     // 400 - Petición incorrecta
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

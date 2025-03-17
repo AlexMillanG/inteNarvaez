@@ -1,0 +1,148 @@
+package mx.edu.utez.inteNarvaez.services.address;
+
+import lombok.AllArgsConstructor;
+import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.models.address.AddressBean;
+import mx.edu.utez.inteNarvaez.models.address.AddressRepository;
+import mx.edu.utez.inteNarvaez.models.client.ClientBean;
+import mx.edu.utez.inteNarvaez.models.client.ClientRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.SQLException;
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+@Transactional(rollbackFor = SQLException.class)
+@AllArgsConstructor
+public class AddressService {
+
+    private final AddressRepository addressRepository;
+    private final ClientRepository clientRepository;
+
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> findAll() {
+        return new ResponseEntity<>(new ApiResponse(addressRepository.findAll(), HttpStatus.OK, null, false), HttpStatus.OK);
+    }
+
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> save(AddressBean addressBean) {
+
+        if (addressBean.getCity().equals("") || addressBean.getCity() == null) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La ciudad no puede ser nula o vacía", true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getName().equals("") || addressBean.getName() == null) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la dirección no puede ser nulo o vacío", true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getStreet().equals("") || addressBean.getStreet() == null) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La calle no puede ser nula o vacía", true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getState().equals("") || addressBean.getState() == null) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El estado no puede ser nulo o vacío", true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getZipCode() == null) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El código postal no puede ser nulo", true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getNumber() == null) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El número no puede ser nulo", true), HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<ClientBean> foundClient = clientRepository.findById(addressBean.getClient().getId());
+
+        if (foundClient.isEmpty()) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean), HttpStatus.OK, "dirección guardada correctamente", false), HttpStatus.OK);
+    }
+
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> findByUuid(UUID uuid){
+        Optional<AddressBean> foundAddress = addressRepository.findByUuid(uuid);
+
+        if (foundAddress.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"La dirección no existe",true), HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new ApiResponse(foundAddress.get(),HttpStatus.OK,null,false), HttpStatus.OK);
+    }
+
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> deleteByUuid(UUID uuid){
+        Optional<AddressBean> foundAddress = addressRepository.findByUuid(uuid);
+
+        if (foundAddress.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"La dirección no existe",true), HttpStatus.NOT_FOUND);
+        }
+
+        addressRepository.delete(foundAddress.get());
+
+        return new ResponseEntity<>(new ApiResponse(null,HttpStatus.OK,"Dirección eliminada correctamente",false), HttpStatus.OK);
+    }
+
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> update(AddressBean addressBean){
+        Optional<AddressBean> foundAddress = addressRepository.findById(addressBean.getId());
+
+        if (foundAddress.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"La dirección no existe",true), HttpStatus.NOT_FOUND);
+        }
+
+        addressBean.setUuid(foundAddress.get().getUuid());
+
+        if (addressBean.getCity().equals("") || addressBean.getCity() == null){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"La ciudad no puede ser nula o vacía",true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getName().equals("") || addressBean.getName() == null){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El nombre de la dirección no puede ser nulo o vacío",true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getStreet().equals("") || addressBean.getStreet() == null){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"La calle no puede ser nula o vacía",true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getState().equals("") || addressBean.getState() == null){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El estado no puede ser nulo o vacío",true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getZipCode() == null){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El código postal no puede ser nulo",true), HttpStatus.BAD_REQUEST);
+        }
+
+        if (addressBean.getNumber() == null){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El número no puede ser nulo",true), HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<ClientBean> foundClient = clientRepository.findById(addressBean.getClient().getId());
+
+        if (foundClient.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El cliente no existe",true), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean),HttpStatus.OK,"Dirección actualizada correctamente",false), HttpStatus.OK);
+    }
+
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> findByClientId(Long clientId){
+        Optional<ClientBean> foundClient = clientRepository.findById(clientId);
+
+        if (foundClient.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El cliente no existe",true), HttpStatus.NOT_FOUND);
+        }
+
+        if (addressRepository.findByClient(foundClient.get()).isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El cliente no tiene direcciones",true), HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new ApiResponse(addressRepository.findByClient(foundClient.get()),HttpStatus.OK,null,false), HttpStatus.OK);
+    }
+}
