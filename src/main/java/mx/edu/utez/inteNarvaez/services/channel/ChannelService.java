@@ -80,6 +80,7 @@ public class ChannelService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAllChannel(){
+        System.err.println("antes del returno");
         return ResponseEntity.ok(new ApiResponse(channelRepository.findAll(), HttpStatus.OK, "Canales encontrados", false));
     }
 

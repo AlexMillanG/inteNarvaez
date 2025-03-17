@@ -42,7 +42,20 @@ public class ChannelPackageBean {
     )
     private Set<ChannelBean> channels = new HashSet<>();
 
+    public ChannelPackageBean(Long id, String name, String description, Double amount, Set<ChannelBean> channels) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.amount = amount;
+        this.channels = channels;
+    }
 
+    public ChannelPackageBean(String name, String description, Double amount, Set<ChannelBean> channels) {
+        this.name = name;
+        this.description = description;
+        this.amount = amount;
+        this.channels = channels;
+    }
 
     public ChannelPackageBean() {
         if (this.uuid == null) {
