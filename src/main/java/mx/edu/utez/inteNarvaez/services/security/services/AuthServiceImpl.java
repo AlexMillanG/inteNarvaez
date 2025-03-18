@@ -1,5 +1,8 @@
 package mx.edu.utez.inteNarvaez.services.security.services;
 
+import lombok.AllArgsConstructor;
+import mx.edu.utez.inteNarvaez.models.role.RoleDTO;
+import mx.edu.utez.inteNarvaez.models.user.UserDTO;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
@@ -12,84 +15,87 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class AuthServiceImpl implements IAuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private IJWTUtilityService jwtUtilityService;
+    private final IJWTUtilityService jwtUtilityService;
 
-    @Autowired
-    private  usersValidation usersValidations;
+
+    private final usersValidation usersValidations;
+
     @Override
-    public HashMap<String,String> login(LoginDTO loginDTO) throws Exception {
+    public HashMap<String, String> login(LoginDTO loginDTO) throws Exception {
         try {
-            HashMap<String,String> jwt = new HashMap<>();
-            Optional<UserEntity> user =userRepository.findByEmail(loginDTO.getEmail());
+            HashMap<String, String> jwt = new HashMap<>();
+            Optional<UserEntity> user = userRepository.findByEmail(loginDTO.getEmail());
 
-            if (user.isEmpty()){
-                jwt.put("error","user not register!");
+            if (user.isEmpty()) {
+                jwt.put("error", "User not registered!");
                 return jwt;
             }
-            if (veriifyPassword(loginDTO.getPassword(),user.get().getPassword() )){
 
-                jwt.put("jwt",jwtUtilityService.genareteJWT(user.get().getId()));
+            if (verifyPassword(loginDTO.getPassword(), user.get().getPassword())) {
+                UserDTO userDTO = new UserDTO(user.get());
+
+                jwt.put("jwt", jwtUtilityService.genareteJWT(userDTO.getId(), userDTO.getRoles().stream().collect(Collectors.toList())));
             } else {
-
-                jwt.put("error","Authentication failed!");
-
+                jwt.put("error", "Authentication failed!");
             }
-
             return jwt;
-
-        }catch (Exception e){
-
-            throw  new Exception(e.toString());
-
-        }
-    }
-
-
-    public ResponseDTO register(UserEntity user) throws Exception {
-        try {
-
-            ResponseDTO responseDTO = usersValidations.validate(user);
-
-            if (responseDTO.getNumErrors()>0){
-                return  responseDTO;
-            }
-
-         Optional<UserEntity> getUsers =userRepository.findByEmail(user.getEmail());
-
-
-
-                if (getUsers.isPresent()){
-                    responseDTO.setNumErrors(1);
-                    responseDTO.setMessage("User already exist");
-                    return responseDTO;
-                }
-
-
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-            user.setPassword(encoder.encode(user.getPassword()));
-
-            userRepository.save(user);
-            responseDTO.setMessage("User created succesfully");
-
-            return  responseDTO;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e.toString());
         }
     }
 
-    private boolean veriifyPassword(String enteredPassword,String storePassword){
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return  encoder.matches(enteredPassword,storePassword);
+    @Override
+    public ResponseDTO register(UserEntity user) throws Exception {
+        return null;
+    }
 
+    public ResponseDTO register(UserDTO userDTO) throws Exception {
+        try {
+            ResponseDTO responseDTO = usersValidations.validate(userDTO);
+
+            if (responseDTO.getNumErrors() > 0) {
+                return responseDTO;
+            }
+
+            Optional<UserEntity> getUsers = userRepository.findByEmail(userDTO.getEmail());
+
+            if (getUsers.isPresent()) {
+                responseDTO.setNumErrors(1);
+                responseDTO.setMessage("User already exists");
+                return responseDTO;
+            }
+
+            // Convertir UserDTO a UserEntity
+            UserEntity userEntity = new UserEntity();
+            userEntity.setFirstName(userDTO.getFirstName());
+            userEntity.setLastName(userDTO.getLastName());
+            userEntity.setEmail(userDTO.getEmail());
+
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+            userEntity.setPassword(encoder.encode(userDTO.getPassword()));
+
+            userRepository.save(userEntity);
+            responseDTO.setMessage("User created successfully");
+
+            return responseDTO;
+        } catch (Exception e) {
+            throw new Exception(e.toString());
+        }
+    }
+
+    private boolean verifyPassword(String enteredPassword, String storedPassword) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(enteredPassword, storedPassword);
     }
 
 

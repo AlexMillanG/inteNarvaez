@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.config;
 
+import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
@@ -16,26 +17,16 @@ import javax.swing.text.html.Option;
 import java.nio.channels.Channel;
 import java.util.Optional;
 
-
+@AllArgsConstructor
 @Component
 public class InitialConfig {
 
     // Repositorios para acceder a los datos de roles, usuarios, imágenes, categorías, departamentos y puestos
-    @Autowired
-    private RoleRepository rolRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
 
-    @Autowired
-    private ChannelCategoryRepository channelCategoryRepository;
+    private final ChannelCategoryRepository channelCategoryRepository;
 
-    @Autowired
-    private ChannelRepository channelRepository;
+    private final ChannelRepository channelRepository;
 
     @Bean
     public CommandLineRunner initData() {

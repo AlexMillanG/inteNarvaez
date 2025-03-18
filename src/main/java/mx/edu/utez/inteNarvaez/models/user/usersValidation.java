@@ -4,7 +4,7 @@ import mx.edu.utez.inteNarvaez.models.dtos.ResponseDTO;
 
 public class usersValidation {
 
-    public ResponseDTO validate(UserEntity user){
+    public ResponseDTO validate(UserDTO user){
 
         ResponseDTO responseDTO =  new ResponseDTO();
         responseDTO.setNumErrors(0);
