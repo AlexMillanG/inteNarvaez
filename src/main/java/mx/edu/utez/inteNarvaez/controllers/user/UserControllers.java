@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.controllers.user;
 
+import mx.edu.utez.inteNarvaez.models.user.UserDTO;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.services.security.repository.IUserServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,10 @@ public class UserControllers {
     }
 
     @GetMapping("/find-all")
-    private ResponseEntity<List<UserEntity>> getAllUsers(){
-        return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
+    private ResponseEntity<List<UserDTO>> getAllUsers() {
+
+        List<UserDTO> usersDTO = userService.findAllUsers();
+        return new ResponseEntity<>(usersDTO, HttpStatus.OK);
     }
+
 }
