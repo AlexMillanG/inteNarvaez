@@ -20,7 +20,11 @@ public class ChannelCategoryController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> saveCategoryChannel(@RequestBody ChannelCategoryBean categoryBean){
-        System.err.println(categoryBean);
+        /*
+                    {
+                        "name":"infantil"
+                    }
+         */
         return channelCategoryService.saveCategoryChannel(categoryBean);
     }
 

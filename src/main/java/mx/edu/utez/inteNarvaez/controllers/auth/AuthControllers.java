@@ -28,11 +28,23 @@ public class AuthControllers {
     @PostMapping("/register")
     private ResponseEntity<ResponseDTO> regsiter(@RequestBody UserEntity user) throws Exception {
         return new ResponseEntity<>(authService.register(user), HttpStatus.OK);
+        /*
+           {
+            "firstName": "alex",
+            "lastName": "millan",
+            "email": "alex1@admin.com",
+            "password": "1234"
+            }
+         */
 
     }
 
     @PostMapping("/login")
     private  ResponseEntity<HashMap<String,String>> login(@RequestBody LoginDTO loginRequest) throws Exception {
+        /*
+                "email": "alex1@admin.com",
+                "password": "1234"
+         */
         HashMap<String,String> login = authService.login(loginRequest);
         if (login.containsKey("jwt")) {
             return new ResponseEntity<>(login,HttpStatus.OK);
