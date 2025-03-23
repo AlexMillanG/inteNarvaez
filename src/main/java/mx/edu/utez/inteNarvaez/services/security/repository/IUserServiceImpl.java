@@ -6,6 +6,6 @@ import java.util.List;
 
 
 public interface IUserServiceImpl {
-        List<UserDTO> findAllUsers();
+
 
 }

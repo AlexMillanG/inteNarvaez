@@ -36,7 +36,7 @@ public class ClientBean {
 
     private LocalDate birthdate;
 
-
+    @Column(length = 36, unique = true)
     private UUID uuid;
 
     @OneToMany(mappedBy = "client")

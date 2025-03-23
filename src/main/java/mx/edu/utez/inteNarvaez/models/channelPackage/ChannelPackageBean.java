@@ -26,7 +26,7 @@ public class ChannelPackageBean {
 
     @Enumerated(EnumType.STRING)
     private ChannelPackageStatus status;
-
+    @Column(length = 36, unique = true)
     private UUID uuid;
 
 

@@ -1,34 +1,40 @@
 package mx.edu.utez.inteNarvaez.controllers.auth;
 
+import lombok.AllArgsConstructor;
+import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.models.role.RoleDTO;
+import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
+import mx.edu.utez.inteNarvaez.models.user.UserDTO;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.services.security.repository.IAuthService;
 import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
 import mx.edu.utez.inteNarvaez.models.dtos.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
+
 public class AuthControllers {
+    private final IAuthService authService;
+    private final RoleRepository repository;
 
-
-   private final IAuthService authService;
-
-    public AuthControllers(IAuthService authService) {
+    public AuthControllers(IAuthService authService, RoleRepository repository) {
         this.authService = authService;
+        this.repository = repository;
+    }
+    @PostMapping("/register")
+    private ResponseEntity<ApiResponse> regsiter(@RequestBody UserDTO.RegisterDTO user) throws Exception {
+        return authService.register(user);
     }
 
-
-    @PostMapping("/register")
-    private ResponseEntity<ResponseDTO> regsiter(@RequestBody UserEntity user) throws Exception {
-        return new ResponseEntity<>(authService.register(user), HttpStatus.OK);
-
+    @GetMapping ("/roles")
+    private ResponseEntity<ApiResponse> roles() throws Exception {
+        return new ResponseEntity<>(new ApiResponse(repository.findAll(), HttpStatus.OK,"ROLES"),HttpStatus.OK);
     }
 
     @PostMapping("/login")

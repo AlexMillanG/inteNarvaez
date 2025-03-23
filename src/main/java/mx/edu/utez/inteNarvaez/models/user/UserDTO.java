@@ -1,10 +1,11 @@
 package mx.edu.utez.inteNarvaez.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import mx.edu.utez.inteNarvaez.models.role.RoleDTO;
+
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
@@ -16,11 +17,9 @@ public class UserDTO {
     private String lastName;
     private String email;
     @JsonIgnore
-
     private String password;
     @JsonIgnore
     private Set<String> roles;
-
     public UserDTO(UserEntity userEntity) {
         this.id = userEntity.getId();
         this.firstName = userEntity.getFirstName();
@@ -30,4 +29,21 @@ public class UserDTO {
                 .map(role -> role.getName())
                 .collect(Collectors.toSet());
     }
+    @Getter
+    @Setter
+    @Data
+    public static  class RegisterDTO {
+        private UserEntity user;
+        private String name;
+
+        public RegisterDTO(UserEntity user, String name) {
+            this.user = user;
+            this.name = name;
+        }
+
+        public RegisterDTO() {
+        }
+    }
+
 }
+

@@ -23,7 +23,7 @@ public class ProductBean {
     private Double amount;
 
     private String description;
-
+    @Column(length = 36, unique = true)
     private UUID uuid;
 
 

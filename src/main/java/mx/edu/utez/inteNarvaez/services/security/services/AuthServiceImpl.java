@@ -1,7 +1,9 @@
 package mx.edu.utez.inteNarvaez.services.security.services;
 
 import lombok.AllArgsConstructor;
-import mx.edu.utez.inteNarvaez.models.role.RoleDTO;
+import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.models.role.RoleBean;
+import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
 import mx.edu.utez.inteNarvaez.models.user.UserDTO;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserRepository;
@@ -10,12 +12,14 @@ import mx.edu.utez.inteNarvaez.models.dtos.ResponseDTO;
 import mx.edu.utez.inteNarvaez.models.user.usersValidation;
 import mx.edu.utez.inteNarvaez.services.security.repository.IAuthService;
 import mx.edu.utez.inteNarvaez.services.security.repository.IJWTUtilityService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,6 +28,8 @@ import java.util.stream.Collectors;
 public class AuthServiceImpl implements IAuthService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
 
     private final IJWTUtilityService jwtUtilityService;
 
@@ -54,42 +60,39 @@ public class AuthServiceImpl implements IAuthService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public ResponseDTO register(UserEntity user) throws Exception {
-        return null;
-    }
+    public ResponseEntity<ApiResponse> register(UserDTO.RegisterDTO register) {
 
-    public ResponseDTO register(UserDTO userDTO) throws Exception {
+        //  ApiResponse responseDTO = usersValidation.validate(register.getUser());
+        //   if (responseDTO.isError()) {return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);}
+
         try {
-            ResponseDTO responseDTO = usersValidations.validate(userDTO);
+            UserEntity userEntity = register.getUser();
 
-            if (responseDTO.getNumErrors() > 0) {
-                return responseDTO;
+            Optional<UserEntity> existingUser = userRepository.findByEmail(userEntity.getEmail());
+            if (existingUser.isPresent()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uasurio ya esta registrado", true), HttpStatus.BAD_REQUEST);
             }
-
-            Optional<UserEntity> getUsers = userRepository.findByEmail(userDTO.getEmail());
-
-            if (getUsers.isPresent()) {
-                responseDTO.setNumErrors(1);
-                responseDTO.setMessage("User already exists");
-                return responseDTO;
+            Optional<RoleBean> role = roleRepository.findByName(register.getName());
+            if (role.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
             }
-
-            // Convertir UserDTO a UserEntity
-            UserEntity userEntity = new UserEntity();
-            userEntity.setFirstName(userDTO.getFirstName());
-            userEntity.setLastName(userDTO.getLastName());
-            userEntity.setEmail(userDTO.getEmail());
-
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-            userEntity.setPassword(encoder.encode(userDTO.getPassword()));
+            userEntity.setPassword(encoder.encode(userEntity.getPassword()));
 
-            userRepository.save(userEntity);
-            responseDTO.setMessage("User created successfully");
+            UserEntity createdUser = userRepository.save(userEntity);
+            userRepository.insertRoles(createdUser.getId(), role.get().getId());
 
-            return responseDTO;
+
+
+            return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.CREATED, "Usuario creado correctamente"), HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, e.getMessage(), true), HttpStatus.BAD_REQUEST);
+        } catch (DataAccessException e) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al acceder a la base de datos", true), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            throw new Exception(e.toString());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -38,7 +38,11 @@ public class SecurityConfig {
                         authRequest
                                 .requestMatchers("/auth/**").permitAll() // Acceso libre a /auth/**
                                 .requestMatchers("/admin/**").hasRole("ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // USER y ADMIN pueden acceder
+                                .requestMatchers("/contrato/**").hasRole("USER") // Solo USER puede acceder
+                                .requestMatchers("/api/address**").hasRole("USER") // Solo USER puede acceder
+                                //.requestMatchers("/user/**").hasRole("ADMIN") //  ADMIN pueden acceder
+
+                               .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") //  ADMIN pueden acceder
                                 .anyRequest().authenticated() // Rutas que requieren autenticación
                 )
                 .sessionManagement(sessionManager ->

@@ -17,7 +17,7 @@ public class ChannelCategoryBean {
     private Long id;
 
     private String name;
-
+    @Column(length = 36, unique = true)
     private UUID uuid;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)

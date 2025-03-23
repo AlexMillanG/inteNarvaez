@@ -1,7 +1,10 @@
 package mx.edu.utez.inteNarvaez.controllers.user;
 
+import lombok.AllArgsConstructor;
+import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.user.UserDTO;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
+import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import mx.edu.utez.inteNarvaez.services.security.repository.IUserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,17 +16,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+
 public class UserControllers {
     private final IUserServiceImpl userService;
-    public UserControllers(IUserServiceImpl userService) {
+    private final UserRepository repository;
+    public UserControllers(IUserServiceImpl userService, UserRepository repository) {
         this.userService = userService;
+        this.repository = repository;
     }
 
     @GetMapping("/find-all")
-    private ResponseEntity<List<UserDTO>> getAllUsers() {
+    private ResponseEntity<ApiResponse> getAllUsers() {
 
-        List<UserDTO> usersDTO = userService.findAllUsers();
-        return new ResponseEntity<>(usersDTO, HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(repository.findAll(),HttpStatus.OK,"Lista de usuarios"), HttpStatus.OK);
     }
 
 }

@@ -25,6 +25,7 @@ public class ChannelBean {
 
     private Integer number;
 
+    @Column(length = 36, unique = true)
     private UUID uuid;
 
     @Column(columnDefinition = "TEXT")
