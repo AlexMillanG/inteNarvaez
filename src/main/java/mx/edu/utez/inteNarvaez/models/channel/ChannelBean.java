@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
+import mx.edu.utez.inteNarvaez.models.logo.LogoBean;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,6 +41,10 @@ public class ChannelBean {
 
     @ManyToMany(mappedBy = "channels")
     private Set<ChannelPackageBean> channelPackages = new HashSet<>();
+
+
+    @OneToOne(mappedBy = "channel")
+    private LogoBean logoBean;
 
 
     public ChannelBean() {
