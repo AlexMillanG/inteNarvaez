@@ -14,6 +14,6 @@ public class SalePackageDTO {
     private String name;
     private Double totalAmount;
     private UUID uuid;
-    private String product_uuid;
-    private String channel_package_uuid;
+    private String product_name;
+    private String channel_package_name;
 }

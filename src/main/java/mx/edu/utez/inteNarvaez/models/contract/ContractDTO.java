@@ -1,6 +1,7 @@
 package mx.edu.utez.inteNarvaez.models.contract;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.Date;
 
 
 @Data
@@ -10,10 +11,9 @@ import java.time.LocalDate;
 
 public class ContractDTO {
 
-    private LocalDate creationDate;
+    private Date creationDate;
     private Double amount;
-
-    private String address;
+    private Long address;
     private String salesPackage;
 
 

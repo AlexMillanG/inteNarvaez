@@ -41,9 +41,9 @@ public class SecurityConfig {
                                 .requestMatchers("/api/user/**").hasRole("ADMIN") //  ADMIN pueden acceder
                                 .requestMatchers("/api/product/**").hasRole("ADMIN") //  ADMIN pueden acceder
 
-                                .requestMatchers("/api/contract/**").hasRole("USER") // Solo USER puede acceder
-                                .requestMatchers("/api/salesPackage/").hasRole("USER") // Solo ADMIN puede acceder
-                                .requestMatchers("/api/address/**").hasRole("USER") // Solo USER puede acceder
+                                .requestMatchers("/api/contract/**").hasAnyRole("USER","ADMIN") // Solo USER puede acceder
+                                .requestMatchers("/api/salesPackage/**").hasAnyRole("USER","ADMIN") // Solo ADMIN puede acceder
+                                .requestMatchers("/api/address/**").hasAnyRole("USER","ADMIN") // Solo USER puede acceder
                                 .requestMatchers("/api/client/**").hasAnyRole("USER", "ADMIN") //  ADMIN pueden acceder
                                 .anyRequest().authenticated() // Rutas que requieren autenticación
                 )

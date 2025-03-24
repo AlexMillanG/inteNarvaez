@@ -13,5 +13,5 @@ public interface AddressRepository extends JpaRepository<AddressBean,Long> {
 
     Optional<AddressBean> findByUuid(UUID uuid);
 
-    List<AddressBean> findByClient(ClientBean clientBean);
+    CharSequence findByClient(ClientBean clientBean);
 }

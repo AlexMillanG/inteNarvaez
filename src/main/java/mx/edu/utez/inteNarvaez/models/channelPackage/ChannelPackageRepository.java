@@ -1,6 +1,5 @@
 package mx.edu.utez.inteNarvaez.models.channelPackage;
 
-import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +9,8 @@ import java.util.UUID;
 @Repository
 public interface ChannelPackageRepository extends JpaRepository<ChannelPackageBean,Long> {
 
-    Optional<ChannelPackageBean> findByUuid(UUID uuid);
+    Optional<ChannelPackageBean> findChannelPackageBeanByUuid(UUID uuid);
+
+    Optional<ChannelPackageBean> findChannelPackageBeanByName(String name);
 
 }

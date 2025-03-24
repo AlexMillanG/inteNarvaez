@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 import java.util.*;
 
 @Service
@@ -56,14 +58,13 @@ public class ContractService {
 
 
         try {
-            UUID addressUUID = UUID.fromString(dto.getAddress());
-            UUID salesPackageUUID = UUID.fromString(dto.getSalesPackage());
-            logger.info("addressUUID {}",addressUUID);
-            logger.info("salesPackageUUID {}",salesPackageUUID);
+
+
+
             logger.info("Consultando la BD ");
 
-            Optional<SalesPackageEntity> findSalepackage = Salesrepository.findByUuid(salesPackageUUID);
-            Optional<AddressBean> findAddress = addressRepository.findByUuid(addressUUID);
+            Optional<SalesPackageEntity> findSalepackage = Salesrepository.findByName(dto.getSalesPackage());
+            Optional<AddressBean> findAddress = addressRepository.findById(dto.getAddress());
 
             logger.info("Validaciones de exixtencias");
 
@@ -82,7 +83,7 @@ public class ContractService {
             logger.info("Creando obj");
 
             ContractBean contract = new ContractBean(
-                    dto.getCreationDate(),
+                    new Date(),
                     dto.getAmount(),
                     UUID.randomUUID(),
                     findAddress.get(),

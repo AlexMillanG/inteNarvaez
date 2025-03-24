@@ -19,14 +19,28 @@ public class AddressBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 100)
     private String name;
+
+    @Column(nullable = false, length = 2556)
     private String street;
-    private Integer number;
+
+    @Column(nullable = false,length = 5)
+    private String number;
+
+    @Column(nullable = false, length = 50)
     private String city;
+
+    @Column(nullable = false, length = 20)
     private String state;
+
+    @Column(nullable = false,length = 5)
     private Integer zipCode;
-    @Column(length = 36, unique = true)
+
+    @Column(length = 36, unique = true, nullable = false)
     private UUID uuid;
+
 
 
     @ManyToOne
@@ -35,15 +49,16 @@ public class AddressBean {
     private ClientBean client;
 
     @OneToMany(mappedBy = "address")
+    @JsonIgnore
     private Set<ContractBean> contracts = new HashSet<>();
 
-    public AddressBean(String name, String street, Integer number, String city, String state, Integer zipCode, Long uuid) {
+    public AddressBean(String name, String street, String number, String city, String state, Integer zipCode, Long uuid) {
         if (this.uuid == null) {
             this.uuid = UUID.randomUUID();
         }
     }
 
-    public AddressBean(String name, String street, Integer number, String city, String state, Integer zipCode, UUID uuid, ClientBean client) {
+    public AddressBean(String name, String street, String number, String city, String state, Integer zipCode, UUID uuid, ClientBean client) {
         this.name = name;
         this.street = street;
         this.number = number;

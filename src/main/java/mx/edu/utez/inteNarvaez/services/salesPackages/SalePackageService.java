@@ -1,9 +1,6 @@
 package mx.edu.utez.inteNarvaez.services.salesPackages;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
@@ -13,10 +10,8 @@ import mx.edu.utez.inteNarvaez.models.products.ProductRepository;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalePackageDTO;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageRepository;
-import mx.edu.utez.inteNarvaez.services.contract.ContractService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,7 +26,8 @@ public class SalePackageService {
     private final SalesPackageRepository repository;
     private final ChannelPackageRepository channelPackageRepository;
     private final ProductRepository productRepository;
-    private static final Logger logger = LogManager.getLogger(ContractService.class);
+    private static final Logger logger = LogManager.getLogger(SalePackageService.class);
+
     @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse> findAllSalePackage(){
         try {
@@ -45,18 +41,17 @@ public class SalePackageService {
     public ResponseEntity<ApiResponse> save(SalePackageDTO dto){
 
         try {
-            logger.info(dto.getName() +" Nombre del paquete");
+            logger.info("{} Nombre del paquete", dto.getName());
             Optional<SalesPackageEntity> findObjc = repository.findByName(dto.getName());
 
             if (findObjc.isPresent()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.FOUND,"Ya existe un paquete con ese nombre",true), HttpStatus.FOUND);}
 
-            UUID channelPackageUUID =UUID.fromString( dto.getChannel_package_uuid());
-            UUID productUUID =UUID.fromString( dto.getProduct_uuid());
 
-            Optional<ChannelPackageBean> findChannelPackage = channelPackageRepository.findByUuid(channelPackageUUID);
+
+            Optional<ChannelPackageBean> findChannelPackage = channelPackageRepository.findChannelPackageBeanByName(dto.getChannel_package_name());
             if (findChannelPackage.isEmpty()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El paquete de canales no fue encontrado",true), HttpStatus.NOT_FOUND);}
 
-            Optional<ProductBean> findProduct = productRepository.findByUuid(productUUID);
+            Optional<ProductBean> findProduct = productRepository.findProductBeanByName(dto.getProduct_name());
             if (findProduct.isEmpty()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El producto no fue encontrado",true), HttpStatus.NOT_FOUND);}
 
             SalesPackageEntity salesPackage = new SalesPackageEntity(
@@ -65,7 +60,7 @@ public class SalePackageService {
                     findProduct.get());
 
           SalesPackageEntity obj =  repository.saveAndFlush(salesPackage);
-            return new ResponseEntity<>(new ApiResponse(obj,HttpStatus.INTERNAL_SERVER_ERROR,"Pakete Creado exitosamente",false), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse(obj,HttpStatus.CREATED,"Paquete creado exitosamente",false), HttpStatus.CREATED);
 
         }catch (Exception ex){
             logger.error("Algo salio mal",ex);

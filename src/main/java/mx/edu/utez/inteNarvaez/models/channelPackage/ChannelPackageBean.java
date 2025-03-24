@@ -1,12 +1,10 @@
 package mx.edu.utez.inteNarvaez.models.channelPackage;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -19,13 +17,11 @@ public class ChannelPackageBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(length = 50, unique = true)
     private String name;
-
+    @Column(length = 350)
     private String description;
-
     private Double amount;
-
     @Enumerated(EnumType.STRING)
     private ChannelPackageStatus status;
     @Column(length = 36, unique = true)
