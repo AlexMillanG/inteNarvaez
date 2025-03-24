@@ -3,9 +3,6 @@ package mx.edu.utez.inteNarvaez.controllers.address.dto;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import mx.edu.utez.inteNarvaez.models.client.ClientBean;
-
-import java.util.UUID;
-
 @Data
 public class AddressDTO {
 

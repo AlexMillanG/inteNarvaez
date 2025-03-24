@@ -1,5 +1,7 @@
 package mx.edu.utez.inteNarvaez.models.channelPackage;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
@@ -29,7 +31,7 @@ public class ChannelPackageBean {
     @Column(length = 36, unique = true)
     private UUID uuid;
 
-
+    @JsonIgnore
     @OneToMany(mappedBy = "channelPackage")
     private Set<SalesPackageEntity> salesPackages = new HashSet<>();
 
@@ -40,6 +42,7 @@ public class ChannelPackageBean {
             joinColumns = @JoinColumn(name = "channel_package_id"),
             inverseJoinColumns = @JoinColumn(name = "channel_id")
     )
+    @JsonIgnore
     private Set<ChannelBean> channels = new HashSet<>();
 
     public ChannelPackageBean(Long id, String name, String description, Double amount, Set<ChannelBean> channels) {

@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // Evita incluir valores nulos en la respuesta JSON
 public class ApiResponse {
 
     private Object data;

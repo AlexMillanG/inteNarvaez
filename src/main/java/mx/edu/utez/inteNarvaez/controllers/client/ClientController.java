@@ -18,7 +18,6 @@ public class ClientController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> saveClient(@RequestBody ClientBean clientBean){
-        System.err.println("en el fakin controlador");
         return clientService.saveClient(clientBean);
     }
 

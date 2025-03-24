@@ -47,5 +47,11 @@ public class SalesPackageEntity {
         }
     }
 
-
+    public SalesPackageEntity(String name, Double totalAmount, UUID uuid, ChannelPackageBean channelPackage, ProductBean productBean) {
+        this.name = name;
+        this.totalAmount = totalAmount;
+        this.uuid = uuid;
+        this.channelPackage = channelPackage;
+        this.productBean = productBean;
+    }
 }

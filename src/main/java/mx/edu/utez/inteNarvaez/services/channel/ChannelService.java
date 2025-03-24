@@ -78,10 +78,15 @@ public class ChannelService {
 
     }
 
-    @Transactional(rollbackFor = SQLException.class)
+    @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse> findAllChannel(){
-        System.err.println("antes del returno");
-        return ResponseEntity.ok(new ApiResponse(channelRepository.findAll(), HttpStatus.OK, "Canales encontrados", false));
+        try {
+            return ResponseEntity.ok(new ApiResponse(channelRepository.findAll(), HttpStatus.OK, "Canales encontrados", false));
+        }catch (Exception ex){
+            return ResponseEntity.internalServerError().body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salio mal al consultar los datos " + ex, true));
+
+        }
+
     }
 
     @Transactional(rollbackFor = SQLException.class)

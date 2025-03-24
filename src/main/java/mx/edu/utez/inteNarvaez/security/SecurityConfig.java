@@ -3,7 +3,6 @@ package mx.edu.utez.inteNarvaez.security;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.services.security.repository.IJWTUtilityService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +11,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -25,7 +23,7 @@ public class SecurityConfig {
 
     private final IJWTUtilityService jwtUtilityService;
 
-    private final  CustomUserDetailsService customUserDetailsService; // Inyectamos el servicio personalizado
+    private final CustomUserDetailsService customUserDetailsService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -37,12 +35,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/auth/**").permitAll() // Acceso libre a /auth/**
-                                .requestMatchers("/admin/**").hasRole("ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/contrato/**").hasRole("USER") // Solo USER puede acceder
-                                .requestMatchers("/api/address**").hasRole("USER") // Solo USER puede acceder
-                                //.requestMatchers("/user/**").hasRole("ADMIN") //  ADMIN pueden acceder
+                                .requestMatchers("/api/channelPackage/**").hasRole("ADMIN") // Solo ADMIN puede acceder
+                                .requestMatchers("/api/channelCategory/**").hasRole("ADMIN") // Solo ADMIN puede acceder
+                                .requestMatchers("/api/channel/**").hasRole("ADMIN") // Solo ADMIN puede acceder
+                                .requestMatchers("/api/user/**").hasRole("ADMIN") //  ADMIN pueden acceder
+                                .requestMatchers("/api/product/**").hasRole("ADMIN") //  ADMIN pueden acceder
 
-                               .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") //  ADMIN pueden acceder
+                                .requestMatchers("/api/contract/**").hasRole("USER") // Solo USER puede acceder
+                                .requestMatchers("/api/salesPackage/").hasRole("USER") // Solo ADMIN puede acceder
+                                .requestMatchers("/api/address/**").hasRole("USER") // Solo USER puede acceder
+                                .requestMatchers("/api/client/**").hasAnyRole("USER", "ADMIN") //  ADMIN pueden acceder
                                 .anyRequest().authenticated() // Rutas que requieren autenticación
                 )
                 .sessionManagement(sessionManager ->

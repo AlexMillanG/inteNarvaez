@@ -1,6 +1,7 @@
 package mx.edu.utez.inteNarvaez.models.channel;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
@@ -40,6 +41,7 @@ public class ChannelBean {
 
 
     @ManyToMany(mappedBy = "channels")
+    @JsonIgnore
     private Set<ChannelPackageBean> channelPackages = new HashSet<>();
 
 

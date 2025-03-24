@@ -21,8 +21,7 @@ public class AddressController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> save(@RequestBody AddressDTO dto) {
-        System.err.println(dto.getClientId());
-        return addressService.save(dto.toEntity());
+        return addressService.save(dto);
     }
 
     @GetMapping("/")

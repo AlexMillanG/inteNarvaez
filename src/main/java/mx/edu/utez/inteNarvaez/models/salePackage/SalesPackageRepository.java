@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface SalesPackageRepository extends JpaRepository<SalesPackageEntity,Long> {
 
     Optional<SalesPackageEntity> findByUuid(UUID uid);
+    Optional<SalesPackageEntity> findByName(String name);
 }
