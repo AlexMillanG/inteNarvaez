@@ -64,5 +64,10 @@ public class AddressController {
         return addressService.update(dto.toEntity());
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
+        return addressService.deleteAddress(id);
+    }
+
 
 }
