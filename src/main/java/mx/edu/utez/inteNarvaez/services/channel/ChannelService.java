@@ -72,7 +72,7 @@ public class ChannelService {
         }
 
         channelBean.setName(capitalize(channelBean.getName()));
-
+        channelBean.setStatus(true);
 
 
 

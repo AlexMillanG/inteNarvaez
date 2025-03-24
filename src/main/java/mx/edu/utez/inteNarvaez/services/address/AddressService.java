@@ -25,7 +25,7 @@ public class AddressService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAll() {
-        return new ResponseEntity<>(new ApiResponse(addressRepository.findAll(), HttpStatus.OK, null, false), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(addressRepository.findByStatus(true), HttpStatus.OK, null, false), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = SQLException.class)
@@ -61,6 +61,8 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);
         }
 
+        addressBean.setStatus(true);
+
         return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean), HttpStatus.OK, "dirección guardada correctamente", false), HttpStatus.OK);
     }
 
@@ -73,19 +75,6 @@ public class AddressService {
         }
 
         return new ResponseEntity<>(new ApiResponse(foundAddress.get(),HttpStatus.OK,null,false), HttpStatus.OK);
-    }
-
-    @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> deleteByUuid(UUID uuid){
-        Optional<AddressBean> foundAddress = addressRepository.findByUuid(uuid);
-
-        if (foundAddress.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"La dirección no existe",true), HttpStatus.NOT_FOUND);
-        }
-
-        addressRepository.delete(foundAddress.get());
-
-        return new ResponseEntity<>(new ApiResponse(null,HttpStatus.OK,"Dirección eliminada correctamente",false), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = SQLException.class)
@@ -128,6 +117,8 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El cliente no existe",true), HttpStatus.BAD_REQUEST);
         }
 
+        addressBean.setStatus(foundAddress.get().getStatus());
+
         return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean),HttpStatus.OK,"Dirección actualizada correctamente",false), HttpStatus.OK);
     }
 
@@ -139,10 +130,27 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El cliente no existe",true), HttpStatus.NOT_FOUND);
         }
 
-        if (addressRepository.findByClient(foundClient.get()).isEmpty()){
+        if (addressRepository.findByStatusAndClient(true,foundClient.get()).isEmpty()){
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El cliente no tiene direcciones",true), HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(new ApiResponse(addressRepository.findByClient(foundClient.get()),HttpStatus.OK,null,false), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(addressRepository.findByStatusAndClient(true,foundClient.get()),HttpStatus.OK,null,false), HttpStatus.OK);
+    }
+
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> deleteAddress(Long id){
+        if (id == null){
+            return new ResponseEntity<>(new ApiResponse(null,null,"error, id no proporcionado"),HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<AddressBean> foundAddress = addressRepository.findById(id);
+        if (foundAddress.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"error, id no proporcionado",true),HttpStatus.NOT_FOUND);
+        }
+
+        AddressBean addressBean = foundAddress.get();
+        addressBean.setStatus(false);
+
+        return new ResponseEntity<>(new ApiResponse(addressRepository.saveAndFlush(addressBean),HttpStatus.OK,"dirección eliminada con exito",false),HttpStatus.OK);
     }
 }
