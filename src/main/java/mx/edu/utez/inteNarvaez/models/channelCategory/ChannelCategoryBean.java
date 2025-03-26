@@ -20,6 +20,8 @@ public class ChannelCategoryBean {
 
     private UUID uuid;
 
+    private Boolean status;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChannelBean> channels;
 

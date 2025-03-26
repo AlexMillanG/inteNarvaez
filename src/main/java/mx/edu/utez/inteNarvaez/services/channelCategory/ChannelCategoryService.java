@@ -33,12 +33,13 @@ public class ChannelCategoryService {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria ya existe", true));
 
         categoryBean.setName(capitalize(categoryBean.getName().trim()));
+        categoryBean.setStatus(true);
 
         return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.save(categoryBean), HttpStatus.OK, "Categoria creada correctamente", false));
     }
 
     public ResponseEntity<ApiResponse> findAllCategoryChannel(){
-        return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.findAll(), HttpStatus.OK, null, false));
+        return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.findByStatus(true), HttpStatus.OK, null, false));
     }
 
     public ResponseEntity<ApiResponse> updateCategoryChannel(ChannelCategoryBean categoryBean){
@@ -48,10 +49,11 @@ public class ChannelCategoryService {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
         }
 
-
         if (categoryBean.getName().equals("") || categoryBean.getName() == null) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la categoria no puede ser nulo", true));
         }
+
+        categoryBean.setStatus(foundCategory.get().getStatus());
 
         categoryBean.setUuid(foundCategory.get().getUuid());
         return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.save(categoryBean), HttpStatus.OK, "Categoria actualizada correctamente", false));
@@ -64,6 +66,11 @@ public class ChannelCategoryService {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
         }
 
+        if (!foundCategory.get().getStatus()){
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria se ha eliminado", true));
+
+        }
+
         return ResponseEntity.ok(new ApiResponse(foundCategory.get(), HttpStatus.OK, null, false));
     }
 
@@ -74,7 +81,32 @@ public class ChannelCategoryService {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
         }
 
+        if (!foundCategory.get().getStatus()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria esta eliminada", true));
+        }
+
         return ResponseEntity.ok(new ApiResponse(foundCategory.get(), HttpStatus.OK, null, false));
+    }
+
+    public ResponseEntity<ApiResponse> delete (Long id){
+
+        Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findById(id);
+
+        if (foundChannelCategory.isEmpty()){
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+        }
+
+        if (!foundChannelCategory.get().getStatus()){
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria ya ha sido eliminada", true));
+        }
+
+        ChannelCategoryBean c = foundChannelCategory.get();
+
+        c.setStatus(false);
+
+        channelCategoryRepository.saveAndFlush(c);
+
+        return new ResponseEntity<>(new ApiResponse(null,HttpStatus.OK,"la categoría " + c.getName() +", ha sido eliminada con éxito",false),HttpStatus.OK);
     }
 
 

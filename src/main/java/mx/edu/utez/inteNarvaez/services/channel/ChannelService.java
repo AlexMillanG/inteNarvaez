@@ -59,7 +59,7 @@ public class ChannelService {
 
 
 
-        Optional<ChannelBean> foundNumber = channelRepository.findByNumber(channelBean.getNumber());
+        Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(channelBean.getNumber(),true);
 
         if (foundNumber.isPresent()) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el número " +channelBean.getNumber(), true));
@@ -82,7 +82,7 @@ public class ChannelService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAllChannel(){
-        return ResponseEntity.ok(new ApiResponse(channelRepository.findAll(), HttpStatus.OK, "Canales encontrados", false));
+        return ResponseEntity.ok(new ApiResponse(channelRepository.findByStatus(true), HttpStatus.OK, "Canales encontrados", false));
     }
 
     @Transactional(rollbackFor = SQLException.class)
@@ -123,7 +123,7 @@ public class ChannelService {
         }
 
 
-        Optional<ChannelBean> foundNumber = channelRepository.findByNumber(channelBean.getNumber());
+        Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(channelBean.getNumber(),true);
 
         if (foundNumber.isPresent()) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el número " +channelBean.getNumber(), true));
@@ -139,6 +139,8 @@ public class ChannelService {
 
         channelBean.setUuid(foundChannel.get().getUuid());
 
+        channelBean.setStatus(foundChannel.get().getStatus());
+
 
         return ResponseEntity.ok(new ApiResponse(channelRepository.save(channelBean), HttpStatus.OK, "Canal guardado correctamente", false));
 
@@ -152,15 +154,20 @@ public class ChannelService {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoría no existe", true));
         }
 
-        return ResponseEntity.ok(new ApiResponse(channelRepository.findByCategory(foundCategory.get()), HttpStatus.OK, "Canales encontrados", false));
+        return ResponseEntity.ok(new ApiResponse(channelRepository.findByCategoryAndStatus(foundCategory.get(),true), HttpStatus.OK, "Canales encontrados", false));
     }
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByNumber(Integer number){
-        Optional<ChannelBean> foundChannel = channelRepository.findByNumber(number);
+        Optional<ChannelBean> foundChannel = channelRepository.findByNumberAndStatus(number,true);
 
         if (foundChannel.isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal no existe", true));
+        }
+
+        if (!foundChannel.get().getStatus()){
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal ha sido eliminado", true));
+
         }
 
         return ResponseEntity.ok(new ApiResponse(foundChannel.get(), HttpStatus.OK, "Canal encontrado", false));
@@ -174,6 +181,10 @@ public class ChannelService {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal no existe", true));
         }
 
+         if (!foundChannel.get().getStatus()) {
+             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal ha sido eliminado", true));
+         }
+
         return ResponseEntity.ok(new ApiResponse(foundChannel.get(), HttpStatus.OK, "Canal encontrado", false));
     }
 
@@ -183,6 +194,11 @@ public class ChannelService {
 
         if (foundChannel.isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal no existe", true));
+        }
+
+        if (!foundChannel.get().getStatus()){
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal ha sido eliminado", true));
+
         }
 
         return ResponseEntity.ok(new ApiResponse(foundChannel.get(), HttpStatus.OK, "Canal encontrado", false));
@@ -225,7 +241,7 @@ public class ChannelService {
         }
 
 
-        Optional<ChannelBean> foundNumber = channelRepository.findByNumber(channelBean.getNumber());
+        Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(channelBean.getNumber(),true);
 
         if (foundNumber.isPresent()) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el número " +channelBean.getNumber(), true));
@@ -262,6 +278,22 @@ public class ChannelService {
 
     }
 
+    public ResponseEntity<ApiResponse> delete(Long id){
+        Optional<ChannelBean> foundChannel = channelRepository.findById(id);
+
+        if (foundChannel.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"no se encontró el canal que intentas eliminar",true),HttpStatus.NOT_FOUND);
+        }
+
+        if (!foundChannel.get().getStatus()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"el canal ya ha sido eliminado",true),HttpStatus.BAD_REQUEST);
+        }
+
+        ChannelBean c = foundChannel.get();
+        c.setStatus(false);
+        channelRepository.saveAndFlush(c);
+        return new ResponseEntity<>(new ApiResponse(null,HttpStatus.OK,"el canal " + foundChannel.get().getName() +", ha sido eliminado con éxito",false),HttpStatus.OK);
+    }
 
 
 }

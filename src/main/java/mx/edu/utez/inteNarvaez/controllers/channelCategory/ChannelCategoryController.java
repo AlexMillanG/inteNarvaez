@@ -47,4 +47,9 @@ public class ChannelCategoryController {
     public ResponseEntity<ApiResponse> findByUuid(@PathVariable UUID uuid){
         return channelCategoryService.findByUuid(uuid);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
+        return channelCategoryService.delete(id);
+    }
 }
