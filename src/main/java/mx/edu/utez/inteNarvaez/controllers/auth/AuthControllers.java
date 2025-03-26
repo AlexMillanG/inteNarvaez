@@ -16,7 +16,7 @@ import java.util.HashMap;
 @RequestMapping("/auth")
 
 public class AuthControllers {
-    private final IAuthService authService;
+/*    private final IAuthService authService;
     private final RoleRepository repository;
 
     public AuthControllers(IAuthService authService, RoleRepository repository) {
@@ -40,7 +40,7 @@ public class AuthControllers {
             "password": "1234"
             }
          */
-
+/*
     @GetMapping ("/roles")
     private ResponseEntity<ApiResponse> roles() throws Exception {
         return new ResponseEntity<>(new ApiResponse(repository.findAll(), HttpStatus.OK,"ROLES"),HttpStatus.OK);
@@ -52,7 +52,7 @@ public class AuthControllers {
                 "email": "alex1@admin.com",
                 "password": "1234"
          */
-        HashMap<String,String> login = authService.login(loginRequest);
+  /*      HashMap<String,String> login = authService.login(loginRequest);
         if (login.containsKey("jwt")) {
             return new ResponseEntity<>(login,HttpStatus.OK);
 
@@ -62,4 +62,5 @@ public class AuthControllers {
 
 
     }
+*/
 }
