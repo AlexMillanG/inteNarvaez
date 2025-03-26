@@ -3,11 +3,13 @@ package mx.edu.utez.inteNarvaez.controllers.channel;
 
 import lombok.RequiredArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.controllers.channel.dto.ChannelDTO;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.services.channel.ChannelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +21,27 @@ public class ChannelController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> saveChannel(@RequestBody ChannelBean channelBean){
+        /*
+
+        {
+            "name":"    Cartoon Network  ",
+            "description":"Canal de Warner Bros enfocado a animación infantil",
+            "number":24,
+            "image":"https://upload.wikimedia.org/wikipedia/commons/8/80/Cartoon_Network_2010_logo.svg",
+            "category":{
+                "id":1
+            }
+        }
+
+         */
         return channelService.saveChannel(channelBean);
     }
+
+    @PostMapping("/saveImg")
+    public ResponseEntity<ApiResponse> saveChannelImage(@ModelAttribute ChannelDTO dto) throws IOException {
+        return channelService.saveWithImage(dto);
+    }
+
 
     @GetMapping("/")
     public ResponseEntity<ApiResponse> findAllChannel(){
@@ -50,5 +71,15 @@ public class ChannelController {
     @GetMapping("/name/{name}")
     public ResponseEntity<ApiResponse> findByName(@PathVariable String name){
         return channelService.findByName(name);
+    }
+
+    @GetMapping("/findByUuid/{uuid}")
+    public ResponseEntity<ApiResponse> findByUuid(@PathVariable UUID uuid){
+        return channelService.findByUuid(uuid);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
+        return channelService.delete(id);
     }
 }

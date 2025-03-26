@@ -33,6 +33,8 @@ public class AddressBean {
 
     private UUID uuid;
 
+    private Boolean status;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)

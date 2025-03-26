@@ -20,7 +20,11 @@ public class ChannelCategoryController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> saveCategoryChannel(@RequestBody ChannelCategoryBean categoryBean){
-        System.err.println(categoryBean);
+        /*
+                    {
+                        "name":"infantil"
+                    }
+         */
         return channelCategoryService.saveCategoryChannel(categoryBean);
     }
 
@@ -42,5 +46,10 @@ public class ChannelCategoryController {
     @GetMapping("findByUuid/{uuid}")
     public ResponseEntity<ApiResponse> findByUuid(@PathVariable UUID uuid){
         return channelCategoryService.findByUuid(uuid);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
+        return channelCategoryService.delete(id);
     }
 }

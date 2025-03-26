@@ -18,7 +18,17 @@ public class AddressController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> save(@RequestBody AddressDTO dto) {
-        System.err.println(dto.getClientId());
+        /*
+                {
+                    "name":"casa de alex",
+                    "street":"orquidea",
+                    "number":447,
+                    "city":"Cuernavaca",
+                    "state":"morelos",
+                    "zipCode":62460,
+                    "clientId":1
+                }
+         */
         return addressService.save(dto.toEntity());
     }
 
@@ -39,7 +49,24 @@ public class AddressController {
 
     @PutMapping("/update")
     public ResponseEntity<ApiResponse> update(@RequestBody AddressDTO dto) {
+        /*
+                {
+                    "id":1,
+                    "name":"casa de alex UPDATE",
+                    "street":"orquidea UPDATE",
+                    "number":447,
+                    "city":"Cuernavaca ",
+                    "state":"morelos",
+                    "zipCode":62460,
+                    "clientId":1
+                }
+         */
         return addressService.update(dto.toEntity());
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
+        return addressService.deleteAddress(id);
     }
 
 

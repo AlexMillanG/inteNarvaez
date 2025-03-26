@@ -11,8 +11,10 @@ import java.util.UUID;
 @Repository
 public interface ChannelRepository extends JpaRepository<ChannelBean,Long> {
 
-    Optional<ChannelBean> findByNumber(Integer number);
+    Optional<ChannelBean> findByNumberAndStatus(Integer number, Boolean b);
     Optional<ChannelBean> findByName(String name);
-    List<ChannelBean> findByCategory(ChannelCategoryBean category);
+    List<ChannelBean> findByCategoryAndStatus(ChannelCategoryBean category, Boolean b);
     Optional<ChannelBean> findByUuid(UUID uuid);
+
+    List<ChannelBean> findByStatus(Boolean b);
 }
