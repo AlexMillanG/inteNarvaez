@@ -2,10 +2,14 @@ package mx.edu.utez.inteNarvaez.services.contract;
 
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.models.address.AddressBean;
+import mx.edu.utez.inteNarvaez.models.address.AddressRepository;
 import mx.edu.utez.inteNarvaez.models.contract.ContractBean;
+import mx.edu.utez.inteNarvaez.models.contract.ContractDTO;
 import mx.edu.utez.inteNarvaez.models.contract.ContractRepository;
 import mx.edu.utez.inteNarvaez.models.contract.ContractValidation;
-import mx.edu.utez.inteNarvaez.models.dtos.ResponseDTO;
+import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
+import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,15 +18,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.Date;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class ContractService {
 
     private final ContractRepository repository;
+    private  final SalesPackageRepository Salesrepository;
+    private  final AddressRepository addressRepository;
+
     private static final Logger logger = LogManager.getLogger(ContractService.class);
 
     @Transactional(readOnly = true)
@@ -41,30 +47,66 @@ public class ContractService {
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<ApiResponse> SaveContract(ContractBean contractBean) {
+      @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse> saveContract(ContractDTO dto) {
 
+        /*
         ApiResponse validations = ContractValidation.validate(contractBean);
-
         if (validations.isError()) {
             return new ResponseEntity<>(validations, HttpStatus.BAD_REQUEST);
-        }
+        }*/
+
+
         try {
 
-            repository.save(contractBean);
-            logger.info("Contrato creado exitosamente");
-            return new ResponseEntity<>(new ApiResponse(contractBean, HttpStatus.CREATED, "Contrato creado exitosasmente"), HttpStatus.OK);
+
+
+            logger.info("Consultando la BD ");
+
+            Optional<SalesPackageEntity> findSalepackage = Salesrepository.findByName(dto.getSalesPackage());
+            Optional<AddressBean> findAddress = addressRepository.findById(dto.getAddress());
+
+            logger.info("Validaciones de exixtencias");
+
+            if (findAddress.isEmpty()){
+                logger.info("address OBJ {}",findAddress);
+                return new ResponseEntity<>(new ApiResponse(findAddress.get(), HttpStatus.NOT_FOUND, "Direccion del cliente no encontrada",true), HttpStatus.NOT_FOUND);
+            }
+
+
+            if (findSalepackage.isEmpty()) {
+                logger.info("salesPackage OBJ {}",findSalepackage);
+
+                return new ResponseEntity<>(new ApiResponse(findSalepackage.get(), HttpStatus.NOT_FOUND, "Paquete de venta no encontrado",true), HttpStatus.NOT_FOUND);
+            }
+
+            logger.info("Creando obj");
+
+            ContractBean contract = new ContractBean(
+                    new Date(),
+                    dto.getAmount(),
+                    UUID.randomUUID(),
+                    findAddress.get(),
+                    findSalepackage.get()
+            );
+
+            ContractBean savedContract = repository.save(contract);
+
+                  logger.info("Contrato creado exitosamente");
+
+
+            return new ResponseEntity<>(new ApiResponse(savedContract, HttpStatus.CREATED, "Contrato creado exitosamente"), HttpStatus.CREATED);
 
         } catch (DataIntegrityViolationException ex) {
-            logger.error("Error de integridad al crear un contrato {}", ex.getMessage());
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "Confricto en los datos del contrato "), HttpStatus.CONFLICT);
+            logger.error("Error de integridad al crear un contrato: {}", ex.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "Conflicto en los datos del contrato"), HttpStatus.CONFLICT);
 
         } catch (Exception ex) {
-            logger.error("Error al crear un contrato {}", ex.getMessage());
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salio mal al crear el contrato "), HttpStatus.INTERNAL_SERVER_ERROR);
-
+            logger.error("Error al crear un contrato: {}", ex.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salió mal al crear el contrato"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> updateContract(ContractBean contractBean) {

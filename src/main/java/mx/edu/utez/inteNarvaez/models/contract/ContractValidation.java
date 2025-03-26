@@ -16,11 +16,11 @@ public class ContractValidation {
         }
 
         if (contract.getAddress() == null) {
-            return new ApiResponse(null, HttpStatus.BAD_REQUEST, "El campo address no puede ser nulo.", true);
+            return new ApiResponse(null, HttpStatus.BAD_REQUEST, "Addres no puede ser nulo.", true);
         }
 
         if (contract.getSalesPackageEntity() == null) {
-            return new ApiResponse(null, HttpStatus.BAD_REQUEST, "El campo salesPackageEntity no puede ser nulo.", true);
+            return new ApiResponse(null, HttpStatus.BAD_REQUEST, "SalesPackageEntity no puede ser nulo.", true);
         }
 
         return new ApiResponse(contract, HttpStatus.OK, "Validación exitosa.", false);

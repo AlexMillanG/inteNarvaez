@@ -1,16 +1,22 @@
 package mx.edu.utez.inteNarvaez.models.client;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Data
 @Table(name = "clients")
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
 public class ClientBean {
 
     @Id
@@ -32,28 +38,21 @@ public class ClientBean {
     @Column(length = 100, unique = true)
     private String email;
 
+    @Column(length = 10)
     private String phone;
 
-    private LocalDate birthdate;
+    @Temporal(TemporalType.DATE)
+    private Date birthdate;
 
-
+    @Column(length = 36, unique = true)
     private UUID uuid;
 
     @OneToMany(mappedBy = "client")
     private List<AddressBean> addresses;
 
-
-
     public ClientBean() {
-        if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
-        }
+
     }
 
-    @PrePersist
-    protected void onCreate() {
-        if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
-        }
-    }
+
 }

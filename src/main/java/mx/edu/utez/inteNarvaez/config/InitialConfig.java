@@ -9,26 +9,23 @@ import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.swing.text.html.Option;
-import java.nio.channels.Channel;
 import java.util.Optional;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Component
 public class InitialConfig {
 
-    // Repositorios para acceder a los datos de roles, usuarios, imágenes, categorías, departamentos y puestos
-
-
     private final ChannelCategoryRepository channelCategoryRepository;
 
     private final ChannelRepository channelRepository;
+    private final RoleRepository roleRepository;
+
+    private final UserRepository userRepository;
 
     @Bean
     public CommandLineRunner initData() {
@@ -44,6 +41,9 @@ public class InitialConfig {
             createChannel("Nickelodeon","Un canal de caricaturas naranja",132,"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Nickelodeon_2023_logo_%28outline%29.svg/1200px-Nickelodeon_2023_logo_%28outline%29.svg.png",1L);
             createChannel("ESPN","ahí pasan futbol picante", 234,"https://static.wikia.nocookie.net/telepedia-es/images/9/99/ESPN_logo.png/revision/latest?cb=20210826204726&path-prefix=es",2L);
             createChannel("FOX", "nose, ya no lo veo",45435,"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Fox_Channel_logo.svg/2560px-Fox_Channel_logo.svg.png",3L);
+
+            roles(new RoleBean("ADMIN", UUID.randomUUID()));
+            roles(new RoleBean("USER", UUID.randomUUID()));
 
         };
     }
@@ -61,6 +61,17 @@ public class InitialConfig {
             System.err.println("categoria de canal "+  name +" creada");
         }
 
+    }
+
+    private void roles(RoleBean role){
+        Optional<RoleBean> foundRole = roleRepository.findByName(role.getName()); // Buscar por nombre
+
+        if (foundRole.isEmpty()){
+            roleRepository.save(role);
+            System.err.println("Rol " + role.getName() + " creado correctamente");
+        } else {
+            System.err.println("Rol " + role.getName() + " ya existe");
+        }
     }
 
     private void createChannel(String name, String description, Integer number, String image, Long categoryId) {
@@ -97,12 +108,12 @@ public class InitialConfig {
     }
 
     private void createRoles(String rolName) {
-        Optional<RoleBean> foundRole = rolRepository.findByName(rolName);
+        Optional<RoleBean> foundRole = roleRepository.findByName(rolName);
         if (foundRole.isEmpty()){
             RoleBean roleBean = new RoleBean();
             roleBean.setName(rolName);
 
-            rolRepository.save(roleBean);
+            roleRepository.save(roleBean);
             System.err.println("rol "+rolName+" creado");
         }
     }

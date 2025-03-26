@@ -9,5 +9,8 @@ import java.util.UUID;
 @Repository
 public interface ChannelPackageRepository extends JpaRepository<ChannelPackageBean,Long> {
 
-    Optional<ChannelPackageBean> findByUuid(UUID uuid);
+    Optional<ChannelPackageBean> findChannelPackageBeanByUuid(UUID uuid);
+
+    Optional<ChannelPackageBean> findChannelPackageBeanByName(String name);
+
 }

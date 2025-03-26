@@ -13,12 +13,7 @@ public class RoleDTO {
     private Long id;
     private String name;
 
-    // Constructor, getters, setters
-    public RoleDTO(RoleBean roleBean) {
-        this.id = roleBean.getId();
-        this.name = roleBean.getName();
-    }
+     public RoleDTO(Long id, String name, UUID uuid) {
 
-    public RoleDTO(Long id, String name, UUID uuid) {
     }
 }

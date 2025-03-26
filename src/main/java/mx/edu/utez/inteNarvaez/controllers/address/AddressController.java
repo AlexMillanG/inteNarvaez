@@ -3,6 +3,7 @@ package mx.edu.utez.inteNarvaez.controllers.address;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.controllers.address.dto.AddressDTO;
+import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageRepository;
 import mx.edu.utez.inteNarvaez.services.address.AddressService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.UUID;
 public class AddressController {
 
     private final AddressService addressService;
+
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> save(@RequestBody AddressDTO dto) {
@@ -29,7 +31,7 @@ public class AddressController {
                     "clientId":1
                 }
          */
-        return addressService.save(dto.toEntity());
+        return addressService.save(dto);
     }
 
     @GetMapping("/")

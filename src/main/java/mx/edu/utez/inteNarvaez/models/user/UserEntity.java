@@ -1,6 +1,6 @@
 package mx.edu.utez.inteNarvaez.models.user;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +23,7 @@ public class UserEntity {
     private  String lastName;
     private  String email;
     private String password;
-    @JsonBackReference
     @ManyToMany(mappedBy = "userEntities")
     private Set<RoleBean> roleBeans = new HashSet<>();
+
 }

@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.models.products;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
@@ -23,12 +24,13 @@ public class ProductBean {
     private Double amount;
 
     private String description;
-
+    @Column(length = 36, unique = true)
     private UUID uuid;
 
 
 
     @OneToMany(mappedBy = "productBean")
+    @JsonIgnore
     private Set<SalesPackageEntity> salesPackageEntities;
 
 

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements IUserServiceImpl {
 
   private final  UserRepository userRepository;
-    @Override
+
     public List<UserDTO> findAllUsers() {
         List<UserEntity> users = userRepository.findAll();
         return users.stream()

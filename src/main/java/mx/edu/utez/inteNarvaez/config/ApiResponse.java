@@ -8,23 +8,22 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // Evita incluir valores nulos en la respuesta JSON
 public class ApiResponse {
 
-    private Object object;
+    private Object data;
     private HttpStatus status;
     private String message;
     private boolean error;
 
     public ApiResponse(Object object, HttpStatus status, String message, boolean error) {
-        this.object = object;
+        this.data = object;
         this.status = status;
         this.message = message;
         this.error = error;
     }
 
     public ApiResponse(Object object, HttpStatus status, String message) {
-        this.object = object;
+        this.data = object;
         this.status = status;
         this.message = message;
     }

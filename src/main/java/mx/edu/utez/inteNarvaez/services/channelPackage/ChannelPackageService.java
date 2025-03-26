@@ -115,7 +115,7 @@ public class ChannelPackageService {
 
     public ResponseEntity<ApiResponse> findByUuid(UUID uuid){
 
-        Optional<ChannelPackageBean> foundPackage = channelPackageRepository.findByUuid(uuid);
+        Optional<ChannelPackageBean> foundPackage = channelPackageRepository.findChannelPackageBeanByUuid(uuid);
 
         if (foundPackage.isEmpty()){
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"error, el paquete que buscas no existe"),HttpStatus.NOT_FOUND);
