@@ -29,18 +29,6 @@ public class ChannelPackageController {
     public ResponseEntity<ApiResponse> save(@RequestBody ChannelPackageDTO dto){
         return channelPackageService.save(dto.toEntity());
 
-        /*
-            {
-                 "name":"paquete basico",
-                 "description":"paquete con lo necesario",
-                 "amount":444,
-                 "channels":[
-                    {"id":1},
-                    {"id":2},
-                    {"id":4}
-                  ]
-            }
-         */
     }
 
     @PutMapping("/update")

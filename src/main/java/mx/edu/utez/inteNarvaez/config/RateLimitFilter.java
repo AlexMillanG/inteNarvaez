@@ -1,4 +1,4 @@
-/*package mx.edu.utez.inteNarvaez.config;
+package mx.edu.utez.inteNarvaez.config;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -41,4 +41,3 @@ public class RateLimitFilter implements Filter {
         return Bucket4j.builder().addLimit(limit).build();
     }
 }
-*/

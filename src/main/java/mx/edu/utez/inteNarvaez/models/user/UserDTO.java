@@ -25,7 +25,7 @@ public class UserDTO {
         this.firstName = userEntity.getFirstName();
         this.lastName = userEntity.getLastName();
         this.email = userEntity.getEmail();
-                this.roles = userEntity.getRoleBeans().stream()
+        this.roles = userEntity.getRoleBeans().stream()
                 .map(role -> role.getName())
                 .collect(Collectors.toSet());
     }
@@ -46,4 +46,3 @@ public class UserDTO {
     }
 
 }
-

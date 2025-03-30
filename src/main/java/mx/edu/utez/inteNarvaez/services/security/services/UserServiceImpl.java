@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserServiceImpl implements IUserServiceImpl {
 
-  private final  UserRepository userRepository;
+    private final  UserRepository userRepository;
 
     public List<UserDTO> findAllUsers() {
         List<UserEntity> users = userRepository.findAll();

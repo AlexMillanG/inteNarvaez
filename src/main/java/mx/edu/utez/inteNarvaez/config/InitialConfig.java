@@ -7,12 +7,11 @@ import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryRepository;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
-import mx.edu.utez.inteNarvaez.models.user.UserEntity;
-import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.rmi.server.UID;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,14 +24,10 @@ public class InitialConfig {
     private final ChannelRepository channelRepository;
     private final RoleRepository roleRepository;
 
-    private final UserRepository userRepository;
 
     @Bean
     public CommandLineRunner initData() {
         return args -> {
-
-            createRoles("ADMIN");
-            createRoles("USER");
 
             createCategoryChannel("Infantil");
             createCategoryChannel("Deportes");
@@ -74,6 +69,9 @@ public class InitialConfig {
         }
     }
 
+
+
+
     private void createChannel(String name, String description, Integer number, String image, Long categoryId) {
         Optional<ChannelBean> foundChannel = channelRepository.findByName(name);
         if (foundChannel.isEmpty()) {
@@ -85,7 +83,7 @@ public class InitialConfig {
                 channel.setDescription(description);
                 channel.setNumber(number);
                 channel.setImage(image);
-                channel.setCategory(foundCategory.get());
+                channel.setCategory(foundCategory.get());  // Usamos la categoría existente de la BD
 
                 channelRepository.save(channel);
                 System.err.println("Canal " + name + " insertado");
@@ -95,28 +93,7 @@ public class InitialConfig {
         }
     }
 
-    private void createUser(String name, String email, String password, String lastname){
-        Optional<UserEntity> foundUser = userRepository.findByEmail(email);
-        if (foundUser.isPresent()){
-            UserEntity user = new UserEntity();
-            user.setEmail(email);
-            user.setFirstName(name);
-            user.setLastName(lastname);
-            userRepository.save(user);
 
-        }
-    }
-
-    private void createRoles(String rolName) {
-        Optional<RoleBean> foundRole = roleRepository.findByName(rolName);
-        if (foundRole.isEmpty()){
-            RoleBean roleBean = new RoleBean();
-            roleBean.setName(rolName);
-
-            roleRepository.save(roleBean);
-            System.err.println("rol "+rolName+" creado");
-        }
-    }
 
 
 }
