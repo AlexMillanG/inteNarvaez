@@ -28,7 +28,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowCredentials(false)
                 .maxAge(3600);
     }
-/*
+
     @Bean(name = "rateLimitFilterBean")
     public FilterRegistrationBean<RateLimitFilter> rateLimitFilter() {
         FilterRegistrationBean<RateLimitFilter> registrationBean = new FilterRegistrationBean<>();
@@ -37,5 +37,5 @@ public class CorsConfig implements WebMvcConfigurer {
         return registrationBean;
     }
 
-*/
+
 }
