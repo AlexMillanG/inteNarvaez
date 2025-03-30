@@ -12,11 +12,13 @@ import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,13 +30,26 @@ public class SalePackageService {
     private final ProductRepository productRepository;
     private static final Logger logger = LogManager.getLogger(SalePackageService.class);
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<ApiResponse> findAllSalePackage(){
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse> findAllSalePackage() {
         try {
-            return new ResponseEntity<>(new ApiResponse(repository.findAll(),HttpStatus.INTERNAL_SERVER_ERROR,"Lista de packetes de ventas",false), HttpStatus.OK);
-        }catch (Exception ex){
+            List<SalesPackageEntity> salePackages = repository.findAll();
 
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"Algo salio mal"+ex,true), HttpStatus.INTERNAL_SERVER_ERROR);
+            // Evitar inicializaciones forzadas y manejar relaciones de forma explícita.
+            salePackages.forEach(sp -> Hibernate.initialize(sp.getChannelPackage().getChannels()));
+
+            // Devolver la respuesta adecuada.
+            return new ResponseEntity<>(
+                    new ApiResponse(salePackages, HttpStatus.OK, "Paquetes obtenidos exitosamente", false),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
+            // Manejar errores explícitamente.
+            logger.error("Error al obtener paquetes de ventas", e);
+            return new ResponseEntity<>(
+                    new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salió mal", true),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
     @Transactional(rollbackFor = Exception.class)

@@ -31,9 +31,10 @@ public class ContractService {
 
     private static final Logger logger = LogManager.getLogger(ContractService.class);
 
-    @Transactional(readOnly = true)
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> findAllContract() {
         try {
+            logger.info("Consultando la BD para contratos");
             List<ContractBean> contratos = repository.findAll();
             if (contratos.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(Collections.emptyList(),HttpStatus.NO_CONTENT, "No se encuentra ningún contrato registrado"),HttpStatus.NO_CONTENT);

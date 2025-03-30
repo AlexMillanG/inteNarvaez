@@ -34,20 +34,23 @@ public class SecurityConfig {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authRequest -> authRequest
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/api/channelPackage/**").hasRole("ADMIN")
-                        .requestMatchers("/api/channelCategory/**").hasRole("ADMIN")
-                        .requestMatchers("/api/channel/**").hasRole("ADMIN")
-                        .requestMatchers("/api/user/**").hasRole("ADMIN")
-                        .requestMatchers("/api/product/**").hasRole("ADMIN")
-                        .requestMatchers("/api/contract/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/api/salesPackage/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/api/address/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/api/client/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(authRequest ->
+                        authRequest
+                                .requestMatchers("/auth/**").permitAll() // Acceso libre a /auth/**
+                                .requestMatchers("/api/channelPackage/**").hasRole("ADMIN") // Solo ADMIN puede acceder
+                                .requestMatchers("/api/channelCategory/**").hasRole("ADMIN") // Solo ADMIN puede acceder
+                                .requestMatchers("/api/channel/**").hasRole("ADMIN") // Solo ADMIN puede acceder
+                                .requestMatchers("/api/user/**").hasRole("ADMIN") //  ADMIN pueden acceder
+                                .requestMatchers("/api/product/**").hasRole("ADMIN") //  ADMIN pueden acceder
+
+                                .requestMatchers("/api/contract/**").hasAnyRole("USER","ADMIN") // Solo USER puede acceder
+                                .requestMatchers("/api/salesPackage/**").hasAnyRole("USER","ADMIN") // Solo ADMIN puede acceder
+                                .requestMatchers("/api/address/**").hasAnyRole("USER","ADMIN") // Solo USER puede acceder
+                                .requestMatchers("/api/client/**").hasAnyRole("USER", "ADMIN") //  ADMIN pueden acceder
+                                .anyRequest().authenticated() // Rutas que requieren autenticación
+                )
+                .sessionManagement(sessionManager ->
+                        sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JWTAuthorizationFilter(jwtUtilityService), UsernamePasswordAuthenticationFilter.class)

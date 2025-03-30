@@ -27,14 +27,13 @@ public class SalesPackageEntity {
 
     @ManyToOne
     @JoinColumn(name = "channel_package_id", nullable = false)
-    @JsonIgnore
-
     private ChannelPackageBean channelPackage;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "product_id",nullable = false)
     private ProductBean productBean;
+
+
 
 
     @OneToMany(mappedBy = "salesPackageEntity")

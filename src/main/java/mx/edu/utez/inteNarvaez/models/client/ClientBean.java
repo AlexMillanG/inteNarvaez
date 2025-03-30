@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.models.client;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -48,8 +49,8 @@ public class ClientBean {
     private UUID uuid;
 
     @OneToMany(mappedBy = "client")
+    @JsonIgnore
     private List<AddressBean> addresses;
-
     public ClientBean() {
 
     }

@@ -15,9 +15,10 @@ public class SalePackageController {
     private final SalePackageService service;
 
     @GetMapping("/")
-    public ResponseEntity<ApiResponse> getAllSalesPackage(){
+    public ResponseEntity<ApiResponse> getAllSalesPackage() {
         return service.findAllSalePackage();
     }
+
     @PostMapping("/save") public ResponseEntity<ApiResponse> save(@RequestBody SalePackageDTO dto){
         return  service.save(dto);
     }
