@@ -1,6 +1,5 @@
 package mx.edu.utez.inteNarvaez.models.channel;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -37,7 +36,6 @@ public class ChannelBean {
 
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "category_id", nullable = false)
     private ChannelCategoryBean category;
 

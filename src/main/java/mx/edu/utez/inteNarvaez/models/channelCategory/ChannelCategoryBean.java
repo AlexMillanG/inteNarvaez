@@ -1,11 +1,11 @@
 package mx.edu.utez.inteNarvaez.models.channelCategory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @Entity
@@ -22,8 +22,10 @@ public class ChannelCategoryBean {
 
     private Boolean status;
 
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ChannelBean> channels;
+    @JsonIgnore
+    private List<ChannelBean> channels = new ArrayList<>();
 
 
     public ChannelCategoryBean() {
