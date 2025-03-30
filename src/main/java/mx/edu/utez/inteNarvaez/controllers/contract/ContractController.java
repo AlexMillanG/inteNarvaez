@@ -18,7 +18,6 @@ public class ContractController {
     private final ContractService service;
     @GetMapping("/")
     public ResponseEntity<ApiResponse> findAllContract(){
-
         return service.findAllContract();
     }
 

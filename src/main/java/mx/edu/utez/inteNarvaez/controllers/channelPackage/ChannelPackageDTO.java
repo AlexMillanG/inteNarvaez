@@ -5,6 +5,7 @@ import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -18,7 +19,7 @@ public class ChannelPackageDTO {
 
 
     public ChannelPackageBean toEntity(){
-        return new ChannelPackageBean(name, description, amount,channels);
+        return new ChannelPackageBean(name, description, amount, (List<ChannelBean>) channels);
     }
 
     public ChannelPackageBean toEntityUpdate(){

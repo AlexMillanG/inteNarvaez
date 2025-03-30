@@ -45,7 +45,6 @@ public class AddressBean {
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
-    @JsonIgnore
     private ClientBean client;
 
     @OneToMany(mappedBy = "address")

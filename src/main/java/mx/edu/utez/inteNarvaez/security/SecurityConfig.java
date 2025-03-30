@@ -35,17 +35,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/auth/**").permitAll() // Acceso libre a /auth/**
-                                .requestMatchers("/api/channelPackage/**").hasRole("ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/api/channelCategory/**").hasRole("ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/api/channel/**").hasRole("ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/api/user/**").hasRole("ADMIN") //  ADMIN pueden acceder
-                                .requestMatchers("/api/product/**").hasRole("ADMIN") //  ADMIN pueden acceder
+                                .requestMatchers("/api/channelPackage/**").hasRole("ADMIN")
+                                .requestMatchers("/api/channelCategory/**").hasRole("ADMIN")
+                                .requestMatchers("/api/channel/**").hasRole("ADMIN")
+                                .requestMatchers("/api/user/**").hasRole("ADMIN")
+                                .requestMatchers("/api/product/**").hasRole("ADMIN")
 
-                                .requestMatchers("/api/contract/**").hasAnyRole("USER","ADMIN") // Solo USER puede acceder
-                                .requestMatchers("/api/salesPackage/**").hasAnyRole("USER","ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/api/address/**").hasAnyRole("USER","ADMIN") // Solo USER puede acceder
-                                .requestMatchers("/api/client/**").hasAnyRole("USER", "ADMIN") //  ADMIN pueden acceder
-                                .anyRequest().authenticated() // Rutas que requieren autenticación
+                                .requestMatchers("/api/contract/**").hasAnyRole("USER","ADMIN")
+                                .requestMatchers("/api/salesPackage/**").hasAnyRole("USER","ADMIN")
+                                .requestMatchers("/api/address/**").hasAnyRole("USER","ADMIN")
+                                .requestMatchers("/api/client/**").hasAnyRole("USER", "ADMIN")
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager ->
                         sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
