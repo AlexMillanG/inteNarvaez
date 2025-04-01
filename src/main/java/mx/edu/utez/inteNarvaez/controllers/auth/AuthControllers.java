@@ -24,6 +24,7 @@ public class AuthControllers {
     }
     @PostMapping("/register")
     private ResponseEntity<ApiResponse> regsiter(@RequestBody UserDTO.RegisterDTO user) throws Exception {
+        System.out.println("llegando al controller");
         return authService.register(user);
     }
 
