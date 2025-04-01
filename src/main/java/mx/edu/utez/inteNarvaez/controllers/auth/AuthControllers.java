@@ -22,11 +22,19 @@ public class AuthControllers {
         this.authService = authService;
         this.repository = repository;
     }
-    @PostMapping("/register")
-    private ResponseEntity<ApiResponse> regsiter(@RequestBody UserDTO.RegisterDTO user) throws Exception {
-        System.out.println("llegando al controller");
+    @PostMapping("/registerUser")
+    private ResponseEntity<ApiResponse> registeUser(@RequestBody UserDTO.RegisterDTO user) throws Exception {
+        user.setName("USER");
         return authService.register(user);
     }
+
+    @PostMapping("/register")
+    private ResponseEntity<ApiResponse> registeAdmin(@RequestBody UserDTO.RegisterDTO user) throws Exception {
+
+        user.setName("ADMIN");
+        return authService.register(user);
+    }
+
 
     @GetMapping ("/roles")
     private ResponseEntity<ApiResponse> roles() throws Exception {
