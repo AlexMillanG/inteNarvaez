@@ -14,8 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.swing.text.html.Option;
-import java.nio.channels.Channel;
 import java.util.Optional;
 
 
@@ -82,7 +80,6 @@ public class InitialConfig {
                 channel.setName(name);
                 channel.setDescription(description);
                 channel.setNumber(number);
-                channel.setImage(image);
                 channel.setCategory(foundCategory.get());
 
                 channelRepository.save(channel);
