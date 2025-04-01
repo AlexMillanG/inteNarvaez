@@ -11,7 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import java.rmi.server.UID;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -82,8 +82,7 @@ public class InitialConfig {
                 channel.setName(name);
                 channel.setDescription(description);
                 channel.setNumber(number);
-                channel.setImage(image);
-                channel.setCategory(foundCategory.get());  // Usamos la categoría existente de la BD
+                channel.setCategory(foundCategory.get());
 
                 channelRepository.save(channel);
                 System.err.println("Canal " + name + " insertado");

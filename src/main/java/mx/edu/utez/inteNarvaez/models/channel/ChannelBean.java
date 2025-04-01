@@ -31,8 +31,7 @@ public class ChannelBean {
     @Column(length = 36, unique = true)
     private UUID uuid;
 
-    @Column(columnDefinition = "TEXT")
-    private String image;
+    
 
 
     @ManyToOne
