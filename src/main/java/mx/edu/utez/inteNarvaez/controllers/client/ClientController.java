@@ -18,17 +18,7 @@ public class ClientController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> saveClient(@RequestBody ClientBean clientBean){
-        /*
-                {
-                    "name":"Alvaro",
-                    "lastName":"Diaz",
-                    "surname":"no se",
-                    "rfc":"AAAAA",
-                    "email":"alvarito@rimasentretainment.com",
-                    "phone":22222222,
-                    "birthdate":"2004-06-10"
-                }
-         */
+
         return clientService.saveClient(clientBean);
     }
 

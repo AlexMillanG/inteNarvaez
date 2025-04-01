@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.models.salePackage;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
@@ -18,11 +19,9 @@ public class SalesPackageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
     private Double totalAmount;
-
+    @Column(length = 36, unique = true)
     private UUID uuid;
 
 
@@ -35,9 +34,11 @@ public class SalesPackageEntity {
     private ProductBean productBean;
 
 
-    @OneToMany(mappedBy = "salesPackageEntity")
-    private Set<ContractBean> contracts = new HashSet<>();
 
+
+    @OneToMany(mappedBy = "salesPackageEntity")
+    @JsonIgnore
+    private Set<ContractBean> contracts = new HashSet<>();
 
     public SalesPackageEntity() {
         if (this.uuid == null) {
@@ -45,10 +46,11 @@ public class SalesPackageEntity {
         }
     }
 
-    @PrePersist
-    protected void onCreate() {
-        if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
-        }
+    public SalesPackageEntity(String name, Double totalAmount, UUID uuid, ChannelPackageBean channelPackage, ProductBean productBean) {
+        this.name = name;
+        this.totalAmount = totalAmount;
+        this.uuid = uuid;
+        this.channelPackage = channelPackage;
+        this.productBean = productBean;
     }
 }

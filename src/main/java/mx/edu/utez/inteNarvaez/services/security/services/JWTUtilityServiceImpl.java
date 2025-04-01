@@ -25,6 +25,8 @@ import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
+
 @Service
 public class JWTUtilityServiceImpl implements IJWTUtilityService {
 
@@ -34,17 +36,21 @@ public class JWTUtilityServiceImpl implements IJWTUtilityService {
     private Resource public_keyResource;
 
     @Override
-    public String genareteJWT (Long userID) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
-        PrivateKey privateKey = loadPrivateKey(private_keyResource);
+    public String genareteJWT(Long userID, List<String> roles)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
 
+        PrivateKey privateKey = loadPrivateKey(private_keyResource);
         JWSSigner signer = new RSASSASigner(privateKey);
         Date now = new Date();
+
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(userID.toString())
+                .claim("roles", roles)
                 .issueTime(now)
-                .expirationTime(new Date(now.getTime()+14400000))
+                .expirationTime(new Date(now.getTime() + 14400000)) // 4 horas
                 .build();
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256),claimsSet);
+
+        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSet);
         signedJWT.sign(signer);
 
         return signedJWT.serialize();

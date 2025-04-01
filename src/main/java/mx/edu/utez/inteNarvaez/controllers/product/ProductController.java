@@ -25,28 +25,13 @@ public class ProductController {
     public ResponseEntity<ApiResponse> saveProduct(@RequestBody ProductDTO productDTO){
         return productService.saveProduct(productDTO.toEntity());
 
-        /*
-                   {
-                    "name": "internet 1",
-                    "speed":"22MB",
-                    "description":"es un internet asi bien cabronsote",
-                    "amount":444.00
-                   }
-        */
+
     }
 
     @PutMapping("/update")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody ProductDTO productDTO){
         return productService.updateProduct(productDTO.toEntity());
-        /*
-               {
-                "id":2,
-                "name": "internet 1 UPDATE",
-                "speed":"223MB",
-                "description":"es un internet asi bien cabronsote UPDATE",
-                "amount":44444.00
-               }
-         */
+
     }
 
     @GetMapping("/findByUuid/{uuid}")

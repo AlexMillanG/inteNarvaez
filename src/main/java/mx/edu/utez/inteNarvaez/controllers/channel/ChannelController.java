@@ -21,19 +21,7 @@ public class ChannelController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> saveChannel(@RequestBody ChannelBean channelBean){
-        /*
 
-        {
-            "name":"    Cartoon Network  ",
-            "description":"Canal de Warner Bros enfocado a animación infantil",
-            "number":24,
-            "image":"https://upload.wikimedia.org/wikipedia/commons/8/80/Cartoon_Network_2010_logo.svg",
-            "category":{
-                "id":1
-            }
-        }
-
-         */
         return channelService.saveChannel(channelBean);
     }
 

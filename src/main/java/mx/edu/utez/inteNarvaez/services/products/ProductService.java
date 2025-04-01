@@ -90,6 +90,6 @@ public class ProductService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByUuid(UUID uuid){
-        return ResponseEntity.ok(new ApiResponse(productRepository.findByUuid(uuid), HttpStatus.OK, "Producto encontrado", false));
+        return ResponseEntity.ok(new ApiResponse(productRepository.findProductBeanByUuid(uuid), HttpStatus.OK, "Producto encontrado", false));
     }
 }
