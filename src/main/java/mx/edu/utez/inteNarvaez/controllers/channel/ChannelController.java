@@ -27,6 +27,10 @@ public class ChannelController {
 
     @PostMapping("/saveImg")
     public ResponseEntity<ApiResponse> saveChannelImage(@ModelAttribute ChannelDTO dto) throws IOException {
+
+        if(dto.getImage().isEmpty()){
+            System.err.println("imagen nula");
+        }
         return channelService.saveWithImage(dto);
     }
 
