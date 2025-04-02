@@ -263,11 +263,17 @@ public class ChannelService {
         String extension = originalFilename != null && originalFilename.contains(".")
                 ? originalFilename.substring(originalFilename.lastIndexOf(".") + 1)
                 : "";
+
+
+
         logo.setFileExtension(extension);
 
         logoRepository.save(logo);
 
+        channelBean.setStatus(true);
         return ResponseEntity.ok(new ApiResponse(savedChannel, HttpStatus.OK, "Canal guardado correctamente", false));
+
+
     }
 
     public ResponseEntity<ApiResponse> delete(Long id){
