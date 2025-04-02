@@ -22,6 +22,12 @@ public class AuthControllers {
         this.authService = authService;
         this.repository = repository;
     }
+    @PostMapping("/registerUser")
+    private ResponseEntity<ApiResponse> registeUser(@RequestBody UserDTO.RegisterDTO user) throws Exception {
+        user.setName("USER");
+        return authService.register(user);
+    }
+  
     @PostMapping("/register")
     private ResponseEntity<ApiResponse> regsiter(@RequestBody UserDTO.RegisterDTO user) throws Exception {
         return authService.register(user);
