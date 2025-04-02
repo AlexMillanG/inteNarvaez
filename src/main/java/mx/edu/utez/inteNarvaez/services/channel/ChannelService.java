@@ -268,11 +268,12 @@ public class ChannelService {
                 ? originalFilename.substring(originalFilename.lastIndexOf(".") + 1)
                 : "";
 
+
         logo.setFileExtension(extension);
         logo.setChannel(channelBean);
         logoRepository.save(logo);
 
-
+        channelBean.setStatus(true);
         return ResponseEntity.ok(new ApiResponse(channelRepository.save(channelBean), HttpStatus.OK, "Canal guardado correctamente", false));
 
 
