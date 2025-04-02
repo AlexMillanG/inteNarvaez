@@ -1,12 +1,12 @@
 package mx.edu.utez.inteNarvaez.security;
 
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import mx.edu.utez.inteNarvaez.services.security.repository.IJWTUtilityService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,38 +14,39 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final IJWTUtilityService jwtUtilityService;
-
     private final CustomUserDetailsService customUserDetailsService;
-
     private final PasswordEncoder passwordEncoder;
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 🔥 Habilitar CORS correctamente
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/auth/**").permitAll() // Acceso libre a /auth/**
-                                .requestMatchers("/api/channelPackage/**").hasRole("ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/api/channelCategory/**").hasRole("ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/api/channel/**").hasRole("ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/api/user/**").hasRole("ADMIN") //  ADMIN pueden acceder
-                                .requestMatchers("/api/product/**").hasRole("ADMIN") //  ADMIN pueden acceder
-
-                                .requestMatchers("/api/contract/**").hasAnyRole("USER","ADMIN") // Solo USER puede acceder
-                                .requestMatchers("/api/salesPackage/**").hasAnyRole("USER","ADMIN") // Solo ADMIN puede acceder
-                                .requestMatchers("/api/address/**").hasAnyRole("USER","ADMIN") // Solo USER puede acceder
-                                .requestMatchers("/api/client/**").hasAnyRole("USER", "ADMIN") //  ADMIN pueden acceder
-                                .anyRequest().authenticated() // Rutas que requieren autenticación
+                                .requestMatchers("/api/channelPackage/**").hasRole("ADMIN")
+                                .requestMatchers("/api/channelCategory/**").hasRole("ADMIN")
+                                .requestMatchers("/api/channel/**").hasRole("ADMIN")
+                                .requestMatchers("/api/user/**").hasRole("ADMIN")
+                                .requestMatchers("/api/product/**").hasRole("ADMIN")
+                                .requestMatchers("/api/contract/**").hasAnyRole("USER","ADMIN")
+                                .requestMatchers("/api/salesPackage/**").hasAnyRole("USER","ADMIN")
+                                .requestMatchers("/api/address/**").hasAnyRole("USER","ADMIN")
+                                .requestMatchers("/api/client/**").hasAnyRole("USER", "ADMIN")
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManager ->
                         sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -60,13 +61,33 @@ public class SecurityConfig {
                 .build();
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(customUserDetailsService)
-                .passwordEncoder(passwordEncoder);
-        return authenticationManagerBuilder.build();
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("origins", "Content-Type", "Accept", "Authorization"));
+        config.setAllowCredentials(true);
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
+    @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("origins", "Content-Type", "Accept", "Authorization"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
