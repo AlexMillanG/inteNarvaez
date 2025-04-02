@@ -6,6 +6,7 @@ import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.controllers.channel.dto.ChannelDTO;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.services.channel.ChannelService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +28,8 @@ public class ChannelController {
 
     @PostMapping("/saveImg")
     public ResponseEntity<ApiResponse> saveChannelImage(@ModelAttribute ChannelDTO dto) throws IOException {
-
-        if(dto.getImage().isEmpty()){
-            System.err.println("imagen nula");
+        if (dto.getImage() == null || dto.getImage().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Imagen nula o vacía", true));
         }
         return channelService.saveWithImage(dto);
     }

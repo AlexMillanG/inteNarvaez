@@ -27,14 +27,11 @@ public class AuthControllers {
         user.setName("USER");
         return authService.register(user);
     }
-
+  
     @PostMapping("/register")
-    private ResponseEntity<ApiResponse> registeAdmin(@RequestBody UserDTO.RegisterDTO user) throws Exception {
-
-        user.setName("ADMIN");
+    private ResponseEntity<ApiResponse> regsiter(@RequestBody UserDTO.RegisterDTO user) throws Exception {
         return authService.register(user);
     }
-
 
     @GetMapping ("/roles")
     private ResponseEntity<ApiResponse> roles() throws Exception {
