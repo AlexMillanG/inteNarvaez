@@ -29,10 +29,6 @@ public class ProductBean {
 
 
 
-    @OneToMany(mappedBy = "productBean")
-    @JsonIgnore
-    private Set<SalesPackageEntity> salesPackageEntities;
-
 
     public ProductBean() {
         if (this.uuid == null) {

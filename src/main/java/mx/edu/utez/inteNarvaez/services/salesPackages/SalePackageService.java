@@ -66,13 +66,13 @@ public class SalePackageService {
             Optional<ChannelPackageBean> findChannelPackage = channelPackageRepository.findChannelPackageBeanByName(dto.getChannel_package_name());
             if (findChannelPackage.isEmpty()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El paquete de canales no fue encontrado",true), HttpStatus.NOT_FOUND);}
 
-            Optional<ProductBean> findProduct = productRepository.findProductBeanByName(dto.getProduct_name());
-            if (findProduct.isEmpty()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El producto no fue encontrado",true), HttpStatus.NOT_FOUND);}
 
-            SalesPackageEntity salesPackage = new SalesPackageEntity(
-                    dto.getName(),dto.getTotalAmount(),
-                    UUID.randomUUID(), findChannelPackage.get(),
-                    findProduct.get());
+            SalesPackageEntity salesPackage = new SalesPackageEntity();
+
+            salesPackage.setName(dto.getName());
+            salesPackage.setTotalAmount(dto.getTotalAmount());
+            salesPackage.setUuid(UUID.randomUUID());
+            salesPackage.setChannelPackage(findChannelPackage.get());
 
           SalesPackageEntity obj =  repository.saveAndFlush(salesPackage);
             return new ResponseEntity<>(new ApiResponse(obj,HttpStatus.CREATED,"Paquete creado exitosamente",false), HttpStatus.CREATED);
