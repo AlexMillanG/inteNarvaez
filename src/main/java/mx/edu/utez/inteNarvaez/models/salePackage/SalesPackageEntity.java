@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 import mx.edu.utez.inteNarvaez.models.contract.ContractBean;
-import mx.edu.utez.inteNarvaez.models.products.ProductBean;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +45,7 @@ public class SalesPackageEntity {
         }
     }
 
-    public SalesPackageEntity(String name, Double totalAmount, UUID uuid, ChannelPackageBean channelPackage, ProductBean productBean,String speed) {
+    public SalesPackageEntity(String name, Double totalAmount, UUID uuid, ChannelPackageBean channelPackage,String speed) {
         this.name = name;
         this.totalAmount = totalAmount;
         this.uuid = uuid;
