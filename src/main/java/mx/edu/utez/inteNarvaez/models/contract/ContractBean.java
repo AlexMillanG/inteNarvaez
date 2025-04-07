@@ -20,9 +20,12 @@ public class ContractBean {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm")
-
+    @Column(nullable = false)
     private Date creationDate;
+    @Column(nullable = false)
     private Double amount;
+    @Column(nullable = false)
+    private boolean status;
     @Column(length = 36, unique = true)
     private UUID uuid;
 

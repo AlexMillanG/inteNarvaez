@@ -8,6 +8,8 @@ import java.util.UUID;
 
 @Data
 public class ChannelDTO {
+    //@NotBlank(message = "El nombre no puede estar vacío") // Asegura que no esté vacío
+    //@Max
     private String name;
 
     private String description;
