@@ -11,7 +11,7 @@ import java.util.UUID;
 @Repository
 public interface AddressRepository extends JpaRepository<AddressBean,Long> {
 
-    Optional<AddressBean> findByUuid(UUID uuid);
+    Optional<AddressBean> findByUuid(String uuid);
 
 
     Optional<AddressBean> findByStatus(Boolean b);

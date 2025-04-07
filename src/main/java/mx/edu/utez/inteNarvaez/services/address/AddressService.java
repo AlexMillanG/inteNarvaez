@@ -63,6 +63,7 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);
         }
 
+        addressBean.setUuid(UUID.randomUUID().toString());
         addressBean.setStatus(true);
 
         return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean), HttpStatus.OK, "dirección guardada correctamente", false), HttpStatus.OK);
@@ -70,7 +71,7 @@ public class AddressService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByUuid(UUID uuid){
-        Optional<AddressBean> foundAddress = addressRepository.findByUuid(uuid);
+        Optional<AddressBean> foundAddress = addressRepository.findByUuid(uuid.toString());
 
         if (foundAddress.isEmpty()){
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"La dirección no existe",true), HttpStatus.NOT_FOUND);
@@ -120,6 +121,7 @@ public class AddressService {
         }
 
         addressBean.setStatus(foundAddress.get().getStatus());
+        addressBean.setUuid(foundAddress.get().getUuid());
 
         return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean),HttpStatus.OK,"Dirección actualizada correctamente",false), HttpStatus.OK);
     }
