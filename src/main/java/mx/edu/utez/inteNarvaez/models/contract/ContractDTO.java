@@ -1,6 +1,5 @@
 package mx.edu.utez.inteNarvaez.models.contract;
 import lombok.*;
-import java.time.LocalDate;
 import java.util.Date;
 
 

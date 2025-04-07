@@ -19,15 +19,14 @@ public class ChannelBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
     private String name;
-
+    @Column(nullable = false)
     private String description;
-
+    @Column(nullable = false)
     private Integer number;
-
+    @Column(nullable = false)
     private Boolean status;
-
     @Column(length = 36, unique = true)
     private UUID uuid;
 

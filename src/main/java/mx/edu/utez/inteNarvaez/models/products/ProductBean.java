@@ -16,20 +16,20 @@ public class ProductBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false)
     private String name;
-
+    @Column(nullable = false)
     private String speed;
-
+    @Column(nullable = false)
     private Double amount;
-
+    @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
+    private boolean status;
     @Column(length = 36, unique = true)
     private UUID uuid;
 
-
-
-    @OneToMany(mappedBy = "productBean")
+   @OneToMany(mappedBy = "productBean")
     @JsonIgnore
     private Set<SalesPackageEntity> salesPackageEntities;
 

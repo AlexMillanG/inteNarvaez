@@ -19,8 +19,12 @@ public class SalesPackageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private Double totalAmount;
+    @Column(nullable = false)
+    private boolean status;
     @Column(length = 36, unique = true)
     private UUID uuid;
 
