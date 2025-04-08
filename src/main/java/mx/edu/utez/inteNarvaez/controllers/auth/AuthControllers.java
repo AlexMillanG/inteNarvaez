@@ -47,7 +47,12 @@ public class AuthControllers {
         }else {
             return new ResponseEntity<>(login,HttpStatus.UNAUTHORIZED);
         }
-
-
     }
+
+    @PostMapping("/forward-password")
+    private  ResponseEntity<ApiResponse> forwardPassword(@RequestParam String email) throws Exception {
+       return authService.forwardPassword(String.valueOf(email));
+    }
+
+
 }

@@ -1,27 +1,28 @@
 package mx.edu.utez.inteNarvaez.services.security.services;
 
 import lombok.AllArgsConstructor;
-import mx.edu.utez.inteNarvaez.models.user.UserDTO;
-import mx.edu.utez.inteNarvaez.models.user.UserEntity;
-import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import mx.edu.utez.inteNarvaez.services.security.repository.IUserServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
+import java.security.SecureRandom;
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements IUserServiceImpl {
 
-    private final  UserRepository userRepository;
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private static final int PASSWORD_LENGTH = 8; // puedes cambiar la longitud
+    private static final SecureRandom random = new SecureRandom();
 
-    public List<UserDTO> findAllUsers() {
-        List<UserEntity> users = userRepository.findAll();
-        return users.stream()
-                .map(userEntity -> new UserDTO(userEntity))
-                .collect(Collectors.toList());
-    }
+        public static String generatePassword() {
+            StringBuilder sb = new StringBuilder(PASSWORD_LENGTH);
+            for (int i = 0; i < PASSWORD_LENGTH; i++) {
+                int index = random.nextInt(CHARACTERS.length());
+                sb.append(CHARACTERS.charAt(index));
+            }
+            return sb.toString();
+        }
+
+
 
 }

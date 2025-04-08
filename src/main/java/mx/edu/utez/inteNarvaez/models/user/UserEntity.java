@@ -23,6 +23,8 @@ public class UserEntity {
     private  String lastName;
     private  String email;
     private String password;
+    private boolean temporalPassword;
+
     @ManyToMany(mappedBy = "userEntities")
     private Set<RoleBean> roleBeans = new HashSet<>();
 
