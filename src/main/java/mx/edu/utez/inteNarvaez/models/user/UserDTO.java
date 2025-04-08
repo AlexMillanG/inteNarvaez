@@ -41,8 +41,7 @@ public class UserDTO {
             this.name = name;
         }
 
-        public RegisterDTO() {
-        }
+
     }
 
 }
