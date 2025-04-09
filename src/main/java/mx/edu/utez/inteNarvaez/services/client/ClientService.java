@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,13 +32,16 @@ public class ClientService {
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAllClient() {
         try {
-            return ResponseEntity.ok(new ApiResponse(clientRepository.findAll(), HttpStatus.OK, "Lista de clientes", false));
-        } catch (Exception ex) {
-            logger.error("Error al consultar los datos ");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la informacion", true));
-        }
+            List<ClientBean> clients = clientRepository.findAll();
 
+            return ResponseEntity.ok(new ApiResponse(clients, HttpStatus.OK, "Lista de clientes con direcciones", false));
+        } catch (Exception ex) {
+            logger.error("Error al consultar los datos: ", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
+        }
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> saveClient(ClientBean clientBean) {
@@ -57,7 +61,8 @@ public class ClientService {
             clientBean.setLastName(capitalize(clientBean.getLastName()));
             clientBean.setSurname(capitalize(clientBean.getSurname()));
             clientBean.setEmail(clientBean.getEmail().toLowerCase());
-            clientBean.setUuid(UUID.randomUUID());
+            clientBean.setUuid(UUID.randomUUID().toString());
+            System.err.println(clientBean.getUuid());
             clientBean.setRfc(clientBean.getRfc().toUpperCase());
 
             ClientBean savedClient = clientRepository.saveAndFlush(clientBean);
@@ -103,7 +108,9 @@ public class ClientService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByUUID(UUID uuid) {
-        Optional<ClientBean> foundClient = clientRepository.findByUuid(uuid);
+        System.err.println("en el servicio: "+uuid);
+
+        Optional<ClientBean> foundClient = clientRepository.findByUuid(uuid.toString());
 
         if (foundClient.isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true));

@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.models.address;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -38,13 +39,15 @@ public class AddressBean {
     @Column(nullable = false,length = 5)
     private Integer zipCode;
 
-    @Column(length = 36, unique = true, nullable = false)
-    private UUID uuid;
+    @Column(length = 36, unique = true, columnDefinition = "CHAR(36) NOT NULL")
+    private String uuid;
 
     private Boolean status;
 
 
     @ManyToOne
+    @JsonBackReference
+
     @JoinColumn(name = "client_id", nullable = false)
     private ClientBean client;
 
@@ -54,7 +57,7 @@ public class AddressBean {
 
     public AddressBean(String name, String street, String number, String city, String state, Integer zipCode, Long uuid) {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = UUID.randomUUID().toString();
         }
     }
 
@@ -65,7 +68,7 @@ public class AddressBean {
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
-        this.uuid = uuid;
+        this.uuid = uuid.toString();
         this.client = client;
     }
 }

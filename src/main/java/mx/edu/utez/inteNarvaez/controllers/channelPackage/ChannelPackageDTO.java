@@ -4,6 +4,7 @@ import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,9 @@ public class ChannelPackageDTO {
 
 
     public ChannelPackageBean toEntity(){
-        return new ChannelPackageBean(name, description, amount, (List<ChannelBean>) channels);
+        // Convert the Set to a List
+        List<ChannelBean> channelList = new ArrayList<>(channels);
+        return new ChannelPackageBean(name, description, amount, channelList);
     }
 
     public ChannelPackageBean toEntityUpdate(){
