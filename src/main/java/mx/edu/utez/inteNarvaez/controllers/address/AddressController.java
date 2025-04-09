@@ -48,6 +48,11 @@ public class AddressController {
         return addressService.findByClientId(clientId);
     }
 
+    @GetMapping("findOne/{id}")
+    public ResponseEntity<ApiResponse> findById(@PathVariable Long id){
+        return addressService.findById(id);
+    }
+
     @PutMapping("/update")
     public ResponseEntity<ApiResponse> update(@RequestBody AddressDTO dto) {
         /*

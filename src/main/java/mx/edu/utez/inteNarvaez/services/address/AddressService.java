@@ -192,4 +192,19 @@ public class AddressService {
 
         return new ResponseEntity<>(new ApiResponse(addressRepository.saveAndFlush(addressBean),HttpStatus.OK,"dirección eliminada con exito",false),HttpStatus.OK);
     }
+
+    public ResponseEntity<ApiResponse> findById(Long id){
+        Optional<AddressBean> foundAddress = addressRepository.findById(id);
+
+        if (foundAddress.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"no se encotró la dirección"),HttpStatus.NOT_FOUND);
+        }
+
+        if (foundAddress.get().getStatus()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"esta dirección esta eliminada"),HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(new ApiResponse(foundAddress.get(),HttpStatus.OK,null,false),HttpStatus.OK);
+
+    }
 }
