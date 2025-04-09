@@ -2,6 +2,8 @@ package mx.edu.utez.inteNarvaez.services.channelCategory;
 
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
+import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryRepository;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +22,7 @@ import java.util.UUID;
 public class ChannelCategoryService {
 
     private final ChannelCategoryRepository channelCategoryRepository;
+    private final ChannelRepository channelRepository;
 
 
     public ResponseEntity<ApiResponse> saveCategoryChannel(ChannelCategoryBean categoryBean){
@@ -45,8 +49,13 @@ public class ChannelCategoryService {
     public ResponseEntity<ApiResponse> updateCategoryChannel(ChannelCategoryBean categoryBean){
         Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(categoryBean.getId());
 
+
         if (foundCategory.isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+        }
+
+        if (!foundCategory.get().getStatus()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no puede actulizar una categoria eliminada",true), HttpStatus.CONFLICT);
         }
 
         if (categoryBean.getName().equals("") || categoryBean.getName() == null) {
@@ -98,6 +107,12 @@ public class ChannelCategoryService {
 
         if (!foundChannelCategory.get().getStatus()){
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria ya ha sido eliminada", true));
+        }
+
+        List<ChannelBean> foundChannels = channelRepository.findByCategoryAndStatus(foundChannelCategory.get(),true);
+
+        if (!foundChannels.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no se puede eliminar esta catagoria, tiene canales activos relacionados",true), HttpStatus.CONFLICT);
         }
 
         ChannelCategoryBean c = foundChannelCategory.get();
