@@ -16,6 +16,6 @@ public interface AddressRepository extends JpaRepository<AddressBean,Long> {
 
     Optional<AddressBean> findByStatus(Boolean b);
 
-    Optional<AddressBean> findByStatusAndClient(Boolean b, ClientBean clientBean);
+    List<AddressBean> findByStatusAndClient(Boolean b, ClientBean clientBean);
 
 }

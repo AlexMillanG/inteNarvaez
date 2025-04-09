@@ -7,6 +7,8 @@ import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import mx.edu.utez.inteNarvaez.models.address.AddressRepository;
 import mx.edu.utez.inteNarvaez.models.client.ClientBean;
 import mx.edu.utez.inteNarvaez.models.client.ClientRepository;
+import mx.edu.utez.inteNarvaez.models.contract.ContractBean;
+import mx.edu.utez.inteNarvaez.models.contract.ContractRepository;
 import mx.edu.utez.inteNarvaez.services.contract.ContractService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +28,8 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
     private final ClientRepository clientRepository;
+    private final ContractRepository contractRepository;
+
     private static final Logger logger = LogManager.getLogger(ContractService.class);
 
     @Transactional(rollbackFor = SQLException.class)
@@ -63,6 +68,10 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);
         }
 
+        if (!foundClient.get().getStatus()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no se puede asignar una dirección a un cliente eliminado",true), HttpStatus.CONFLICT);
+        }
+
         addressBean.setUuid(UUID.randomUUID().toString());
         addressBean.setStatus(true);
 
@@ -77,6 +86,10 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"La dirección no existe",true), HttpStatus.NOT_FOUND);
         }
 
+        if (foundAddress.get().getStatus()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, esta dirección ha sido eliminada",true), HttpStatus.CONFLICT);
+        }
+
         return new ResponseEntity<>(new ApiResponse(foundAddress.get(),HttpStatus.OK,null,false), HttpStatus.OK);
     }
 
@@ -84,8 +97,14 @@ public class AddressService {
     public ResponseEntity<ApiResponse> update(AddressBean addressBean){
         Optional<AddressBean> foundAddress = addressRepository.findById(addressBean.getId());
 
+
         if (foundAddress.isEmpty()){
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"La dirección no existe",true), HttpStatus.NOT_FOUND);
+        }
+
+        if (!foundAddress.get().getStatus()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no puede actulizar una dirección eliminada",true), HttpStatus.CONFLICT);
+
         }
 
         addressBean.setUuid(foundAddress.get().getUuid());
@@ -120,7 +139,11 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El cliente no existe",true), HttpStatus.BAD_REQUEST);
         }
 
-        addressBean.setStatus(foundAddress.get().getStatus());
+        if (!foundClient.get().getStatus()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no se puede asignar una dirección a un cliente eliminado",true), HttpStatus.CONFLICT);
+        }
+
+
         addressBean.setUuid(foundAddress.get().getUuid());
 
         return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean),HttpStatus.OK,"Dirección actualizada correctamente",false), HttpStatus.OK);
@@ -132,6 +155,10 @@ public class AddressService {
 
         if (foundClient.isEmpty()){
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El cliente no existe",true), HttpStatus.NOT_FOUND);
+        }
+
+        if (!foundClient.get().getStatus()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, el cliente ha sido eliminado",true), HttpStatus.CONFLICT);
         }
 
         if (addressRepository.findByStatusAndClient(true,foundClient.get()).isEmpty()){
@@ -151,6 +178,14 @@ public class AddressService {
         if (foundAddress.isEmpty()){
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"error, id no proporcionado",true),HttpStatus.NOT_FOUND);
         }
+
+
+        List<ContractBean> foundContracts = contractRepository.findByAddress(foundAddress.get());
+
+        if (!foundContracts.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no se puede eliminar una dirección con contratos",true), HttpStatus.CONFLICT);
+        }
+
 
         AddressBean addressBean = foundAddress.get();
         addressBean.setStatus(false);

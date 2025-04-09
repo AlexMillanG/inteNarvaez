@@ -46,6 +46,8 @@ public class ClientBean {
     @Temporal(TemporalType.DATE)
     private Date birthdate;
 
+    private Boolean status;
+
     @Column(length = 36, unique = true, columnDefinition = "CHAR(36) NOT NULL")
     private String uuid;
 
