@@ -251,6 +251,8 @@ public class ChannelService {
 
         channelBean.setName(capitalize(channelBean.getName()));
 
+        channelBean.setStatus(true);
+
         // Guardar el canal primero
         ChannelBean savedChannel = channelRepository.save(channelBean);
 
@@ -272,10 +274,10 @@ public class ChannelService {
 
 
         logo.setFileExtension(extension);
+        logo.setFileExtension(extension);
 
         logoRepository.save(logo);
 
-        channelBean.setStatus(true);
         return ResponseEntity.ok(new ApiResponse(savedChannel, HttpStatus.OK, "Canal guardado correctamente", false));
 
 
