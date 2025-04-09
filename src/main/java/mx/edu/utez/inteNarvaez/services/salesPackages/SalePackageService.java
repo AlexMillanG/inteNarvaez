@@ -70,6 +70,7 @@ public class SalePackageService {
             salesPackage.setTotalAmount(dto.getTotalAmount());
             salesPackage.setUuid(UUID.randomUUID());
             salesPackage.setChannelPackage(findChannelPackage.get());
+            salesPackage.setSpeed(dto.getSpeed());
 
           SalesPackageEntity obj =  repository.saveAndFlush(salesPackage);
             return new ResponseEntity<>(new ApiResponse(obj,HttpStatus.CREATED,"Paquete creado exitosamente",false), HttpStatus.CREATED);
