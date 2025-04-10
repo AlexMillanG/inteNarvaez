@@ -31,7 +31,7 @@ public class ChannelPackageService {
 
     public ResponseEntity<ApiResponse> save(ChannelPackageBean channelPackageBean) {
         try {
-            Optional<ChannelPackageBean> foundPackageName = channelPackageRepository.findChannelPackageBeanByName(channelPackageBean.getName());
+            Optional<ChannelPackageBean> foundPackageName = channelPackageRepository.findChannelPackageBeanByNameAndStatus(channelPackageBean.getName(),ChannelPackageStatus.DISPONIBLE);
 
             if (foundPackageName.isPresent()){
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: Ya existe un paquete de canales con el nombre "+channelPackageBean.getName(), true), HttpStatus.BAD_REQUEST);
@@ -99,10 +99,11 @@ public class ChannelPackageService {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: ingresa un nombre válido", true), HttpStatus.BAD_REQUEST);
             }
 
-            Optional<ChannelPackageBean> duplicateNamePackage = channelPackageRepository.findChannelPackageBeanByName(channelPackageBean.getName());
+            Optional<ChannelPackageBean> duplicateNamePackage = channelPackageRepository.findChannelPackageBeanByNameAndStatus(channelPackageBean.getName(), ChannelPackageStatus.DISPONIBLE);
             if (duplicateNamePackage.isPresent() && !duplicateNamePackage.get().getId().equals(channelPackageBean.getId())) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: Ya existe un paquete de canales con el nombre " + channelPackageBean.getName(), true), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: Ya existe un paquete de canales disponible con el nombre " + channelPackageBean.getName(), true), HttpStatus.BAD_REQUEST);
             }
+
 
             if (channelPackageBean.getDescription() == null || channelPackageBean.getDescription().isBlank()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: ingresa una descripción válida", true), HttpStatus.BAD_REQUEST);

@@ -12,7 +12,8 @@ public interface ChannelPackageRepository extends JpaRepository<ChannelPackageBe
 
     Optional<ChannelPackageBean> findChannelPackageBeanByUuid(UUID uuid);
 
-    Optional<ChannelPackageBean> findChannelPackageBeanByName(String name);
+    //no puede haber paquetes de canales activos que compartan el mismo nombre
+    Optional<ChannelPackageBean> findChannelPackageBeanByNameAndStatus(String name,ChannelPackageStatus channelPackageStatus);
 
     List<ChannelPackageBean> findAllByStatus(ChannelPackageStatus status);
 
