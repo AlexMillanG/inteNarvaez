@@ -61,6 +61,13 @@ public class ClientService {
                 return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya hay un usuario registrado con el RFC: " + clientBean.getRfc(), true));
             }
 
+            Optional<ClientBean> foundEmail = clientRepository.findByEmail(clientBean.getEmail());
+
+            if (foundEmail.isPresent()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya hay un usuario registrado con el correo: " + clientBean.getEmail(), true));
+            }
+
+
             clientBean.setStatus(true);
             clientBean.setName(capitalize(clientBean.getName()));
             clientBean.setLastName(capitalize(clientBean.getLastName()));

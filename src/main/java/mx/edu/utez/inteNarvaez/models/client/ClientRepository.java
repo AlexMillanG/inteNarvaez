@@ -13,4 +13,6 @@ public interface ClientRepository extends JpaRepository<ClientBean,Long> {
     Optional<ClientBean> findByUuid(String uuid);
 
     List<ClientBean> findByStatus(Boolean b);
+
+    Optional<ClientBean> findByEmail(String s);
 }
