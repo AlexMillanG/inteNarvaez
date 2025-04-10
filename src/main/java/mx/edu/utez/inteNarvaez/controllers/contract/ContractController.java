@@ -24,6 +24,11 @@ public class ContractController {
         return service.saveContract(dto);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> deleteContract(@PathVariable Long id) {
+        return service.delete(id);
+    }
+
 
 
 

@@ -32,7 +32,7 @@ public class ClientService {
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAllClient() {
         try {
-            List<ClientBean> clients = clientRepository.findAll();
+            List<ClientBean> clients = clientRepository.findByStatus(true);
 
             return ResponseEntity.ok(new ApiResponse(clients, HttpStatus.OK, "Lista de clientes con direcciones", false));
         } catch (Exception ex) {

@@ -184,5 +184,23 @@ public class ContractService {
 
     }
 
+    public ResponseEntity<ApiResponse> delete(Long id){
+
+
+        Optional<ContractBean> foundContract = repository.findById(id);
+
+        if (foundContract.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Error contrato no encontrado",true), HttpStatus.NOT_FOUND);
+        }
+
+        ContractBean contract = foundContract.get();
+
+        contract.setStatus(false);
+
+        repository.saveAndFlush(contract);
+
+        return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Contrato eliminado correctamente",false), HttpStatus.OK);
+    }
+
 
 }
