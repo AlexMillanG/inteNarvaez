@@ -16,6 +16,8 @@ public class ContractDTO {
 
     private Long userId;
 
+    private Long id;
+
 
 
 }
