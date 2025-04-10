@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
+import mx.edu.utez.inteNarvaez.models.user.UserEntity;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -20,8 +22,6 @@ public class ContractBean {
     @Column(nullable = false)
     private Date creationDate;
     @Column(nullable = false)
-    private Double amount;
-    @Column(nullable = false)
     private boolean status;
     @Column(length = 36, unique = true)
     private UUID uuid;
@@ -35,14 +35,21 @@ public class ContractBean {
     private SalesPackageEntity salesPackageEntity;
 
 
-    public ContractBean(Date creationDate, Double amount, UUID uuid, AddressBean address, SalesPackageEntity salesPackageEntity) {
+    @ManyToOne
+    @JoinColumn(name = "sales_agent_id", nullable = false)
+    private UserEntity salesAgent;
 
+    // Modifica el constructor para incluir el agente de ventas
+    public ContractBean(Date creationDate, UUID uuid,
+                        AddressBean address, SalesPackageEntity salesPackageEntity,
+                        UserEntity salesAgent) {
         this.creationDate = creationDate;
-        this.amount = amount;
         this.uuid = uuid;
         this.address = address;
         this.salesPackageEntity = salesPackageEntity;
+        this.salesAgent = salesAgent;
     }
+
 
     public ContractBean() {
         if (this.uuid == null) {

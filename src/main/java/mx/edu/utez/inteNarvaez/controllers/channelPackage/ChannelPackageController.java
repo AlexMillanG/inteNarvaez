@@ -35,4 +35,30 @@ public class ChannelPackageController {
     public ResponseEntity<ApiResponse> update(@RequestBody ChannelPackageDTO dto){
         return  channelPackageService.Update(dto.toEntityUpdate());
     }
+
+    @GetMapping("/findDiscontinued")
+    public ResponseEntity<ApiResponse> findDiscontinued(){
+        return channelPackageService.FindAllDescontinuado();
+    }
+
+    @GetMapping("/findObsolete")
+    public ResponseEntity<ApiResponse> findObsolete(){
+        return channelPackageService.findAllObsoleto();
+    }
+
+    @PutMapping("/setDiscontinued/{id}")
+    public ResponseEntity<ApiResponse> setDiscontinued(@PathVariable Long id){
+        return channelPackageService.setDescontinuado(id);
+    }
+
+    @PutMapping("/setAvailable/{id}")
+    public ResponseEntity<ApiResponse> setAvailable(@PathVariable Long id){
+        return channelPackageService.setDisponile(id);
+    }
+
+    //lo setea como obsoleto
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
+        return channelPackageService.delete(id);
+    }
 }

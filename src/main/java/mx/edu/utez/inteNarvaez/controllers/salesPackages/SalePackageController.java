@@ -23,4 +23,9 @@ public class SalePackageController {
         return  service.save(dto);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
+        return service.delete(id);
+    }
+
 }

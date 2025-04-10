@@ -15,6 +15,8 @@ public class ContractDTO {
     private Long address;
     private String salesPackage;
 
+    private Long userId;
+
 
 
 }

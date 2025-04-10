@@ -21,7 +21,6 @@ public class ChannelPackageBean {
     private String name;
     @Column(length = 350)
     private String description;
-    private Double amount;
     @Enumerated(EnumType.STRING)
     private ChannelPackageStatus status;
     @Column(length = 36, unique = true)
@@ -43,18 +42,16 @@ public class ChannelPackageBean {
     private List<ChannelBean> channels = new ArrayList<>();
 
 
-    public ChannelPackageBean(Long id, String name, String description, Double amount, List<ChannelBean> channels) {
+    public ChannelPackageBean(Long id, String name, String description, List<ChannelBean> channels) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.amount = amount;
         this.channels = channels;
     }
 
-    public ChannelPackageBean(String name, String description, Double amount, List<ChannelBean> channels) {
+    public ChannelPackageBean(String name, String description, List<ChannelBean> channels) {
         this.name = name;
         this.description = description;
-        this.amount = amount;
         this.channels = channels;
     }
 
