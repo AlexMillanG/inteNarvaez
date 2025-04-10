@@ -235,9 +235,12 @@ public class ContractService {
         List<AddressBean> relatedAddresses = clientBean.getAddresses();
 
 
-       List<ContractBean> associatedContracts = new ArrayList<>();
+        List<ContractBean> associatedContracts = relatedAddresses.stream()
+                .flatMap(address -> new HashSet<>(address.getContracts()).stream()) // Copia segura
+                .collect(Collectors.toList());
 
-       for (AddressBean addressBean: relatedAddresses){
+
+        for (AddressBean addressBean: relatedAddresses){
            Set<ContractBean>  contracts = addressBean.getContracts();
            associatedContracts.addAll(contracts);
 
