@@ -96,13 +96,13 @@ public class ContractService {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "el usuario esta eliminado",true), HttpStatus.CONFLICT);
             }
 
-            
+
 
 
             logger.info("Creando obj");
 
             ContractBean contract = new ContractBean();
-
+            contract.setCreationDate(new Date());
             contract.setStatus(true);
             contract.setAddress(findAddress.get());
             contract.setUuid(UUID.randomUUID());

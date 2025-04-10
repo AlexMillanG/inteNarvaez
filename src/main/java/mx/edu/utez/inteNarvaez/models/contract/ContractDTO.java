@@ -10,7 +10,6 @@ import java.util.Date;
 
 public class ContractDTO {
 
-    private Date creationDate;
     private Double amount;
     private Long address;
     private String salesPackage;
