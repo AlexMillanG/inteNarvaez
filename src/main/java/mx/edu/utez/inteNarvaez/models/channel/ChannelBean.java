@@ -26,7 +26,7 @@ public class ChannelBean {
     @Column(nullable = false)
     private Integer number;
     @Column(nullable = false)
-    private Boolean status;
+    private Boolean status = true;
     @Column(length = 36, unique = true)
     private UUID uuid;
 
