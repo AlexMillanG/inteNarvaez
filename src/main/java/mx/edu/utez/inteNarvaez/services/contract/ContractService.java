@@ -8,8 +8,11 @@ import mx.edu.utez.inteNarvaez.models.contract.ContractBean;
 import mx.edu.utez.inteNarvaez.models.contract.ContractDTO;
 import mx.edu.utez.inteNarvaez.models.contract.ContractRepository;
 import mx.edu.utez.inteNarvaez.models.contract.ContractValidation;
+import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageRepository;
+import mx.edu.utez.inteNarvaez.models.user.UserEntity;
+import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,12 +33,13 @@ public class ContractService {
     private  final AddressRepository addressRepository;
 
     private static final Logger logger = LogManager.getLogger(ContractService.class);
+    private final UserRepository userRepository;
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> findAllContract() {
         try {
             logger.info("Consultando la BD para contratos");
-            List<ContractBean> contratos = repository.findAll();
+            List<ContractBean> contratos = repository.findByStatus(true);
             if (contratos.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(Collections.emptyList(),HttpStatus.NO_CONTENT, "No se encuentra ningún contrato registrado"),HttpStatus.NO_CONTENT);
             }
@@ -51,12 +55,6 @@ public class ContractService {
       @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> saveContract(ContractDTO dto) {
 
-        /*
-        ApiResponse validations = ContractValidation.validate(contractBean);
-        if (validations.isError()) {
-            return new ResponseEntity<>(validations, HttpStatus.BAD_REQUEST);
-        }*/
-
 
         try {
 
@@ -71,25 +69,54 @@ public class ContractService {
 
             if (findAddress.isEmpty()){
                 logger.info("address OBJ {}",findAddress);
-                return new ResponseEntity<>(new ApiResponse(findAddress.get(), HttpStatus.NOT_FOUND, "Direccion del cliente no encontrada",true), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Direccion del cliente no encontrada",true), HttpStatus.NOT_FOUND);
             }
 
 
             if (findSalepackage.isEmpty()) {
                 logger.info("salesPackage OBJ {}",findSalepackage);
 
-                return new ResponseEntity<>(new ApiResponse(findSalepackage.get(), HttpStatus.NOT_FOUND, "Paquete de venta no encontrado",true), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Paquete de venta no encontrado",true), HttpStatus.NOT_FOUND);
             }
+
+
+            Optional<UserEntity> foundUser = userRepository.findById(dto.getUserId());
+
+            if (foundUser.isEmpty()){
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Usuario no encontrado",true), HttpStatus.NOT_FOUND);
+            }
+
+            UserEntity agent = foundUser.get();
+
+            if (!agent.getStatus()){
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "el usuario esta eliminado",true), HttpStatus.CONFLICT);
+            }
+
+            boolean hasUserRole = false;
+            for (RoleBean role : agent.getRoleBeans()) {
+                if ("USER".equals(role.getName())) {
+                    hasUserRole = true;
+                    break;
+                }
+            }
+
+            if (!hasUserRole) {
+                return new ResponseEntity<>(
+                        new ApiResponse(null, HttpStatus.FORBIDDEN, "El usuario no tiene el rol requerido", true),
+                        HttpStatus.FORBIDDEN
+                );
+            }
+
 
             logger.info("Creando obj");
 
-            ContractBean contract = new ContractBean(
-                    new Date(),
-                    dto.getAmount(),
-                    UUID.randomUUID(),
-                    findAddress.get(),
-                    findSalepackage.get()
-            );
+            ContractBean contract = new ContractBean();
+
+            contract.setStatus(true);
+            contract.setAddress(findAddress.get());
+            contract.setUuid(UUID.randomUUID());
+            contract.setSalesPackageEntity(findSalepackage.get());
+            contract.setSalesAgent(foundUser.get());
 
             ContractBean savedContract = repository.save(contract);
 
@@ -125,7 +152,6 @@ public class ContractService {
             }
 
             ContractBean existingContract = findObj.get();
-            existingContract.setAmount(contractBean.getAmount());
 
             repository.saveAndFlush(existingContract);
 

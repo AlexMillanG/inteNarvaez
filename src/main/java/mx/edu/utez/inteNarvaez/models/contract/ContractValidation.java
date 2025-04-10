@@ -11,10 +11,6 @@ public class ContractValidation {
             return new ApiResponse(null, HttpStatus.BAD_REQUEST, "El campo creationDate no puede ser nulo.", true);
         }
 
-        if (contract.getAmount() == null || contract.getAmount() <= 0) {
-            return new ApiResponse(null, HttpStatus.BAD_REQUEST, "El campo amount no puede ser nulo y debe ser mayor a 0.", true);
-        }
-
         if (contract.getAddress() == null) {
             return new ApiResponse(null, HttpStatus.BAD_REQUEST, "Addres no puede ser nulo.", true);
         }

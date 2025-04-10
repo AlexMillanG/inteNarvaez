@@ -14,4 +14,6 @@ public interface ContractRepository extends JpaRepository<ContractBean,Long> {
     Optional<ContractBean> findAllByUuid(UUID uuid);
 
     List<ContractBean> findByAddress(AddressBean addressBean);
+
+    List<ContractBean> findByStatus(Boolean status);
 }
