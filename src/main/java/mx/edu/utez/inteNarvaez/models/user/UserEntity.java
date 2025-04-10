@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,8 +21,13 @@ public class UserEntity {
     @Column(name = "user_id")
     private Long id;
     private String firstName;
-    private  String lastName;
-    private  String email;
+    private String lastName;
+    private String surname;
+    private String rfc;
+    private String email;
+    private String phone;
+    @Temporal(TemporalType.DATE)
+    private Date birthdate;
     private String password;
     private boolean temporalPassword;
 
