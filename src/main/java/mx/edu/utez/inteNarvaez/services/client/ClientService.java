@@ -2,6 +2,8 @@ package mx.edu.utez.inteNarvaez.services.client;
 
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.models.address.AddressBean;
+import mx.edu.utez.inteNarvaez.models.address.AddressRepository;
 import mx.edu.utez.inteNarvaez.models.client.ClientBean;
 import mx.edu.utez.inteNarvaez.models.client.ClientRepository;
 import mx.edu.utez.inteNarvaez.models.client.ClientValidation;
@@ -27,6 +29,8 @@ import static mx.edu.utez.inteNarvaez.services.channelCategory.ChannelCategorySe
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final AddressRepository addressRepository;
+
     private static final Logger logger = LogManager.getLogger(ContractService.class);
 
     @Transactional(rollbackFor = SQLException.class)
@@ -119,7 +123,27 @@ public class ClientService {
         return ResponseEntity.ok(new ApiResponse(foundClient.get(), HttpStatus.OK, null, false));
     }
 
+    public ResponseEntity<ApiResponse> delete (Long id){
+
+        Optional<ClientBean> foundClient = clientRepository.findById(id);
+
+        if (foundClient.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true));
+        }
+
+
+        List<AddressBean> foundAddresses = addressRepository.findByStatusAndClient(true, foundClient.get());
+
+        if (!foundAddresses.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "no se puede eliminar al cliente, tiene direcciones asociadas", true));
+        }
+
+
+        ClientBean clientBean = foundClient.get();
+        clientBean.setStatus(false);
+        clientRepository.saveAndFlush(clientBean);
+
+        return ResponseEntity.ok(new ApiResponse(clientBean, HttpStatus.OK, "Cliente eliminado correctamente", false));
+    }
 
 }
-
-

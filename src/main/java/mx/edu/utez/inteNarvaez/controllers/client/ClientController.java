@@ -36,4 +36,9 @@ public class ClientController {
     public ResponseEntity<ApiResponse> findOneClient(@PathVariable UUID uuid){
         return clientService.findByUUID(uuid);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse> deleteClient(@PathVariable Long id){
+        return clientService.delete(id);
+    }
 }

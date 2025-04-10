@@ -14,4 +14,6 @@ public interface SalesPackageRepository extends JpaRepository<SalesPackageEntity
     Optional<SalesPackageEntity> findByUuid(UUID uid);
     Optional<SalesPackageEntity> findByName(String name);
     List<SalesPackageEntity> findByChannelPackage(ChannelPackageBean channelPackageBean);
+
+    List<SalesPackageEntity> findByStatus(Boolean status);
 }
