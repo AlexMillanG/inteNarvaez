@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface AddressRepository extends JpaRepository<AddressBean,Long> {
@@ -14,7 +13,7 @@ public interface AddressRepository extends JpaRepository<AddressBean,Long> {
     Optional<AddressBean> findByUuid(String uuid);
 
 
-    Optional<AddressBean> findByStatus(Boolean b);
+    List<AddressBean> findByStatus(Boolean b);
 
     List<AddressBean> findByStatusAndClient(Boolean b, ClientBean clientBean);
 

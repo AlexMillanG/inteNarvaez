@@ -33,16 +33,13 @@ public class SalePackageService {
         try {
             List<SalesPackageEntity> salePackages = repository.findAll();
 
-            // Evitar inicializaciones forzadas y manejar relaciones de forma explícita.
             salePackages.forEach(sp -> Hibernate.initialize(sp.getChannelPackage().getChannels()));
 
-            // Devolver la respuesta adecuada.
             return new ResponseEntity<>(
                     new ApiResponse(salePackages, HttpStatus.OK, "Paquetes obtenidos exitosamente", false),
                     HttpStatus.OK
             );
         } catch (Exception e) {
-            // Manejar errores explícitamente.
             logger.error("Error al obtener paquetes de ventas", e);
             return new ResponseEntity<>(
                     new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salió mal", true),

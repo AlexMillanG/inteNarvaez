@@ -7,6 +7,8 @@ import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageRepository;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageStatus;
+import mx.edu.utez.inteNarvaez.models.contract.ContractRepository;
+import mx.edu.utez.inteNarvaez.services.email.EmailService;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageRepository;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,8 @@ public class ChannelPackageService {
 
     private final ChannelPackageRepository channelPackageRepository;
     private final ChannelRepository channelRepository;
+    private final EmailService emailService;
+    private final ContractRepository contractRepository;
     private final SalesPackageRepository salesPackageRepository;
 
 
@@ -73,10 +77,12 @@ public class ChannelPackageService {
         }
     }
 
-    public ResponseEntity<ApiResponse> update(ChannelPackageBean channelPackageBean) {
+
+    public ResponseEntity<ApiResponse> Update(ChannelPackageBean channelPackageBean) {
         try {
-            if (channelPackageBean.getId() == null) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el id es requerido", true), HttpStatus.BAD_REQUEST);
+
+            if (channelPackageBean.getId() == null){
+                return new ResponseEntity<>(new ApiResponse(channelPackageBean,HttpStatus.BAD_REQUEST,"error, el id es requerido,",true),HttpStatus.BAD_REQUEST);
             }
 
             Optional<ChannelPackageBean> foundPackage = channelPackageRepository.findById(channelPackageBean.getId());
@@ -109,9 +115,6 @@ public class ChannelPackageService {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: ingresa una descripción válida", true), HttpStatus.BAD_REQUEST);
             }
 
-            if (channelPackageBean.getAmount() == null || channelPackageBean.getAmount() < 0) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: ingresa un monto válido", true), HttpStatus.BAD_REQUEST);
-            }
 
             if (channelPackageBean.getChannels() == null || channelPackageBean.getChannels().isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el paquete debe contener al menos un canal", true), HttpStatus.BAD_REQUEST);
@@ -124,7 +127,9 @@ public class ChannelPackageService {
                 }
             }
 
+
             // Actualiza solo los campos permitidos
+            channelPackageBean.setUuid(foundPackage.get().getUuid());
             existing.setName(channelPackageBean.getName());
             existing.setDescription(channelPackageBean.getDescription());
             existing.setAmount(channelPackageBean.getAmount());
@@ -132,7 +137,13 @@ public class ChannelPackageService {
             existing.setStatus(ChannelPackageStatus.DISPONIBLE);
 
             ChannelPackageBean savedPackage = channelPackageRepository.save(existing);
-            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.OK, "Paquete actualizado correctamente", false), HttpStatus.OK);
+
+           List<String> stringList = contractRepository.findDistinctEmailsByChannelPackage(channelPackageBean.getId());
+
+           emailService.UpdatePackageEmail(stringList,savedPackage);
+
+            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete actaulizado correctamente", false), HttpStatus.CREATED);
+
 
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);

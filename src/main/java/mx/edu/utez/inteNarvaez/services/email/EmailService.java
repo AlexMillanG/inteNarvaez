@@ -2,10 +2,11 @@ package mx.edu.utez.inteNarvaez.services.email;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
+import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 import mx.edu.utez.inteNarvaez.models.email.Emails;
-import mx.edu.utez.inteNarvaez.models.email.emailsRepository;
-import mx.edu.utez.inteNarvaez.services.contract.ContractService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -13,51 +14,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.List;
+
 
 @Service
-public  class EmailService implements emailsRepository {
+@AllArgsConstructor
+public  class EmailService  {
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
+
     private static final Logger logger = LogManager.getLogger(EmailService.class);
-
-    protected EmailService(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
-        this.javaMailSender = javaMailSender;
-        this.templateEngine = templateEngine;
-    }
-
-    public ResponseEntity<ApiResponse> sendMail(Emails emails) throws MessagingException {
-
-        try {
-            MimeMessage message = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message,true,"UTF-8");
-
-            helper.setTo(emails.getDestinatario());
-            helper.setSubject(emails.getSubject());
-            helper.setFrom("utezdoces@gmail.com");
-            Context context = new Context();
-            context.setVariable("message", emails.getMensaje());
-            String contentHTML = templateEngine.process("email",context);
-            helper.setText(contentHTML,true);
-            javaMailSender.send(message);
-
-         return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK ,"El correo fue enviado exitosamente"),HttpStatus.OK);
-
-        }catch (Exception ex){
-            System.out.println(ex);
-            logger.error("Error al enviar el correo", ex);
-            throw  new RuntimeException("Error ala enviar al correo"+ex.getMessage(),ex);
-
-        }
-
-    }
 
     public ResponseEntity<ApiResponse> sendEmail(Emails email ,int plantilla) throws MessagingException {
         try {
-            // Crear contexto de Thymeleaf
+
             Context context = new Context();
 
             context.setVariable("message", email.getMensaje());
@@ -65,10 +40,8 @@ public  class EmailService implements emailsRepository {
 
             String[] plantillaAlerta = new String[]{"verificacion","email","alerta"};
 
-            // Procesar la plantilla y generar el contenido HTML
             String htmlContent = templateEngine.process(plantillaAlerta[plantilla], context);
 
-            // Crear el mensaje MIME
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(email.getDestinatario());
@@ -76,7 +49,6 @@ public  class EmailService implements emailsRepository {
             helper.setText(htmlContent, true);
             helper.setFrom("utezdoces@gmail.com");
 
-            // Enviar el correo
             javaMailSender.send(message);
             System.out.println("Correo HTML enviado con éxito a " + email.getDestinatario());
 
@@ -90,6 +62,33 @@ public  class EmailService implements emailsRepository {
         }
 
     }
+
+@Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse> UpdatePackageEmail(List<String> destinatarios , ChannelPackageBean packageBean) throws MessagingException {
+        try {
+            Context context = new Context();
+
+            String imagen ="src/main/resources/image/default.jpg";
+            context.setVariable("channels", packageBean.getChannels());
+            context.setVariable("default", imagen);
+
+            String htmlContent = templateEngine.process("updatePackage", context);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(destinatarios.toArray(new String[0]));
+            helper.setText(htmlContent, true);
+            helper.setFrom("utezdoces@gmail.com");
+            helper.setSubject("Actualización de Paquete de Canales");
+            javaMailSender.send(message);
+            logger.info("Correo HTML enviado con exito");
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "El email se envió correctamente"), HttpStatus.OK);
+
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "No se envió el email"), HttpStatus.OK);
+        }
+    }
+
 
 }
 

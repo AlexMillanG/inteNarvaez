@@ -3,7 +3,6 @@ package mx.edu.utez.inteNarvaez.models.client;
 import io.micrometer.common.util.StringUtils;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 public class ClientValidation {
 

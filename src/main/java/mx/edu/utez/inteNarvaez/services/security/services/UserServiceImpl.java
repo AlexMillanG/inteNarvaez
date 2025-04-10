@@ -11,7 +11,7 @@ import java.security.SecureRandom;
 public class UserServiceImpl implements IUserServiceImpl {
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static final int PASSWORD_LENGTH = 8; // puedes cambiar la longitud
+    private static final int PASSWORD_LENGTH = 8;
     private static final SecureRandom random = new SecureRandom();
 
         public static String generatePassword() {

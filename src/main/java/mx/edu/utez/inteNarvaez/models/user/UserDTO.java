@@ -2,10 +2,7 @@ package mx.edu.utez.inteNarvaez.models.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import mx.edu.utez.inteNarvaez.models.role.RoleDTO;
-
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data

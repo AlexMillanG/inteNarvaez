@@ -7,16 +7,13 @@ import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryRepository;
-import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageRepository;
-import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageStatus;
 import mx.edu.utez.inteNarvaez.models.logo.LogoBean;
 import mx.edu.utez.inteNarvaez.models.logo.LogoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Optional;
