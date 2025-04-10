@@ -96,20 +96,7 @@ public class ContractService {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "el usuario esta eliminado",true), HttpStatus.CONFLICT);
             }
 
-            boolean hasUserRole = false;
-            for (RoleBean role : agent.getRoleBeans()) {
-                if ("USER".equals(role.getName())) {
-                    hasUserRole = true;
-                    break;
-                }
-            }
-
-            if (!hasUserRole) {
-                return new ResponseEntity<>(
-                        new ApiResponse(null, HttpStatus.FORBIDDEN, "El usuario no tiene el rol requerido", true),
-                        HttpStatus.FORBIDDEN
-                );
-            }
+            
 
 
             logger.info("Creando obj");
