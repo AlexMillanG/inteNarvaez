@@ -3,6 +3,7 @@ package mx.edu.utez.inteNarvaez.models.channelPackage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,5 +13,7 @@ public interface ChannelPackageRepository extends JpaRepository<ChannelPackageBe
     Optional<ChannelPackageBean> findChannelPackageBeanByUuid(UUID uuid);
 
     Optional<ChannelPackageBean> findChannelPackageBeanByName(String name);
+
+    List<ChannelPackageBean> findAllByStatus(ChannelPackageStatus status);
 
 }
