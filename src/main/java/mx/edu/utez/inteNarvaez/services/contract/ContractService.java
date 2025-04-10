@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import mx.edu.utez.inteNarvaez.models.address.AddressRepository;
+import mx.edu.utez.inteNarvaez.models.client.ClientBean;
 import mx.edu.utez.inteNarvaez.models.client.ClientRepository;
 import mx.edu.utez.inteNarvaez.models.contract.ContractBean;
 import mx.edu.utez.inteNarvaez.models.contract.ContractDTO;
@@ -182,7 +183,6 @@ public class ContractService {
     }
 
 
-
     public ResponseEntity<ApiResponse> findByAgent(Long id){
 
         Optional<UserEntity> foundUser = userRepository.findById(id);
@@ -224,24 +224,29 @@ public class ContractService {
 
     public ResponseEntity<ApiResponse> findByClient(Long id) {
 
-        Optional<UserEntity> foundUser = userRepository.findById(id);
+        Optional<ClientBean> foundClient = clientRepository.findById(id);
 
-        if (foundUser.isEmpty()) {
+        if (foundClient.isEmpty()) {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Error cliente no encontrado", true), HttpStatus.NOT_FOUND);
         }
 
-        // Recuperar contratos del cliente
-        List<ContractBean> contracts = getContractsByClientId(id);
+        ClientBean clientBean = foundClient.get();
 
-        return new ResponseEntity<>(new ApiResponse(contracts, HttpStatus.OK, "Contratos encontrados", false), HttpStatus.OK);
+        List<AddressBean> relatedAddresses = clientBean.getAddresses();
+
+
+       List<ContractBean> associatedContracts = new ArrayList<>();
+
+       for (AddressBean addressBean: relatedAddresses){
+           Set<ContractBean>  contracts = addressBean.getContracts();
+           associatedContracts.addAll(contracts);
+
+       }
+
+
+
+        return new ResponseEntity<>(new ApiResponse(associatedContracts, HttpStatus.OK, "Contratos encontrados", false), HttpStatus.OK);
     }
 
-    public List<ContractBean> getContractsByClientId(Long id) {
-        return clientRepository.findById(id)
-                .map(client -> client.getAddresses().stream()
-                        .flatMap(address -> address.getContracts().stream())
-                        .collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
-    }
 
 }
