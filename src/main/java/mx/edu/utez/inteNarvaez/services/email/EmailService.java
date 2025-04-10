@@ -7,7 +7,6 @@ import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 import mx.edu.utez.inteNarvaez.models.email.Emails;
-import mx.edu.utez.inteNarvaez.models.email.emailsRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -24,11 +23,10 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public  class EmailService implements emailsRepository {
+public  class EmailService  {
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
-    private final ChannelRepository channelRepository;
 
     private static final Logger logger = LogManager.getLogger(EmailService.class);
 
@@ -42,10 +40,8 @@ public  class EmailService implements emailsRepository {
 
             String[] plantillaAlerta = new String[]{"verificacion","email","alerta"};
 
-            // Procesar la plantilla y generar el contenido HTML
             String htmlContent = templateEngine.process(plantillaAlerta[plantilla], context);
 
-            // Crear el mensaje MIME
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(email.getDestinatario());
@@ -53,7 +49,6 @@ public  class EmailService implements emailsRepository {
             helper.setText(htmlContent, true);
             helper.setFrom("utezdoces@gmail.com");
 
-            // Enviar el correo
             javaMailSender.send(message);
             System.out.println("Correo HTML enviado con éxito a " + email.getDestinatario());
 
@@ -74,7 +69,7 @@ public  class EmailService implements emailsRepository {
             Context context = new Context();
 
             String imagen ="src/main/resources/image/default.jpg";
-            context.setVariable("channels", packageBean.getChannels()); // Pasar la lista de canales
+            context.setVariable("channels", packageBean.getChannels());
             context.setVariable("default", imagen);
 
             String htmlContent = templateEngine.process("updatePackage", context);

@@ -5,10 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
-
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 @Data

@@ -1,6 +1,5 @@
 package mx.edu.utez.inteNarvaez.models.client;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Table(name = "clients")

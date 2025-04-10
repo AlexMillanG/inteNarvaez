@@ -1,7 +1,6 @@
 package mx.edu.utez.inteNarvaez.models.user;
 
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
-import mx.edu.utez.inteNarvaez.models.dtos.ResponseDTO;
 import org.springframework.http.HttpStatus;
 
 public class usersValidation {
