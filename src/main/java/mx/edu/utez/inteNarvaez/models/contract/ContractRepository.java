@@ -1,6 +1,7 @@
 package mx.edu.utez.inteNarvaez.models.contract;
 
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
+import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,5 +30,8 @@ public interface ContractRepository extends JpaRepository<ContractBean,Long> {
                """, nativeQuery = true)
 
     List<String> findDistinctEmailsByChannelPackage(@Param("channelPackageId") Long channelPackageId);
+
+
+    List<ContractBean> findBySalesAgentAndStatus(UserEntity user, Boolean b);
 
 }

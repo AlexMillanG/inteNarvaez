@@ -31,9 +31,9 @@ public class ContractService {
     private final ContractRepository repository;
     private  final SalesPackageRepository Salesrepository;
     private  final AddressRepository addressRepository;
+    private final UserRepository userRepository;
 
     private static final Logger logger = LogManager.getLogger(ContractService.class);
-    private final UserRepository userRepository;
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> findAllContract() {
@@ -164,8 +164,25 @@ public class ContractService {
     }
 
 
+    public ResponseEntity<ApiResponse> findByAgent(Long id){
+
+        Optional<UserEntity> foundUser = userRepository.findById(id);
+        if (foundUser.isEmpty()){
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Error agente no encontrado",true), HttpStatus.NOT_FOUND);
+        }
+
+        UserEntity user = foundUser.get();
+
+        if (!user.getStatus()){
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "Error agente no encontrado",true), HttpStatus.CONFLICT);
+        }
+
+        List<ContractBean> foundContracts = repository.findBySalesAgentAndStatus(user,true);
 
 
+        return new ResponseEntity<>(new ApiResponse(foundContracts, HttpStatus.OK, null,false), HttpStatus.OK);
+
+    }
 
 
 }
