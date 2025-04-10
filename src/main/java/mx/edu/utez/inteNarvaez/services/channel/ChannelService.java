@@ -280,6 +280,75 @@ public class ChannelService {
 
     }
 
+    public ResponseEntity<ApiResponse> updateWithImage(ChannelDTO dto) throws IOException {
+        Optional<ChannelBean> foundChannelOpt = channelRepository.findById(dto.getId());
+        if (foundChannelOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(null, HttpStatus.NOT_FOUND, "El canal no existe", true));
+        }
+
+        ChannelBean channelBean = foundChannelOpt.get();
+
+        if (dto.getName() == null || dto.getName().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre del canal no puede ser nulo o vacío", true));
+        }
+        if (dto.getDescription() == null || dto.getDescription().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La descripción del canal no puede ser nula o vacía", true));
+        }
+        if (dto.getNumber() == null) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El número del canal no puede ser nulo", true));
+        }
+        if (dto.getCategoryId() == null) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoría del canal no puede ser nula", true));
+        }
+
+        Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(dto.getCategoryId());
+        if (foundCategory.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoría del canal no existe", true));
+        }
+
+        Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(dto.getNumber(), true);
+        if (foundNumber.isPresent() && !foundNumber.get().getId().equals(channelBean.getId())) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el número " + dto.getNumber(), true));
+        }
+
+        Optional<ChannelBean> foundName = channelRepository.findByName(capitalize(dto.getName()));
+        if (foundName.isPresent() && !foundName.get().getId().equals(channelBean.getId())) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el nombre " + dto.getName(), true));
+        }
+
+        channelBean.setName(capitalize(dto.getName()));
+        channelBean.setDescription(dto.getDescription());
+        channelBean.setNumber(dto.getNumber());
+        channelBean.setCategory(foundCategory.get());
+        channelBean.setStatus(true);
+
+        // Guardar canal actualizado
+        ChannelBean updatedChannel = channelRepository.save(channelBean);
+
+        if (dto.getImage() == null){
+            System.err.println("no llegó la imagen");
+        }
+
+        // Manejo de la imagen (solo si se envía una nueva)
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            Optional<LogoBean> foundLogoOpt = logoRepository.findByChannel_Id(updatedChannel.getId());
+
+            LogoBean logo = foundLogoOpt.orElseGet(LogoBean::new);
+            logo.setChannel(updatedChannel);
+            logo.setImage(dto.getImage().getBytes());
+
+            String originalFilename = dto.getImage().getOriginalFilename();
+            String extension = originalFilename != null && originalFilename.contains(".")
+                    ? originalFilename.substring(originalFilename.lastIndexOf(".") + 1)
+                    : "";
+
+            logo.setFileExtension(extension);
+            logoRepository.save(logo);
+        }
+
+        return ResponseEntity.ok(new ApiResponse(updatedChannel, HttpStatus.OK, "Canal actualizado correctamente", false));
+    }
+
     public ResponseEntity<ApiResponse> delete(Long id){
         Optional<ChannelBean> foundChannel = channelRepository.findById(id);
 

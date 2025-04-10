@@ -20,11 +20,6 @@ public class ChannelController {
 
     private final ChannelService channelService;
 
-    @PostMapping("/save")
-    public ResponseEntity<ApiResponse> saveChannel(@RequestBody ChannelBean channelBean){
-
-        return channelService.saveChannel(channelBean);
-    }
 
     @PostMapping("/saveImg")
     public ResponseEntity<ApiResponse> saveChannelImage(@ModelAttribute ChannelDTO dto) throws IOException {
@@ -32,6 +27,11 @@ public class ChannelController {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Imagen nula o vacía", true));
         }
         return channelService.saveWithImage(dto);
+    }
+
+    @PutMapping("/updateImg")
+    public ResponseEntity<ApiResponse> update(@ModelAttribute ChannelDTO dto) throws IOException {
+        return channelService.updateWithImage(dto);
     }
 
 

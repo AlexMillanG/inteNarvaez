@@ -29,6 +29,11 @@ public class ContractController {
         return service.delete(id);
     }
 
+    @GetMapping("/findByClient/{id}")
+    public ResponseEntity<ApiResponse> findByClient(@PathVariable Long id) {
+        return service.findByClient(id);
+    }
+
 
 
 

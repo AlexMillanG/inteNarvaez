@@ -10,6 +10,8 @@ import java.util.UUID;
 public class ChannelDTO {
     //@NotBlank(message = "El nombre no puede estar vacío") // Asegura que no esté vacío
     //@Max
+    private Long id;
+
     private String name;
 
     private String description;
@@ -20,7 +22,6 @@ public class ChannelDTO {
 
     private Long categoryId;
 
-    @NotNull // Asegura que no sea nulo
     private MultipartFile image;
 
 

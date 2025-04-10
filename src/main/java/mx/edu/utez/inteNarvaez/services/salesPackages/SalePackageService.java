@@ -69,6 +69,7 @@ public class SalePackageService {
 
             SalesPackageEntity salesPackage = new SalesPackageEntity();
 
+            salesPackage.setStatus(true);
             salesPackage.setName(dto.getName());
             salesPackage.setTotalAmount(dto.getTotalAmount());
             salesPackage.setUuid(UUID.randomUUID());

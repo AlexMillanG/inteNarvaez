@@ -61,12 +61,19 @@ public class ClientService {
                 return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya hay un usuario registrado con el RFC: " + clientBean.getRfc(), true));
             }
 
+            Optional<ClientBean> foundEmail = clientRepository.findByEmail(clientBean.getEmail());
+
+            if (foundEmail.isPresent()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya hay un usuario registrado con el correo: " + clientBean.getEmail(), true));
+            }
+
+
+            clientBean.setStatus(true);
             clientBean.setName(capitalize(clientBean.getName()));
             clientBean.setLastName(capitalize(clientBean.getLastName()));
             clientBean.setSurname(capitalize(clientBean.getSurname()));
             clientBean.setEmail(clientBean.getEmail().toLowerCase());
             clientBean.setUuid(UUID.randomUUID().toString());
-            System.err.println(clientBean.getUuid());
             clientBean.setRfc(clientBean.getRfc().toUpperCase());
 
             ClientBean savedClient = clientRepository.saveAndFlush(clientBean);
@@ -92,6 +99,15 @@ public class ClientService {
             if (foundClient.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(null, HttpStatus.NOT_FOUND, "El cliente no exixte", true));
             }
+
+            Optional<ClientBean> foundEmail = clientRepository.findByEmail(clientBean.getEmail());
+
+
+            if (foundEmail.isPresent() && !foundEmail.get().getId().equals(clientBean.getId())) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya hay un usuario registrado con el correo: " + clientBean.getEmail(), true));
+            }
+
+
             clientBean.setId(foundClient.get().getId());
             clientBean.setUuid(foundClient.get().getUuid());
             clientBean.setName(capitalize(clientBean.getName()));
