@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageRepository;
+import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageStatus;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalePackageDTO;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageRepository;
@@ -60,7 +61,7 @@ public class SalePackageService {
 
 
 
-            Optional<ChannelPackageBean> findChannelPackage = channelPackageRepository.findChannelPackageBeanByName(dto.getChannel_package_name());
+            Optional<ChannelPackageBean> findChannelPackage = channelPackageRepository.findChannelPackageBeanByNameAndStatus(dto.getChannel_package_name(),ChannelPackageStatus.DISPONIBLE);
             if (findChannelPackage.isEmpty()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El paquete de canales no fue encontrado",true), HttpStatus.NOT_FOUND);}
 
 
