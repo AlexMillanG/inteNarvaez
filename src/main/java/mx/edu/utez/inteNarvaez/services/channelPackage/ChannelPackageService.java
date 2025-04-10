@@ -126,7 +126,7 @@ public class ChannelPackageService {
 
            emailService.UpdatePackageEmail(stringList,savedPackage);
 
-            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete actaulizado correctamente", false), HttpStatus.CREATED);
+            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.OK, "Paquete actaulizado correctamente", false), HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
