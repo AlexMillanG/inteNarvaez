@@ -93,7 +93,6 @@ public  class EmailService  {
             });*/
 
             context.setVariable("channels", packageBean.getChannels());
-            context.setVariable("default", imagen);
 
             String htmlContent = templateEngine.process("updatePackage", context);
             MimeMessage message = javaMailSender.createMimeMessage();
