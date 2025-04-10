@@ -61,12 +61,12 @@ public class ClientService {
                 return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya hay un usuario registrado con el RFC: " + clientBean.getRfc(), true));
             }
 
+            clientBean.setStatus(true);
             clientBean.setName(capitalize(clientBean.getName()));
             clientBean.setLastName(capitalize(clientBean.getLastName()));
             clientBean.setSurname(capitalize(clientBean.getSurname()));
             clientBean.setEmail(clientBean.getEmail().toLowerCase());
             clientBean.setUuid(UUID.randomUUID().toString());
-            System.err.println(clientBean.getUuid());
             clientBean.setRfc(clientBean.getRfc().toUpperCase());
 
             ClientBean savedClient = clientRepository.saveAndFlush(clientBean);
