@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import mx.edu.utez.inteNarvaez.models.address.AddressRepository;
+import mx.edu.utez.inteNarvaez.models.client.ClientRepository;
 import mx.edu.utez.inteNarvaez.models.contract.ContractBean;
 import mx.edu.utez.inteNarvaez.models.contract.ContractDTO;
 import mx.edu.utez.inteNarvaez.models.contract.ContractRepository;
@@ -18,20 +19,23 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ContractService {
 
     private final ContractRepository repository;
-    private  final SalesPackageRepository Salesrepository;
-    private  final AddressRepository addressRepository;
+    private final SalesPackageRepository Salesrepository;
+    private final AddressRepository addressRepository;
     private final UserRepository userRepository;
+    private final ClientRepository clientRepository;
 
     private static final Logger logger = LogManager.getLogger(ContractService.class);
 
@@ -202,5 +206,27 @@ public class ContractService {
         return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Contrato eliminado correctamente",false), HttpStatus.OK);
     }
 
+
+    public ResponseEntity<ApiResponse> findByClient(Long id) {
+
+        Optional<UserEntity> foundUser = userRepository.findById(id);
+
+        if (foundUser.isEmpty()) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Error cliente no encontrado", true), HttpStatus.NOT_FOUND);
+        }
+
+        // Recuperar contratos del cliente
+        List<ContractBean> contracts = getContractsByClientId(id);
+
+        return new ResponseEntity<>(new ApiResponse(contracts, HttpStatus.OK, "Contratos encontrados", false), HttpStatus.OK);
+    }
+
+    public List<ContractBean> getContractsByClientId(Long id) {
+        return clientRepository.findById(id)
+                .map(client -> client.getAddresses().stream()
+                        .flatMap(address -> address.getContracts().stream())
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
 
 }
