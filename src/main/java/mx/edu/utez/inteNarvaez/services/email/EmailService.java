@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 
 
@@ -68,9 +71,28 @@ public  class EmailService  {
         try {
             Context context = new Context();
 
-            String imagen ="src/main/resources/image/default.jpg";
+            // Ruta de la imagen por defecto
+            String defaultImagePath = "src/main/resources/image/default.jpg";
+            var ref = new Object() {
+                String defaultImageBase64 = "";
+            };
+
+            // Convertir la imagen a Base64
+            try {
+                byte[] imageBytes = Files.readAllBytes(Paths.get(defaultImagePath));
+                ref.defaultImageBase64 = Base64.getEncoder().encodeToString(imageBytes);
+            } catch (Exception e) {
+                logger.error("Error al leer la imagen por defecto: " + e.getMessage());
+            }
+
+         /*   // Asignar imagen por defecto a los canales con logo null
+            packageBean.getChannels().forEach(channel -> {
+                if (channel.getLogoBean() == null) {
+                    channel.getLogoBean("data:image/jpeg;base64,");
+                }
+            });*/
+
             context.setVariable("channels", packageBean.getChannels());
-            context.setVariable("default", imagen);
 
             String htmlContent = templateEngine.process("updatePackage", context);
             MimeMessage message = javaMailSender.createMimeMessage();

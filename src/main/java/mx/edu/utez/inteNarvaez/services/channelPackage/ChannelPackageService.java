@@ -138,7 +138,7 @@ public class ChannelPackageService {
 
            emailService.UpdatePackageEmail(stringList,savedPackage);
 
-            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete actaulizado correctamente", false), HttpStatus.CREATED);
+            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.OK, "Paquete actaulizado correctamente", false), HttpStatus.OK);
 
 
         } catch (Exception e) {
