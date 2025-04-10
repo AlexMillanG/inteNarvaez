@@ -1,11 +1,9 @@
 package mx.edu.utez.inteNarvaez.models.user;
 
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
-
 import java.util.HashSet;
 import java.util.Set;
 

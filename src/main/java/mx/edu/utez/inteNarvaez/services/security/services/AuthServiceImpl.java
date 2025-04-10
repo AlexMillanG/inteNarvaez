@@ -9,9 +9,6 @@ import mx.edu.utez.inteNarvaez.models.user.UserDTO;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
-import mx.edu.utez.inteNarvaez.models.dtos.ResponseDTO;
-import mx.edu.utez.inteNarvaez.models.user.usersValidation;
-import mx.edu.utez.inteNarvaez.services.contract.ContractService;
 import mx.edu.utez.inteNarvaez.services.email.EmailService;
 import mx.edu.utez.inteNarvaez.services.security.repository.IAuthService;
 import mx.edu.utez.inteNarvaez.services.security.repository.IJWTUtilityService;
@@ -55,13 +52,11 @@ public class AuthServiceImpl implements IAuthService {
             if (verifyPassword(loginDTO.getPassword(), user.get().getPassword())) {
                 UserDTO userDTO = new UserDTO(user.get());
 
-                // Generar el JWT normal
                 jwt.put("jwt", jwtUtilityService.genareteJWT(
                         userDTO.getId(),
                         userDTO.getRoles().stream().collect(Collectors.toList())
                 ));
 
-                // Agregar información si es contraseña temporal
                 if (user.get().isTemporalPassword()) {
                     jwt.put("temporal", "true");
                 }

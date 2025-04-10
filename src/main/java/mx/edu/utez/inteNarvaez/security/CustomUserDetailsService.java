@@ -2,7 +2,7 @@ package mx.edu.utez.inteNarvaez.security;
 
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
-import mx.edu.utez.inteNarvaez.models.role.RoleDTO;  // Importar RoleDTO
+import mx.edu.utez.inteNarvaez.models.role.RoleDTO;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import org.springframework.context.annotation.Bean;
@@ -26,30 +26,26 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Codificador de contraseñas
+        return new BCryptPasswordEncoder();
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Buscar el usuario por su correo electrónico
         UserEntity userEntity = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
-        // Mapear los roles a autoridades (authorities) de Spring Security
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         for (RoleDTO role : mapRolesToDTO(userEntity)) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())); // Asignamos el prefijo "ROLE_" a los roles
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         }
 
-        // Crear y retornar un objeto User de Spring Security con las autoridades
         return new User(
-                userEntity.getEmail(),               // username
-                userEntity.getPassword(),            // password
-                authorities                         // roles o autoridades
+                userEntity.getEmail(),
+                userEntity.getPassword(),
+                authorities
         );
     }
 
-    // Método para mapear los roles del UserEntity a RoleDTO
     private Set<RoleDTO> mapRolesToDTO(UserEntity userEntity) {
         Set<RoleDTO> roleDTOs = new HashSet<>();
         for (RoleBean role : userEntity.getRoleBeans()) {

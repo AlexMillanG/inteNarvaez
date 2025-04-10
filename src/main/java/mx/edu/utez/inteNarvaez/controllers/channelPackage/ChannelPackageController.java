@@ -33,6 +33,6 @@ public class ChannelPackageController {
 
     @PutMapping("/update")
     public ResponseEntity<ApiResponse> update(@RequestBody ChannelPackageDTO dto){
-        return  channelPackageService.save(dto.toEntityUpdate());
+        return  channelPackageService.Update(dto.toEntityUpdate());
     }
 }
