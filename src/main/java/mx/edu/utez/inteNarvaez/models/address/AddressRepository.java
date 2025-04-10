@@ -11,11 +11,11 @@ import java.util.UUID;
 @Repository
 public interface AddressRepository extends JpaRepository<AddressBean,Long> {
 
-    Optional<AddressBean> findByUuid(UUID uuid);
+    Optional<AddressBean> findByUuid(String uuid);
 
 
     List<AddressBean> findByStatus(Boolean b);
 
-    Optional<AddressBean> findByStatusAndClient(Boolean b, ClientBean clientBean);
+    List<AddressBean> findByStatusAndClient(Boolean b, ClientBean clientBean);
 
 }

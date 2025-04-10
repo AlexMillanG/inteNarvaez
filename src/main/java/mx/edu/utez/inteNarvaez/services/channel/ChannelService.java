@@ -7,6 +7,9 @@ import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryRepository;
+import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
+import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageRepository;
+import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageStatus;
 import mx.edu.utez.inteNarvaez.models.logo.LogoBean;
 import mx.edu.utez.inteNarvaez.models.logo.LogoRepository;
 import org.springframework.http.HttpStatus;
@@ -31,6 +34,8 @@ public class ChannelService {
     private final ChannelCategoryRepository channelCategoryRepository;
 
     private final LogoRepository logoRepository;
+
+    private final ChannelPackageRepository channelPackageRepository;
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> saveChannel(ChannelBean channelBean){
@@ -246,6 +251,8 @@ public class ChannelService {
 
         channelBean.setName(capitalize(channelBean.getName()));
 
+        channelBean.setStatus(true);
+
         // Guardar el canal primero
         ChannelBean savedChannel = channelRepository.save(channelBean);
 
@@ -267,10 +274,10 @@ public class ChannelService {
 
 
         logo.setFileExtension(extension);
+        logo.setFileExtension(extension);
 
         logoRepository.save(logo);
 
-        channelBean.setStatus(true);
         return ResponseEntity.ok(new ApiResponse(savedChannel, HttpStatus.OK, "Canal guardado correctamente", false));
 
 
@@ -282,6 +289,19 @@ public class ChannelService {
         if (foundChannel.isEmpty()){
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"no se encontró el canal que intentas eliminar",true),HttpStatus.NOT_FOUND);
         }
+
+
+        ChannelBean channel = foundChannel.get();
+
+
+        if (!channel.getChannelPackages().isEmpty()) {
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"error, no se puede eliminar el canal, porque esta asociado a uno  o más paquetes de canales",true),HttpStatus.CONFLICT);
+        }
+
+
+        channel.setStatus(false);
+        channelRepository.save(channel);
+
 
         if (!foundChannel.get().getStatus()){
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"el canal ya ha sido eliminado",true),HttpStatus.BAD_REQUEST);

@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.models.contract;
 
+import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,8 @@ import java.util.UUID;
 public interface ContractRepository extends JpaRepository<ContractBean,Long> {
 
     Optional<ContractBean> findAllByUuid(UUID uuid);
+
+    List<ContractBean> findByAddress(AddressBean addressBean);
 
     @Query(value = """
                 SELECT DISTINCT c.email

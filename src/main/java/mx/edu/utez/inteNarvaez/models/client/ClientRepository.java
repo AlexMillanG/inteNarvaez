@@ -11,5 +11,5 @@ public interface ClientRepository extends JpaRepository<ClientBean,Long> {
 
     Optional<ClientBean> findByRfc(String rfc);
 
-    Optional<ClientBean> findByUuid(UUID uuid);
+    Optional<ClientBean> findByUuid(String uuid);
 }

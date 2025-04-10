@@ -1,6 +1,7 @@
 package mx.edu.utez.inteNarvaez.models.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,12 +46,16 @@ public class ClientBean {
     @Temporal(TemporalType.DATE)
     private Date birthdate;
 
-    @Column(length = 36, unique = true)
-    private UUID uuid;
+    private Boolean status;
+
+    @Column(length = 36, unique = true, columnDefinition = "CHAR(36) NOT NULL")
+    private String uuid;
 
     @OneToMany(mappedBy = "client")
-    @JsonIgnore
+    @JsonManagedReference
     private List<AddressBean> addresses;
+
+
     public ClientBean() {
 
     }
