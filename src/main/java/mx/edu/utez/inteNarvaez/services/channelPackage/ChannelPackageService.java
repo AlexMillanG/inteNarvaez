@@ -7,12 +7,15 @@ import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageRepository;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageStatus;
+import mx.edu.utez.inteNarvaez.models.contract.ContractRepository;
+import mx.edu.utez.inteNarvaez.services.email.EmailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,6 +26,8 @@ public class ChannelPackageService {
 
     private final ChannelPackageRepository channelPackageRepository;
     private final ChannelRepository channelRepository;
+    private final EmailService emailService;
+    private final ContractRepository contractRepository;
 
     public ResponseEntity<ApiResponse> findAll() {
         try {
@@ -66,11 +71,12 @@ public class ChannelPackageService {
         }
     }
 
+
     public ResponseEntity<ApiResponse> Update(ChannelPackageBean channelPackageBean) {
         try {
 
             if (channelPackageBean.getId() == null){
-                return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"error, el id es requerido,",true),HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(channelPackageBean,HttpStatus.BAD_REQUEST,"error, el id es requerido,",true),HttpStatus.BAD_REQUEST);
             }
 
             Optional<ChannelPackageBean> foundPackage = channelPackageRepository.findById(channelPackageBean.getId());
@@ -102,11 +108,15 @@ public class ChannelPackageService {
                 }
             }
 
-
             channelPackageBean.setUuid(foundPackage.get().getUuid());
             channelPackageBean.setStatus(ChannelPackageStatus.DISPONIBLE);
             ChannelPackageBean savedPackage = channelPackageRepository.save(channelPackageBean);
-            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete guardado correctamente", false), HttpStatus.CREATED);
+
+           List<String> stringList = contractRepository.findDistinctEmailsByChannelPackage(channelPackageBean.getId());
+
+           emailService.UpdatePackageEmail(stringList,savedPackage);
+
+            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete actaulizado correctamente", false), HttpStatus.CREATED);
 
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -20,17 +20,6 @@ public class AddressController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> save(@RequestBody AddressDTO dto) {
-        /*
-                {
-                    "name":"casa de alex",
-                    "street":"orquidea",
-                    "number":447,
-                    "city":"Cuernavaca",
-                    "state":"morelos",
-                    "zipCode":62460,
-                    "clientId":1
-                }
-         */
         return addressService.save(dto);
     }
 
