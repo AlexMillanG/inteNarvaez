@@ -14,7 +14,6 @@ public class ChannelPackageDTO {
     private Long id;
     private String name;
     private String description;
-    private Double amount;
     private Set<ChannelBean> channels = new HashSet<>();
 
 /*
@@ -22,10 +21,10 @@ public class ChannelPackageDTO {
         return new ChannelPackageBean(name, description, amount, (List<ChannelBean>) channels);
     }*/
     public ChannelPackageBean toEntity(){
-        return new ChannelPackageBean(name, description, amount, new ArrayList<>(channels));
+        return new ChannelPackageBean(name, description, new ArrayList<>(channels));
     }
 
     public ChannelPackageBean toEntityUpdate(){
-        return new ChannelPackageBean(id,name,description,amount,new ArrayList<>(channels));
+        return new ChannelPackageBean(id,name,description,new ArrayList<>(channels));
     }
 }

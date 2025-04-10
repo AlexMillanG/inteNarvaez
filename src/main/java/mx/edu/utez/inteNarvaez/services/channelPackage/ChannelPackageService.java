@@ -49,9 +49,6 @@ public class ChannelPackageService {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: ingresa una descripción válida", true), HttpStatus.BAD_REQUEST);
             }
 
-            if (channelPackageBean.getAmount() == null || channelPackageBean.getAmount() < 0) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: ingresa un monto válido", true), HttpStatus.BAD_REQUEST);
-            }
 
             if (channelPackageBean.getChannels() == null || channelPackageBean.getChannels().isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el paquete debe contener al menos un canal", true), HttpStatus.BAD_REQUEST);
@@ -132,7 +129,6 @@ public class ChannelPackageService {
             channelPackageBean.setUuid(foundPackage.get().getUuid());
             existing.setName(channelPackageBean.getName());
             existing.setDescription(channelPackageBean.getDescription());
-            existing.setAmount(channelPackageBean.getAmount());
             existing.setChannels(channelPackageBean.getChannels());
             existing.setStatus(ChannelPackageStatus.DISPONIBLE);
 
