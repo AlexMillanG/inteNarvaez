@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import mx.edu.utez.inteNarvaez.models.address.AddressRepository;
+import mx.edu.utez.inteNarvaez.models.client.ClientBean;
 import mx.edu.utez.inteNarvaez.models.client.ClientRepository;
 import mx.edu.utez.inteNarvaez.models.contract.ContractBean;
 import mx.edu.utez.inteNarvaez.models.contract.ContractDTO;
@@ -59,10 +60,7 @@ public class ContractService {
       @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> saveContract(ContractDTO dto) {
 
-
         try {
-
-
 
             logger.info("Consultando la BD ");
 
@@ -97,8 +95,6 @@ public class ContractService {
             }
 
 
-
-
             logger.info("Creando obj");
 
             ContractBean contract = new ContractBean();
@@ -127,29 +123,61 @@ public class ContractService {
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<ApiResponse> updateContract(ContractBean contractBean) {
+    public ResponseEntity<ApiResponse> updateContract(ContractDTO dto) {
 
-        ApiResponse validation = ContractValidation.validate(contractBean);
-        if (validation.isError()) {
-            return new ResponseEntity<>(validation, HttpStatus.BAD_REQUEST);
-        }
         try {
+            logger.info("Consultando la BD para actualizar contrato");
 
-            Optional<ContractBean> findObj = repository.findAllByUuid(contractBean.getUuid());
+            // Buscar contrato por ID
+            Optional<ContractBean> existingContract = repository.findById(dto.getId());
 
-            if (findObj.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El contrato no existe"), HttpStatus.NOT_FOUND);
+            if (existingContract.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Contrato no encontrado", true), HttpStatus.NOT_FOUND);
             }
 
-            ContractBean existingContract = findObj.get();
+            // Buscar los otros objetos relacionados
+            Optional<SalesPackageEntity> findSalepackage = Salesrepository.findByName(dto.getSalesPackage());
+            Optional<AddressBean> findAddress = addressRepository.findById(dto.getAddress());
+            Optional<UserEntity> foundUser = userRepository.findById(dto.getUserId());
 
-            repository.saveAndFlush(existingContract);
+            // Validaciones
+            if (findAddress.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Dirección del cliente no encontrada", true), HttpStatus.NOT_FOUND);
+            }
 
-            return new ResponseEntity<>(new ApiResponse(existingContract, HttpStatus.OK, "Actualización exitosa"), HttpStatus.OK);
+            if (findSalepackage.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Paquete de venta no encontrado", true), HttpStatus.NOT_FOUND);
+            }
+
+            if (foundUser.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Usuario no encontrado", true), HttpStatus.NOT_FOUND);
+            }
+
+            UserEntity agent = foundUser.get();
+            if (!agent.getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "El usuario está eliminado", true), HttpStatus.CONFLICT);
+            }
+
+            // Actualizando el contrato
+            ContractBean contract = existingContract.get();
+            contract.setSalesPackageEntity(findSalepackage.get());
+            contract.setAddress(findAddress.get());
+            contract.setSalesAgent(agent);
+
+
+            // Guardar cambios
+            ContractBean updatedContract = repository.save(contract);
+
+            logger.info("Contrato actualizado exitosamente");
+
+            return new ResponseEntity<>(new ApiResponse(updatedContract, HttpStatus.OK, "Contrato actualizado exitosamente"), HttpStatus.OK);
+
+        } catch (DataIntegrityViolationException ex) {
+            logger.error("Error de integridad al actualizar el contrato: {}", ex.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "Conflicto en los datos del contrato"), HttpStatus.CONFLICT);
 
         } catch (Exception ex) {
-            logger.error("Error al actualizar el contrato: {}", ex.getMessage(), ex);
+            logger.error("Error al actualizar el contrato: {}", ex.getMessage());
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salió mal al actualizar el contrato"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -196,24 +224,32 @@ public class ContractService {
 
     public ResponseEntity<ApiResponse> findByClient(Long id) {
 
-        Optional<UserEntity> foundUser = userRepository.findById(id);
+        Optional<ClientBean> foundClient = clientRepository.findById(id);
 
-        if (foundUser.isEmpty()) {
+        if (foundClient.isEmpty()) {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Error cliente no encontrado", true), HttpStatus.NOT_FOUND);
         }
 
-        // Recuperar contratos del cliente
-        List<ContractBean> contracts = getContractsByClientId(id);
+        ClientBean clientBean = foundClient.get();
 
-        return new ResponseEntity<>(new ApiResponse(contracts, HttpStatus.OK, "Contratos encontrados", false), HttpStatus.OK);
+        List<AddressBean> relatedAddresses = clientBean.getAddresses();
+
+
+        List<ContractBean> associatedContracts = relatedAddresses.stream()
+                .flatMap(address -> new HashSet<>(address.getContracts()).stream()) // Copia segura
+                .collect(Collectors.toList());
+
+
+        for (AddressBean addressBean: relatedAddresses){
+           Set<ContractBean>  contracts = addressBean.getContracts();
+           associatedContracts.addAll(contracts);
+
+       }
+
+
+
+        return new ResponseEntity<>(new ApiResponse(associatedContracts, HttpStatus.OK, "Contratos encontrados", false), HttpStatus.OK);
     }
 
-    public List<ContractBean> getContractsByClientId(Long id) {
-        return clientRepository.findById(id)
-                .map(client -> client.getAddresses().stream()
-                        .flatMap(address -> address.getContracts().stream())
-                        .collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
-    }
 
 }

@@ -27,5 +27,7 @@ public class ContractDTO {
     @Positive(message = "El ID del usuario debe ser ser mayor a 0")
     private Long userId;
 
+    private Long id;
+
 
 }
