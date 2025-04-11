@@ -1,10 +1,12 @@
 package mx.edu.utez.inteNarvaez.controllers.client;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.client.ClientBean;
 import mx.edu.utez.inteNarvaez.services.client.ClientService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,9 +19,9 @@ public class ClientController {
     private final ClientService clientService;
 
     @PostMapping("/save")
-    public ResponseEntity<ApiResponse> saveClient(@RequestBody ClientBean clientBean){
-
-        return clientService.saveClient(clientBean);
+    public ResponseEntity<ApiResponse> saveClient(@Valid @RequestBody ClientDTO dto, BindingResult result){
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
+        return clientService.saveClient(dto.toEntity());
     }
 
     @GetMapping("/")
@@ -28,8 +30,10 @@ public class ClientController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse> updateClient(@RequestBody ClientBean clientBean){
-        return clientService.updateClient(clientBean);
+    public ResponseEntity<ApiResponse> updateClient(@Valid @RequestBody ClientDTO dto, BindingResult result){
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
+
+        return clientService.updateClient(dto.toEntityUpdate());
     }
 
     @GetMapping("/uuid/{uuid}")

@@ -32,10 +32,10 @@ public class ClientBean {
     @Column(length = 50)
     private String surname;
 
-    @Column(length = 13, unique = true)
+    @Column(unique = true)
     private String rfc;
 
-    @Column(length = 100, unique = true)
+    @Column( unique = true)
     private String email;
 
     @Column(length = 10)
@@ -58,5 +58,27 @@ public class ClientBean {
 
     }
 
-
+    public ClientBean(String name, String lastName, String surname, String rfc, String email, String phone, Date birthdate, Boolean status, String uuid) {
+        this.name = name;
+        this.lastName = lastName;
+        this.surname = surname;
+        this.rfc = rfc;
+        this.email = email;
+        this.phone = phone;
+        this.birthdate = birthdate;
+        this.status = status;
+        this.uuid = uuid;
+    }
+    public ClientBean(Long id, String name, String lastName, String surname, String rfc, String email, String phone, Date birthdate, Boolean status, String uuid) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.surname = surname;
+        this.rfc = rfc;
+        this.email = email;
+        this.phone = phone;
+        this.birthdate = birthdate;
+        this.status = status;
+        this.uuid = uuid;
+    }
 }
