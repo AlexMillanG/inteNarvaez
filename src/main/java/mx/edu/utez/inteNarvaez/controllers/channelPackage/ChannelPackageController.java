@@ -5,6 +5,9 @@ import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.services.channelPackage.ChannelPackageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -26,14 +29,19 @@ public class ChannelPackageController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<ApiResponse> save(@RequestBody ChannelPackageDTO dto){
-        return channelPackageService.save(dto.toEntity());
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody ChannelPackageDTO dto, BindingResult result) {
 
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
+
+        return channelPackageService.save(dto.toEntity());
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse> update(@RequestBody ChannelPackageDTO dto){
-        return  channelPackageService.Update(dto.toEntityUpdate());
+    public ResponseEntity<ApiResponse> update(@Valid @RequestBody ChannelPackageDTO dto, BindingResult result) {
+
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
+
+        return channelPackageService.Update(dto.toEntityUpdate());
     }
 
     @GetMapping("/findDiscontinued")

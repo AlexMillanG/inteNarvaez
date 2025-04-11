@@ -19,7 +19,6 @@ public class emailController {
 
     @PostMapping("/send")
     public ResponseEntity<ApiResponse> sendEmail(@RequestBody Emails emails) throws MessagingException {
-        System.out.println("Llegamos");
         return service.sendEmail(emails,1);
     }
 

@@ -1,10 +1,12 @@
 package mx.edu.utez.inteNarvaez.controllers.channelCategory;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.services.channelCategory.ChannelCategoryService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -19,8 +21,8 @@ public class ChannelCategoryController {
     private final ChannelCategoryService channelCategoryService;
 
     @PostMapping("/save")
-    public ResponseEntity<ApiResponse> saveCategoryChannel(@RequestBody ChannelCategoryBean categoryBean){
-
+    public ResponseEntity<ApiResponse> saveCategoryChannel(@Valid @RequestBody ChannelCategoryBean categoryBean , BindingResult result){
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
         return channelCategoryService.saveCategoryChannel(categoryBean);
     }
 
@@ -30,7 +32,8 @@ public class ChannelCategoryController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse> updateCategoryChannel(@RequestBody ChannelCategoryBean categoryBean){
+    public ResponseEntity<ApiResponse> updateCategoryChannel(@Valid @RequestBody ChannelCategoryBean categoryBean , BindingResult result){
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
         return channelCategoryService.updateCategoryChannel(categoryBean);
     }
 
