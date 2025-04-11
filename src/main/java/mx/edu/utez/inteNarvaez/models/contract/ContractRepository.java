@@ -34,4 +34,15 @@ public interface ContractRepository extends JpaRepository<ContractBean,Long> {
 
     List<ContractBean> findBySalesAgentAndStatus(UserEntity user, Boolean b);
 
+
+    @Query(value = """
+        SELECT c.* 
+        FROM contracts c
+        JOIN addresses a ON c.address_id = a.id
+        WHERE a.client_id = :clientId
+        AND c.status = 1
+        AND a.status = 1
+        """, nativeQuery = true)
+    List<ContractBean> findContractsByClientId(@Param("clientId") Long clientId);
+
 }

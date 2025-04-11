@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.*;
@@ -223,32 +224,19 @@ public class ContractService {
 
 
     public ResponseEntity<ApiResponse> findByClient(Long id) {
-
-        Optional<ClientBean> foundClient = clientRepository.findById(id);
-
-        if (foundClient.isEmpty()) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Error cliente no encontrado", true), HttpStatus.NOT_FOUND);
+        // Verificar primero si el cliente existe
+        if (!clientRepository.existsById(id)) {
+            return new ResponseEntity<>(
+                    new ApiResponse(null, HttpStatus.NOT_FOUND, "Error cliente no encontrado", true),
+                    HttpStatus.NOT_FOUND);
         }
 
-        ClientBean clientBean = foundClient.get();
+        // Obtener los contratos directamente con la consulta nativa
+        List<ContractBean> contracts = repository.findContractsByClientId(id);
 
-        List<AddressBean> relatedAddresses = clientBean.getAddresses();
-
-
-        List<ContractBean> associatedContracts = relatedAddresses.stream()
-                .flatMap(address -> new HashSet<>(address.getContracts()).stream()) // Copia segura
-                .collect(Collectors.toList());
-
-
-        for (AddressBean addressBean: relatedAddresses){
-           Set<ContractBean>  contracts = addressBean.getContracts();
-           associatedContracts.addAll(contracts);
-
-       }
-
-
-
-        return new ResponseEntity<>(new ApiResponse(associatedContracts, HttpStatus.OK, "Contratos encontrados", false), HttpStatus.OK);
+        return new ResponseEntity<>(
+                new ApiResponse(contracts, HttpStatus.OK, "Contratos encontrados", false),
+                HttpStatus.OK);
     }
 
 
