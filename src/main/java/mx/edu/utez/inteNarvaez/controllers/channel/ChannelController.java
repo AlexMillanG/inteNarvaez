@@ -1,6 +1,7 @@
 package mx.edu.utez.inteNarvaez.controllers.channel;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.controllers.channel.dto.ChannelDTO;
@@ -8,6 +9,7 @@ import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.services.channel.ChannelService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -22,7 +24,9 @@ public class ChannelController {
 
 
     @PostMapping("/saveImg")
-    public ResponseEntity<ApiResponse> saveChannelImage(@ModelAttribute ChannelDTO dto) throws IOException {
+    public ResponseEntity<ApiResponse> saveChannelImage(@Valid @ModelAttribute ChannelDTO dto, BindingResult result) throws IOException {
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
+
         if (dto.getImage() == null || dto.getImage().isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Imagen nula o vacía", true));
         }
@@ -30,7 +34,8 @@ public class ChannelController {
     }
 
     @PutMapping("/updateImg")
-    public ResponseEntity<ApiResponse> update(@ModelAttribute ChannelDTO dto) throws IOException {
+    public ResponseEntity<ApiResponse> update(@Valid @ModelAttribute ChannelDTO dto, BindingResult result) throws IOException {
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
         return channelService.updateWithImage(dto);
     }
 
@@ -41,7 +46,8 @@ public class ChannelController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse> updateChannel(@RequestBody ChannelBean channelBean){
+    public ResponseEntity<ApiResponse> updateChannel(@Valid @RequestBody ChannelBean channelBean, BindingResult result){
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
         return channelService.updateChannel(channelBean);
     }
 

@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,5 +30,20 @@ public class ApiResponse {
         this.message = message;
     }
 
+    public static boolean hasValidationErrors(BindingResult result) {
+        return result.hasErrors();
+    }
 
+    public static String buildErrorMessage(BindingResult result) {
+        StringBuilder sb = new StringBuilder();
+        result.getFieldErrors().forEach(error ->
+                sb.append(error.getField()).append(": ").append(error.getDefaultMessage()).append(". ")
+        );
+        return sb.toString();
+    }
+
+    public static ResponseEntity<ApiResponse> buildErrorResponse(BindingResult result) {
+        String errorMessage = buildErrorMessage(result);
+        return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, errorMessage, true));
+    }
 }

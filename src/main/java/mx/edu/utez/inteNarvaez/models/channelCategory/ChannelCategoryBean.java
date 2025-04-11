@@ -2,6 +2,7 @@ package mx.edu.utez.inteNarvaez.models.channelCategory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 
@@ -16,7 +17,11 @@ public class ChannelCategoryBean {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre de la categoría no puede estar vacío.")
+    @Size(max = 100, message = "El nombre de la categoría no puede exceder los 100 caracteres.")
+    @Column(length = 100, nullable = false)
     private String name;
+
     @Column(length = 36, unique = true)
     private UUID uuid;
 
