@@ -111,22 +111,20 @@ public class AuthServiceImpl implements IAuthService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public ResponseEntity<ApiResponse> registerAgente(RegisterDTO register) {
-/*
+    public ResponseEntity<ApiResponse> registerAgente(UserEntity userEntity) {
+
         try {
-            UserEntity userEntity = register.getUser();
 
             Optional<UserEntity> existingUser = userRepository.findByEmail(userEntity.getEmail());
             if (existingUser.isPresent()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uasurio ya esta registrado", true), HttpStatus.BAD_REQUEST);
             }
-            Optional<RoleBean> role = roleRepository.findByName(register.getName());
+            Optional<RoleBean> role = roleRepository.findByName(userEntity.getRoleBeans().iterator().next().getName());
             if (role.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
             }
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
             userEntity.setPassword(encoder.encode(userEntity.getPassword()));
-
             UserEntity createdUser = userRepository.save(userEntity);
             userRepository.insertRoles(createdUser.getId(), role.get().getId());
 
@@ -141,8 +139,7 @@ public class AuthServiceImpl implements IAuthService {
         } catch (Exception e) {
             logger.error("Error al registrar el usuario: {}", e.getMessage());
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
-        }*/
-        return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
 
