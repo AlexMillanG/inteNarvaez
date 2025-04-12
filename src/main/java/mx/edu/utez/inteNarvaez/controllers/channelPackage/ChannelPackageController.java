@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.controllers.channelPackage;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.services.channelPackage.ChannelPackageService;
@@ -40,7 +41,7 @@ public class ChannelPackageController {
     public ResponseEntity<ApiResponse> update(@RequestBody ChannelPackageDTO dto) {
 
 
-        return channelPackageService.Update(dto.toEntityUpdate());
+        return channelPackageService.update(dto.toEntityUpdate());
     }
 
     @GetMapping("/findDiscontinued")
