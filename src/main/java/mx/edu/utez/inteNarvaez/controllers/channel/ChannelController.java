@@ -74,4 +74,9 @@ public class ChannelController {
     public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
         return channelService.delete(id);
     }
+
+    @GetMapping("/channelCount/")
+    public ResponseEntity<ApiResponse> channelCount(){
+        return channelService.channelTotal();
+    }
 }

@@ -15,4 +15,6 @@ public interface ClientRepository extends JpaRepository<ClientBean,Long> {
     List<ClientBean> findByStatus(Boolean b);
 
     Optional<ClientBean> findByEmail(String s);
+
+    Optional<Integer> countByStatus(Boolean b);
 }

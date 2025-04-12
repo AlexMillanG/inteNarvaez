@@ -379,5 +379,13 @@ public class ChannelService {
         return new ResponseEntity<>(new ApiResponse(null,HttpStatus.OK,"el canal " + foundChannel.get().getName() +", ha sido eliminado con éxito",false),HttpStatus.OK);
     }
 
+    public ResponseEntity<ApiResponse> channelTotal(){
+        try {
+            return new ResponseEntity<>(new ApiResponse(channelRepository.countByStatus(true),HttpStatus.OK,null,false),HttpStatus.OK);
+        }catch (Error e){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.OK,"hubo un error al hacer un conteo de canales disponibles",true),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

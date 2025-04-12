@@ -110,5 +110,13 @@ public class SalePackageService {
         }
     }
 
+    public ResponseEntity<ApiResponse>countSalesPackages(){
+        try {
+            return new ResponseEntity<>(new ApiResponse(repository.countByStatus(true),HttpStatus.OK,null,false),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"hubo un error al consultar el conteo de paquetes de ventas",true),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

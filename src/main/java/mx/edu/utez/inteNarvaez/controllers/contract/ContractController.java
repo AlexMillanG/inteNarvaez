@@ -37,11 +37,15 @@ public class ContractController {
     }
 
     @GetMapping("/findByAgent/{id}")
-
     public ResponseEntity<ApiResponse> findByAgent(@PathVariable Long id){
         return service.findByAgent(id);
     }
 
+
+    @GetMapping("/contractsCount/")
+    public ResponseEntity<ApiResponse> contractsCounts(){
+        return service.countActiveContracts();
+    }
 
 
 

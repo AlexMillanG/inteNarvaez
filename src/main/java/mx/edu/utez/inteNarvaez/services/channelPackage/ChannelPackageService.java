@@ -74,7 +74,6 @@ public class ChannelPackageService {
         }
     }
 
-
     public ResponseEntity<ApiResponse> update(ChannelPackageBean channelPackageBean) {
         try {
 
@@ -180,7 +179,6 @@ public class ChannelPackageService {
         return new ResponseEntity<>(new ApiResponse(channelPackageRepository.findAllByStatus(ChannelPackageStatus.OBSOLETO),HttpStatus.OK,null,false),HttpStatus.OK);
     }
 
-
     public ResponseEntity<ApiResponse> setDescontinuado(Long id){
         if (id == null){
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el id es requerido", true), HttpStatus.BAD_REQUEST);
@@ -200,7 +198,6 @@ public class ChannelPackageService {
 
     }
 
-
     public ResponseEntity<ApiResponse> setDisponile(Long id){
         if (id == null){
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el id es requerido", true), HttpStatus.BAD_REQUEST);
@@ -219,7 +216,6 @@ public class ChannelPackageService {
         return new ResponseEntity<>(new ApiResponse(channelPackageRepository.save(channelPackageBean),HttpStatus.OK,"Se actualizó el paquete de canales a disponible", false),HttpStatus.OK);
 
     }
-
 
     public ResponseEntity<ApiResponse> delete(Long id){
 
@@ -247,6 +243,35 @@ public class ChannelPackageService {
         return new ResponseEntity<>(new ApiResponse(channelPackageRepository.save(channelPackageBean),HttpStatus.OK,"Se elimino este paquete con éxito", false),HttpStatus.OK);
 
     }
+
+    public ResponseEntity<ApiResponse> countDisponible(){
+        try{
+            return new ResponseEntity<>(new ApiResponse(channelPackageRepository.countByStatus(ChannelPackageStatus.DISPONIBLE),HttpStatus.OK,null,false),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"ocurrió un error al obtener" +
+                    "el conteo de los paquetes de venta disponbiles",false),HttpStatus.OK);
+        }
+    }
+
+    public ResponseEntity<ApiResponse> countDescontinuado(){
+        try{
+            return new ResponseEntity<>(new ApiResponse(channelPackageRepository.countByStatus(ChannelPackageStatus.DESCONTINUADO),HttpStatus.OK,null,false),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"ocurrió un error al obtener" +
+                    "el conteo de los paquetes de venta descontinuados",false),HttpStatus.OK);
+        }
+    }
+
+    public ResponseEntity<ApiResponse> countObsoleto(){
+        try {
+            return new ResponseEntity<>(new ApiResponse(channelPackageRepository.countByStatus(ChannelPackageStatus.OBSOLETO),HttpStatus.OK,null,false),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"ocurrió un error al obtener" +
+                    "el conteo de los paquetes de venta obsoletos",false),HttpStatus.OK);
+        }
+    }
+
+
 
 
 }
