@@ -33,6 +33,12 @@ public class AuthControllers {
         user.setName("USER");
         return authService.register(user);
     }
+
+    @PostMapping("/registerAgente")
+    private ResponseEntity<ApiResponse> registeUser(@RequestBody RegisterDTO user) throws Exception {
+        user.setRole("USER");
+        return authService.registerAgente(user);
+    }
   
     @PostMapping("/register")
     private ResponseEntity<ApiResponse> regsiter(@RequestBody UserDTO.RegisterDTO user) throws Exception {

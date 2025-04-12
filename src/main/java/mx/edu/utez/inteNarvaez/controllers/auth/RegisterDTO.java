@@ -1,18 +1,23 @@
-package mx.edu.utez.inteNarvaez.models.user;
+package mx.edu.utez.inteNarvaez.controllers.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import mx.edu.utez.inteNarvaez.config.MinimumAge;
+import mx.edu.utez.inteNarvaez.models.role.RoleBean;
+import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 
 import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
-import jakarta.validation.constraints.*;
-import mx.edu.utez.inteNarvaez.config.MinimumAge;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class UserDTO {
+@Getter
+@Setter
+public class RegisterDTO {
+
     private Long id;
     @NotBlank(message = "El nombre no puede estar vacío.")
     @Pattern(regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s]+$", message = "El nombre solo puede contener letras y espacios.")
@@ -43,36 +48,34 @@ public class UserDTO {
     @MinimumAge(value = 18, message = "Debes tener al menos 18 años.")
     private Date birthdate;
 
-
-    @JsonIgnore
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&._-])[A-Za-z\\d@$!%*?&._-]{8,}$",message = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.")
     private String password;
 
-    @JsonIgnore
-    private Set<String> roles;
+    private String role;
 
-    public UserDTO(UserEntity userEntity) {
-        this.id = userEntity.getId();
-        this.firstName = userEntity.getFirstName();
-        this.lastName = userEntity.getLastName();
-        this.email = userEntity.getEmail();
-        this.roles = userEntity.getRoleBeans().stream()
-                .map(role -> role.getName())
-                .collect(Collectors.toSet());
+    public UserEntity toUserEntity() {
+        UserEntity user = new UserEntity();
+        user.setFirstName(this.firstName);
+        user.setLastName(this.lastName);
+        user.setSurname(this.surname);
+        user.setEmail(this.email);
+        user.setRfc(this.rfc);
+        user.setPhone(this.phone);
+        user.setBirthdate(this.birthdate);
+        user.setPassword(this.password);
+        user.setStatus(true);
+        user.setTemporalPassword(false);
+        user.setRoleBeans(null);
+        user.setLastLogin(null);
+        return user;
     }
-    @Getter
-    @Setter
-    @Data
-    public static  class RegisterDTO {
-        private UserEntity user;
-        private String name;
 
-        public RegisterDTO(UserEntity user, String name) {
-            this.user = user;
-            this.name = name;
-        }
-
-
+    public RoleBean toRoleBean(String role) {
+        RoleBean roleBean = new RoleBean();
+        roleBean.setName(role);
+        return roleBean;
     }
+
+
 
 }
