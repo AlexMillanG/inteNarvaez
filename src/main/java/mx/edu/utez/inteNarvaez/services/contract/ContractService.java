@@ -57,8 +57,7 @@ public class ContractService {
         }
     }
 
-
-      @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> saveContract(ContractDTO dto) {
 
         try {
@@ -123,7 +122,7 @@ public class ContractService {
         }
     }
 
-
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> updateContract(ContractDTO dto) {
 
         try {
@@ -183,7 +182,7 @@ public class ContractService {
         }
     }
 
-
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> findByAgent(Long id){
 
         Optional<UserEntity> foundUser = userRepository.findById(id);
@@ -204,6 +203,7 @@ public class ContractService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> delete(Long id){
 
 
@@ -222,7 +222,7 @@ public class ContractService {
         return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Contrato eliminado correctamente",false), HttpStatus.OK);
     }
 
-
+    @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> findByClient(Long id) {
         // Verificar primero si el cliente existe
         if (!clientRepository.existsById(id)) {
@@ -237,6 +237,14 @@ public class ContractService {
         return new ResponseEntity<>(
                 new ApiResponse(contracts, HttpStatus.OK, "Contratos encontrados", false),
                 HttpStatus.OK);
+    }
+
+    public ResponseEntity<ApiResponse> countActiveContracts(){
+        try {
+            return new ResponseEntity<>(new ApiResponse(repository.countByStatus(true),HttpStatus.OK,null,false),HttpStatus.OK);
+        }catch (Error e){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"hubo un error al hacer un conteo de contratos disponibles",true),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

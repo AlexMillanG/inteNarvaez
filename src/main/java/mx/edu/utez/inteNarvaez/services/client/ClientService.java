@@ -46,7 +46,6 @@ public class ClientService {
         }
     }
 
-
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> saveClient(ClientBean clientBean) {
         ApiResponse validationResponse = ClientValidation.validate(clientBean);
@@ -83,7 +82,6 @@ public class ClientService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al guardar el cliente", true));
         }
     }
-
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> updateClient(ClientBean clientBean) {
@@ -139,6 +137,7 @@ public class ClientService {
         return ResponseEntity.ok(new ApiResponse(foundClient.get(), HttpStatus.OK, null, false));
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> delete (Long id){
 
         Optional<ClientBean> foundClient = clientRepository.findById(id);
@@ -160,6 +159,15 @@ public class ClientService {
         clientRepository.saveAndFlush(clientBean);
 
         return ResponseEntity.ok(new ApiResponse(clientBean, HttpStatus.OK, "Cliente eliminado correctamente", false));
+    }
+
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> clientCount(){
+        try {
+            return new ResponseEntity<>(new ApiResponse(clientRepository.countByStatus(true),HttpStatus.OK,null,false),HttpStatus.OK);
+        }catch (Error e){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.OK,"hubo un error al hacer un conteo de canales disponibles",true),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

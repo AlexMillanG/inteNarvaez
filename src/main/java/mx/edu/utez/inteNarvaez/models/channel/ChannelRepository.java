@@ -17,4 +17,6 @@ public interface ChannelRepository extends JpaRepository<ChannelBean,Long> {
     Optional<ChannelBean> findByUuid(UUID uuid);
 
     List<ChannelBean> findByStatus(Boolean b);
+
+    Optional<Integer> countByStatus(Boolean b);
 }

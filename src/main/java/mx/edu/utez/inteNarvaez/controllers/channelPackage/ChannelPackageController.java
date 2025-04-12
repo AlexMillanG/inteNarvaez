@@ -69,4 +69,20 @@ public class ChannelPackageController {
     public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
         return channelPackageService.delete(id);
     }
+
+
+    @GetMapping("/countAvailable")
+    public ResponseEntity<ApiResponse> countAvailable(){
+        return channelPackageService.countDisponible();
+    }
+
+    @GetMapping("/countObsolete")
+    public ResponseEntity<ApiResponse> countObsolete(){
+        return channelPackageService.countObsoleto();
+    }
+
+    @GetMapping("/countDiscontinued")
+    public ResponseEntity<ApiResponse> countDiscontinued(){
+        return channelPackageService.countDescontinuado();
+    }
 }

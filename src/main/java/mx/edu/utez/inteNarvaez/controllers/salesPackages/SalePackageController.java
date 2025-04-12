@@ -32,4 +32,9 @@ public class SalePackageController {
         return service.delete(id);
     }
 
+    @GetMapping("/countSalesPackages/")
+    public ResponseEntity<ApiResponse> countSalesPackages(){
+        return service.countSalesPackages();
+    }
+
 }

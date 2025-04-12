@@ -17,4 +17,6 @@ public interface ChannelPackageRepository extends JpaRepository<ChannelPackageBe
 
     List<ChannelPackageBean> findAllByStatus(ChannelPackageStatus status);
 
+    Optional<Integer> countByStatus(ChannelPackageStatus channelPackageStatus);
+
 }

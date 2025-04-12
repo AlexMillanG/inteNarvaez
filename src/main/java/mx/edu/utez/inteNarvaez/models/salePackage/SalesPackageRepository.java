@@ -21,4 +21,6 @@ public interface SalesPackageRepository extends JpaRepository<SalesPackageEntity
 
     @Query("SELECT COUNT(c) FROM ContractBean c WHERE c.salesPackageEntity.id = :id")
     int countContractsBySalesPackageId(@Param("id") Long id);
+
+    Optional<Integer> countByStatus(Boolean c);
 }
