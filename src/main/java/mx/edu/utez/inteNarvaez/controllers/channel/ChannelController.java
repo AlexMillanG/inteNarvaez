@@ -24,18 +24,12 @@ public class ChannelController {
 
 
     @PostMapping("/saveImg")
-    public ResponseEntity<ApiResponse> saveChannelImage(@Valid @ModelAttribute ChannelDTO dto, BindingResult result) throws IOException {
-        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
-
-        if (dto.getImage() == null || dto.getImage().isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Imagen nula o vacía", true));
-        }
+    public ResponseEntity<ApiResponse> saveChannelImage(@ModelAttribute ChannelDTO dto) throws IOException {
         return channelService.saveWithImage(dto);
     }
 
     @PutMapping("/updateImg")
-    public ResponseEntity<ApiResponse> update(@Valid @ModelAttribute ChannelDTO dto, BindingResult result) throws IOException {
-        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
+    public ResponseEntity<ApiResponse> update( @ModelAttribute ChannelDTO dto) throws IOException {
         return channelService.updateWithImage(dto);
     }
 
