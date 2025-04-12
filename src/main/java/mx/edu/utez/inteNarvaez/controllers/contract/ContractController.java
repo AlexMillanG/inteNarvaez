@@ -36,6 +36,12 @@ public class ContractController {
         return service.findByClient(id);
     }
 
+    @GetMapping("/findByAgent/{id}")
+
+    public ResponseEntity<ApiResponse> findByAgent(@PathVariable Long id){
+        return service.findByAgent(id);
+    }
+
 
 
 

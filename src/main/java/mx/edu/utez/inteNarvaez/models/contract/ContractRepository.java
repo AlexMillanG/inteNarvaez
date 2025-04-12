@@ -1,6 +1,7 @@
 package mx.edu.utez.inteNarvaez.models.contract;
 
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
+import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -44,5 +45,8 @@ public interface ContractRepository extends JpaRepository<ContractBean,Long> {
         AND a.status = 1
         """, nativeQuery = true)
     List<ContractBean> findContractsByClientId(@Param("clientId") Long clientId);
+
+
+    List<ContractBean> findBySalesPackageEntity(SalesPackageEntity salesPackageEntity);
 
 }
