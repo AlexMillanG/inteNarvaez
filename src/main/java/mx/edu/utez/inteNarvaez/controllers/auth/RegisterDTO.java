@@ -52,11 +52,29 @@ public class RegisterDTO {
 
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&._#-])[A-Za-z\\d@$!%*?&._#-]{8,}$",message = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.")
     private String password;
-
     private String role;
 
     public UserEntity toUserEntity() {
         UserEntity user = new UserEntity();
+        user.setFirstName(this.firstName);
+        user.setLastName(this.lastName);
+        user.setSurname(this.surname);
+        user.setEmail(this.email);
+        user.setRfc(this.rfc);
+        user.setPhone(this.phone);
+        user.setBirthdate(this.birthdate);
+        user.setPassword(this.password);
+        user.setStatus(true);
+        user.setTemporalPassword(false);
+        Set<RoleBean> roles = new HashSet<>();
+        roles.add(toRoleBean(role));
+        user.setRoleBeans(roles);
+        user.setLastLogin(null);
+        return user;
+    }
+    public UserEntity toUserEntityUpdate() {
+        UserEntity user = new UserEntity();
+        user.setId(this.id);
         user.setFirstName(this.firstName);
         user.setLastName(this.lastName);
         user.setSurname(this.surname);

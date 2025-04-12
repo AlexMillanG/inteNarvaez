@@ -109,76 +109,7 @@ public class AuthServiceImpl implements IAuthService {
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public ResponseEntity<ApiResponse> registerAgente(UserEntity userEntity) {
 
-        try {
-
-            Optional<UserEntity> existingUser = userRepository.findByEmail(userEntity.getEmail());
-            if (existingUser.isPresent()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uasurio ya esta registrado", true), HttpStatus.BAD_REQUEST);
-            }
-            Optional<RoleBean> role = roleRepository.findByName(userEntity.getRoleBeans().iterator().next().getName());
-            if (role.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
-            }
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-            userEntity.setPassword(encoder.encode(userEntity.getPassword()));
-            UserEntity createdUser = userRepository.save(userEntity);
-            userRepository.insertRoles(createdUser.getId(), role.get().getId());
-
-
-            return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.CREATED, "Usuario creado correctamente"), HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            logger.error(e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, e.getMessage(), true), HttpStatus.BAD_REQUEST);
-        } catch (DataAccessException e) {
-            logger.error("Error al registrar el usuario: {}", e.getMessage());
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al acceder a la base de datos", true), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Error al registrar el usuario: {}", e.getMessage());
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<ApiResponse> updateUser(UserDTO.RegisterDTO register) {
-
-        try {
-            UserEntity updatedUser = register.getUser();
-            Optional<UserEntity> existingUser = userRepository.findById(updatedUser.getId());
-            if (existingUser.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
-            }
-            Optional<RoleBean> role = roleRepository.findByName(register.getName());
-            if (role.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
-            }
-
-            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-                updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
-            } else {
-                updatedUser.setPassword(existingUser.get().getPassword());
-            }
-
-            updatedUser.setEmail(existingUser.get().getEmail()); // Si el email no se puede cambiar
-            UserEntity savedUser = userRepository.save(updatedUser);
-
-            userRepository.insertRoles(savedUser.getId(), role.get().getId());
-
-            return new ResponseEntity<>(new ApiResponse(savedUser, HttpStatus.OK, "Usuario actualizado correctamente"), HttpStatus.OK);
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, e.getMessage(), true), HttpStatus.BAD_REQUEST);
-        } catch (DataAccessException e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al acceder a la base de datos", true), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
 
     @Override

@@ -1,22 +1,39 @@
 package mx.edu.utez.inteNarvaez.services.security.services;
 
 import lombok.AllArgsConstructor;
+import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.models.role.RoleBean;
+import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
+import mx.edu.utez.inteNarvaez.models.user.UserEntity;
+import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import mx.edu.utez.inteNarvaez.services.security.repository.IUserServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements IUserServiceImpl {
 
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
     private static final String DIGITS = "0123456789";
     private static final String SPECIAL = "!@#$%^&*()-_=+<>?";
     private static final String ALL_CHARACTERS = UPPERCASE + LOWERCASE + DIGITS + SPECIAL;
+    private static final Logger logger = LogManager.getLogger(AuthServiceImpl.class);
 
     private static final int PASSWORD_LENGTH = 8;
     private static final SecureRandom random = new SecureRandom();
@@ -47,6 +64,80 @@ public class UserServiceImpl implements IUserServiceImpl {
         return finalPassword.toString();
     }
 
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<ApiResponse> findAll() {
+        try {
+            if (userRepository.findAll().isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND ,"No hay usuarios registrados") , HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(new ApiResponse(userRepository.findAll(), HttpStatus.OK,"Lista de usuarios"), HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"Error al obtener la lista de usuarios"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse> registerAgente(UserEntity userEntity) {
+
+        try {
+
+            Optional<UserEntity> existingUser = userRepository.findByEmail(userEntity.getEmail());
+            if (existingUser.isPresent()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uasurio ya esta registrado", true), HttpStatus.BAD_REQUEST);
+            }
+            Optional<RoleBean> role = roleRepository.findByName(userEntity.getRoleBeans().iterator().next().getName());
+            if (role.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
+            }
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+            userEntity.setPassword(encoder.encode(userEntity.getPassword()));
+            UserEntity createdUser = userRepository.save(userEntity);
+            userRepository.insertRoles(createdUser.getId(), role.get().getId());
+
+
+            return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.CREATED, "Usuario creado correctamente"), HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            logger.error(e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, e.getMessage(), true), HttpStatus.BAD_REQUEST);
+        } catch (DataAccessException e) {
+            logger.error("Error al registrar el usuario: {}", e.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al acceder a la base de datos", true), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error al registrar el usuario: {}", e.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse> updateAgente(UserEntity userEntity) {
+        try {
+            Optional<UserEntity> existingUser = userRepository.findById(userEntity.getId());
+            if (existingUser.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
+            }
+            Optional<RoleBean> role = roleRepository.findByName(userEntity.getRoleBeans().iterator().next().getName());
+            if (role.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
+            }
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+            userEntity.setPassword(encoder.encode(userEntity.getPassword()));
+            UserEntity createdUser = userRepository.save(userEntity);
+
+            return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.OK, "Usuario actualizo correctamente"), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            logger.error(e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, e.getMessage(), true), HttpStatus.BAD_REQUEST);
+        } catch (DataAccessException e) {
+            logger.error("Error al registrar el usuario: {}", e.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al acceder a la base de datos", true), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error al registrar el usuario: {}", e.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 
 
 
