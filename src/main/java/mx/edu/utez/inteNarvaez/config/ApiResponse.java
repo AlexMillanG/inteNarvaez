@@ -5,11 +5,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class ApiResponse {
 
     private Object data;

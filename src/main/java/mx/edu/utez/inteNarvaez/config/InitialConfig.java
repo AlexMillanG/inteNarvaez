@@ -61,6 +61,7 @@ public class InitialConfig {
 
             ChannelCategoryBean categoryBean = new ChannelCategoryBean();
             categoryBean.setName(name);
+            categoryBean.setStatus(true);
             channelCategoryRepository.save(categoryBean);
             System.err.println("categoria de canal "+  name +" creada");
         }

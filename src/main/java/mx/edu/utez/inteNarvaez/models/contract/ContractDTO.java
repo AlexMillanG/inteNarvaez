@@ -11,9 +11,6 @@ import jakarta.validation.constraints.*;
 public class ContractDTO {
 
 
-    @NotNull(message = "El monto no puede ser nulo.")
-    @Positive(message = "El monto debe ser mayor a 0")
-    private Double amount;
 
     @NotNull(message = "La dirección no puede ser nula.")
     @Positive(message = "El ID de dirección debe ser un ser mayor a 0")
