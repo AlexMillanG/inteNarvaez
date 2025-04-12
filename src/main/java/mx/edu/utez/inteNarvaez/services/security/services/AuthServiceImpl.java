@@ -76,9 +76,6 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public ResponseEntity<ApiResponse> register(UserDTO.RegisterDTO register) {
 
-        //  ApiResponse responseDTO = usersValidation.validate(register.getUser());
-        //   if (responseDTO.isError()) {return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);}
-
         try {
             UserEntity userEntity = register.getUser();
 
@@ -177,25 +174,7 @@ public class AuthServiceImpl implements IAuthService {
         }
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<ApiResponse> forwardPass(String password ,Long id) throws Exception {
-        try {
-            Optional<UserEntity> user = userRepository.findById(id);
-            if (user.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
-            }
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-            user.get().setPassword(encoder.encode(password));
-            user.get().setTemporalPassword(false);
-
-            userRepository.saveAndFlush(user.get());
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Actualizacion exitosa"), HttpStatus.OK);
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error : " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    private boolean verifyPassword(String enteredPassword, String storedPassword) {
+     private boolean verifyPassword(String enteredPassword, String storedPassword) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(enteredPassword, storedPassword);
     }

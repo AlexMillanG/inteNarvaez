@@ -27,6 +27,8 @@ public class UserServiceImpl implements IUserServiceImpl {
         password.append(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
         password.append(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
         password.append(SPECIAL.charAt(random.nextInt(SPECIAL.length())));
+        password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
+
 
         for (int i = 3; i < PASSWORD_LENGTH; i++) {
             password.append(ALL_CHARACTERS.charAt(random.nextInt(ALL_CHARACTERS.length())));
@@ -42,7 +44,6 @@ public class UserServiceImpl implements IUserServiceImpl {
         for (char c : passwordChars) {
             finalPassword.append(c);
         }
-
         return finalPassword.toString();
     }
 
