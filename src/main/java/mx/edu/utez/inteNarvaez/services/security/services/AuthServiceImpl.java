@@ -2,6 +2,7 @@ package mx.edu.utez.inteNarvaez.services.security.services;
 
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.controllers.auth.RegisterDTO;
 import mx.edu.utez.inteNarvaez.models.email.Emails;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
@@ -107,6 +108,44 @@ public class AuthServiceImpl implements IAuthService {
         }
     }
 
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ResponseEntity<ApiResponse> registerAgente(RegisterDTO register) {
+/*
+        try {
+            UserEntity userEntity = register.getUser();
+
+            Optional<UserEntity> existingUser = userRepository.findByEmail(userEntity.getEmail());
+            if (existingUser.isPresent()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uasurio ya esta registrado", true), HttpStatus.BAD_REQUEST);
+            }
+            Optional<RoleBean> role = roleRepository.findByName(register.getName());
+            if (role.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
+            }
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+            userEntity.setPassword(encoder.encode(userEntity.getPassword()));
+
+            UserEntity createdUser = userRepository.save(userEntity);
+            userRepository.insertRoles(createdUser.getId(), role.get().getId());
+
+
+            return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.CREATED, "Usuario creado correctamente"), HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            logger.error(e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, e.getMessage(), true), HttpStatus.BAD_REQUEST);
+        } catch (DataAccessException e) {
+            logger.error("Error al registrar el usuario: {}", e.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al acceder a la base de datos", true), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Error al registrar el usuario: {}", e.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+        }*/
+        return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> updateUser(UserDTO.RegisterDTO register) {
 
@@ -125,7 +164,6 @@ public class AuthServiceImpl implements IAuthService {
                 BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
                 updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
             } else {
-                // Mantenemos la contraseña anterior si no se envió una nueva
                 updatedUser.setPassword(existingUser.get().getPassword());
             }
 
@@ -171,6 +209,24 @@ public class AuthServiceImpl implements IAuthService {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al acceder a la base de datos", true), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse> forwardPass(String password ,Long id) throws Exception {
+        try {
+            Optional<UserEntity> user = userRepository.findById(id);
+            if (user.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
+            }
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+            user.get().setPassword(encoder.encode(password));
+            user.get().setTemporalPassword(false);
+
+            userRepository.saveAndFlush(user.get());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Actualizacion exitosa"), HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error : " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
