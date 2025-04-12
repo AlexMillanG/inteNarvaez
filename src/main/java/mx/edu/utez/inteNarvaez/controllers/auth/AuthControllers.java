@@ -1,6 +1,7 @@
 package mx.edu.utez.inteNarvaez.controllers.auth;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
 import mx.edu.utez.inteNarvaez.models.user.UserDTO;
@@ -8,6 +9,7 @@ import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import mx.edu.utez.inteNarvaez.services.security.repository.IAuthService;
 import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
+import mx.edu.utez.inteNarvaez.services.security.services.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,17 +21,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
-
+@AllArgsConstructor
 public class AuthControllers {
     private final IAuthService authService;
     private final RoleRepository repository;
     private final UserRepository userRepository;
+    private final UserServiceImpl userService;
 
-    public AuthControllers(IAuthService authService, RoleRepository repository, UserRepository userRepository) {
-        this.authService = authService;
-        this.repository = repository;
-        this.userRepository = userRepository;
-    }
+
     @PostMapping("/registerUser")
     private ResponseEntity<ApiResponse> registeUser(@RequestBody UserDTO.RegisterDTO user) throws Exception {
         user.setName("USER");
@@ -41,7 +40,7 @@ public class AuthControllers {
         user.setRole("USER");
         if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
 
-        return authService.registerAgente(user.toUserEntity());
+        return userService.registerAgente(user.toUserEntity());
     }
   
     @PostMapping("/register")
