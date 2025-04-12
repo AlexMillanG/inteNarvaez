@@ -1,5 +1,6 @@
 package mx.edu.utez.inteNarvaez.controllers.auth;
 
+import jakarta.validation.Valid;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
 import mx.edu.utez.inteNarvaez.models.user.UserDTO;
@@ -9,6 +10,7 @@ import mx.edu.utez.inteNarvaez.services.security.repository.IAuthService;
 import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -35,9 +37,11 @@ public class AuthControllers {
     }
 
     @PostMapping("/registerAgente")
-    private ResponseEntity<ApiResponse> registeUser(@RequestBody RegisterDTO user) throws Exception {
+    private ResponseEntity<ApiResponse> registeUser(@Valid @RequestBody RegisterDTO user,BindingResult result) throws Exception {
         user.setRole("USER");
-        return authService.registerAgente(user);
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
+
+        return authService.registerAgente(user.toUserEntity());
     }
   
     @PostMapping("/register")

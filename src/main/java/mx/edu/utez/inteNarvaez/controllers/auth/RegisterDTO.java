@@ -1,7 +1,7 @@
 package mx.edu.utez.inteNarvaez.controllers.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
@@ -12,6 +12,8 @@ import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Getter
@@ -43,12 +45,12 @@ public class RegisterDTO {
     @Pattern(regexp = "^[0-9]{10}$", message = "El número de teléfono debe contener 10 dígitos.")
     private String phone;
 
-    @NotBlank(message = "La fecha de nacimiento no puede estar vacía.")
+    @NotNull(message = "La fecha de nacimiento no puede estar vacía.")
     @Past(message = "La fecha de nacimiento debe ser una fecha pasada.")
     @MinimumAge(value = 18, message = "Debes tener al menos 18 años.")
     private Date birthdate;
 
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&._-])[A-Za-z\\d@$!%*?&._-]{8,}$",message = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&._#-])[A-Za-z\\d@$!%*?&._#-]{8,}$",message = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.")
     private String password;
 
     private String role;
@@ -65,7 +67,9 @@ public class RegisterDTO {
         user.setPassword(this.password);
         user.setStatus(true);
         user.setTemporalPassword(false);
-        user.setRoleBeans(null);
+        Set<RoleBean> roles = new HashSet<>();
+        roles.add(toRoleBean(role));
+        user.setRoleBeans(roles);
         user.setLastLogin(null);
         return user;
     }
@@ -75,6 +79,7 @@ public class RegisterDTO {
         roleBean.setName(role);
         return roleBean;
     }
+
 
 
 
