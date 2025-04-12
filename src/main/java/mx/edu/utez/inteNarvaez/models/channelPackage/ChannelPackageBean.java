@@ -71,4 +71,9 @@ public class ChannelPackageBean {
             this.uuid = UUID.randomUUID();
         }
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); // ✅ Solo usa campos inmutables o identificadores únicos
+    }
 }

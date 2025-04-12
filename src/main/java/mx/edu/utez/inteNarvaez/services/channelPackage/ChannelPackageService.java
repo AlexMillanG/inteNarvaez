@@ -75,8 +75,12 @@ public class ChannelPackageService {
     }
 
 
-    public ResponseEntity<ApiResponse> Update(ChannelPackageBean channelPackageBean) {
+    public ResponseEntity<ApiResponse> update(ChannelPackageBean channelPackageBean) {
         try {
+
+            for(ChannelBean channelBean : channelPackageBean.getChannels()){
+                System.err.println("id del paquete de canal "+ channelBean.getId());
+            }
 
             if (channelPackageBean.getId() == null){
                 return new ResponseEntity<>(new ApiResponse(channelPackageBean,HttpStatus.BAD_REQUEST,"error, el id es requerido,",true),HttpStatus.BAD_REQUEST);
@@ -142,6 +146,7 @@ public class ChannelPackageService {
 
 
         } catch (Exception e) {
+            e.printStackTrace(); // <-- imprime el error real en consola
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
