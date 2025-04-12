@@ -47,6 +47,12 @@ public class ContractController {
         return service.countActiveContracts();
     }
 
+    @GetMapping("/contracts/with-total")
+    public ResponseEntity<ApiResponse> getContractsWithTotal() {
+        return service.getContractsWithSalesPackage();
+    }
+
+
 
 
 

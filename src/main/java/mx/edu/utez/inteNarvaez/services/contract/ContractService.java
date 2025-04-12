@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -248,4 +249,33 @@ public class ContractService {
     }
 
 
+    public ResponseEntity<ApiResponse> getContractsWithSalesPackage(){
+        try {
+            return new ResponseEntity<>(new ApiResponse(getContractsWithOnlyTotal(),HttpStatus.OK,null,false),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"ocurrió un error inesperado al traer los contratos con su paquete de venta"),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    public List<ContractWithSalesPackagelDTO> getContractsWithOnlyTotal() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        return repository.findAll().stream()
+                .map(contract -> new ContractWithSalesPackagelDTO(
+                        contract.getId(),
+                        formatter.format(contract.getCreationDate()),
+                        contract.isStatus(),
+                        contract.getUuid(),
+                        contract.getAddress(),
+                        contract.getSalesPackageEntity().getTotalAmount()
+                ))
+                .collect(Collectors.toList());
+    }
+
 }
+
+
+
+
+
