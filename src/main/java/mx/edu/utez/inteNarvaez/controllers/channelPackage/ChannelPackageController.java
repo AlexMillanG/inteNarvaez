@@ -37,9 +37,8 @@ public class ChannelPackageController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse> update(@Valid @RequestBody ChannelPackageDTO dto, BindingResult result) {
+    public ResponseEntity<ApiResponse> update(@RequestBody ChannelPackageDTO dto) {
 
-        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
 
         return channelPackageService.Update(dto.toEntityUpdate());
     }
