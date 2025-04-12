@@ -3,13 +3,17 @@ package mx.edu.utez.inteNarvaez.controllers.auth;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
 import mx.edu.utez.inteNarvaez.models.user.UserDTO;
+import mx.edu.utez.inteNarvaez.models.user.UserEntity;
+import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import mx.edu.utez.inteNarvaez.services.security.repository.IAuthService;
 import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -17,10 +21,12 @@ import java.util.HashMap;
 public class AuthControllers {
     private final IAuthService authService;
     private final RoleRepository repository;
+    private final UserRepository userRepository;
 
-    public AuthControllers(IAuthService authService, RoleRepository repository) {
+    public AuthControllers(IAuthService authService, RoleRepository repository, UserRepository userRepository) {
         this.authService = authService;
         this.repository = repository;
+        this.userRepository = userRepository;
     }
     @PostMapping("/registerUser")
     private ResponseEntity<ApiResponse> registeUser(@RequestBody UserDTO.RegisterDTO user) throws Exception {
@@ -42,6 +48,11 @@ public class AuthControllers {
     private  ResponseEntity<HashMap<String,String>> login(@RequestBody LoginDTO loginRequest) throws Exception {
         HashMap<String,String> login = authService.login(loginRequest);
         if (login.containsKey("jwt")) {
+            Optional<UserEntity> foundUser = userRepository.findByEmail(loginRequest.getEmail());
+            UserEntity user = foundUser.get();
+            user.setLastLogin(new Date());
+            userRepository.save(user);  
+
             return new ResponseEntity<>(login,HttpStatus.OK);
 
         }else {

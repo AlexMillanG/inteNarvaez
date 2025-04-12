@@ -27,6 +27,7 @@ public class UserEntity {
     private String phone;
     @Temporal(TemporalType.DATE)
     private Date birthdate;
+    private Date lastLogin;
     private Boolean status;
     private String password;
     private boolean temporalPassword;
