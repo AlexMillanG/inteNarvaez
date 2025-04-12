@@ -2,6 +2,7 @@ package mx.edu.utez.inteNarvaez.services.security.services;
 
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
+import mx.edu.utez.inteNarvaez.controllers.auth.RegisterDTO;
 import mx.edu.utez.inteNarvaez.models.email.Emails;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
@@ -76,9 +77,6 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public ResponseEntity<ApiResponse> register(UserDTO.RegisterDTO register) {
 
-        //  ApiResponse responseDTO = usersValidation.validate(register.getUser());
-        //   if (responseDTO.isError()) {return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);}
-
         try {
             UserEntity userEntity = register.getUser();
 
@@ -110,43 +108,8 @@ public class AuthServiceImpl implements IAuthService {
         }
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<ApiResponse> updateUser(UserDTO.RegisterDTO register) {
 
-        try {
-            UserEntity updatedUser = register.getUser();
-            Optional<UserEntity> existingUser = userRepository.findById(updatedUser.getId());
-            if (existingUser.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
-            }
-            Optional<RoleBean> role = roleRepository.findByName(register.getName());
-            if (role.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
-            }
 
-            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-                updatedUser.setPassword(encoder.encode(updatedUser.getPassword()));
-            } else {
-                // Mantenemos la contraseña anterior si no se envió una nueva
-                updatedUser.setPassword(existingUser.get().getPassword());
-            }
-
-            updatedUser.setEmail(existingUser.get().getEmail()); // Si el email no se puede cambiar
-            UserEntity savedUser = userRepository.save(updatedUser);
-
-            userRepository.insertRoles(savedUser.getId(), role.get().getId());
-
-            return new ResponseEntity<>(new ApiResponse(savedUser, HttpStatus.OK, "Usuario actualizado correctamente"), HttpStatus.OK);
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, e.getMessage(), true), HttpStatus.BAD_REQUEST);
-        } catch (DataAccessException e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al acceder a la base de datos", true), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
 
     @Override
@@ -176,7 +139,6 @@ public class AuthServiceImpl implements IAuthService {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> forwardPass(String password ,Long id) throws Exception {
         try {
@@ -195,7 +157,8 @@ public class AuthServiceImpl implements IAuthService {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error : " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    private boolean verifyPassword(String enteredPassword, String storedPassword) {
+
+     private boolean verifyPassword(String enteredPassword, String storedPassword) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(enteredPassword, storedPassword);
     }
