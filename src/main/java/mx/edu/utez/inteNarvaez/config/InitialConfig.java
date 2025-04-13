@@ -8,11 +8,9 @@ import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryRepository;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
-import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.services.security.services.UserServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +41,6 @@ public class InitialConfig {
             roles(new RoleBean("USER", UUID.randomUUID()));
 
 
-            createUser("admin","admin","admin","ASDFGHJKLASDF","admin1@admin.com","1234567890","1234");
 
             createCategoryChannel("Infantil");
             createCategoryChannel("Deportes");
@@ -130,31 +127,6 @@ public class InitialConfig {
             }
         }
     }
-
-    private void createUser(String name, String lastname, String surname, String rfc, String email, String phone,String password){
-       Optional<UserEntity> foundAdmin = userRepository.findByEmail(email);
-        if (foundAdmin.isEmpty()){
-            UserEntity user = new UserEntity();
-            user.setFirstName(name);
-            user.setLastName(lastname);
-            user.setSurname(surname);
-            user.setRfc(rfc);
-            user.setEmail(email);
-            user.setPhone(phone);
-            user.setBirthdate(new Date());
-            user.setLastLogin(new Date());
-            user.setStatus(true);
-            user.setPassword(passwordEncoder.encode(password));
-            user.setTemporalPassword(false);
-
-
-            userRepository.save(user);
-            System.err.println("Usuario " + name + " creado");
-        } else {
-            System.err.println("El usuario ya existe");
-        }
-    }
-
 
 
 
