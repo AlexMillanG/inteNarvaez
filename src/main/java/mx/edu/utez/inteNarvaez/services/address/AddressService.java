@@ -90,6 +90,9 @@ public class AddressService {
     public ResponseEntity<ApiResponse> update(AddressBean addressBean) {
 
         try {
+            if (addressBean.getId() == null) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true), HttpStatus.BAD_REQUEST);
+            }
             Optional<AddressBean> foundAddress = addressRepository.findById(addressBean.getId());
 
             if (foundAddress.isEmpty()) {
@@ -123,6 +126,9 @@ public class AddressService {
     public ResponseEntity<ApiResponse> findByClientId(Long clientId) {
 
         try {
+            if (clientId == null) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "error, id no proporcionado"), HttpStatus.BAD_REQUEST);
+            }
             Optional<ClientBean> foundClient = clientRepository.findById(clientId);
 
             if (foundClient.isEmpty()) {
@@ -180,6 +186,9 @@ public class AddressService {
     @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse> findById(Long id) {
         try {
+            if (id == null) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "error, id no proporcionado"), HttpStatus.BAD_REQUEST);
+            }
             Optional<AddressBean> foundAddress = addressRepository.findById(id);
 
             if (foundAddress.isEmpty()) {

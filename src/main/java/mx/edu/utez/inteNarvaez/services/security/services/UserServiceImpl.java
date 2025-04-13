@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -87,9 +84,12 @@ public class UserServiceImpl implements IUserServiceImpl {
             if (role.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
             }
+
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
             userEntity.setPassword(encoder.encode(userEntity.getPassword()));
             UserEntity createdUser = userRepository.save(userEntity);
+
             userRepository.insertRoles(createdUser.getId(), role.get().getId());
 
 
@@ -110,6 +110,9 @@ public class UserServiceImpl implements IUserServiceImpl {
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> updateAgente(UserEntity userEntity) {
         try {
+            if (userEntity.getId() == null || userEntity.getId() <= 0 ) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nullo", true), HttpStatus.BAD_REQUEST);
+            }
             Optional<UserEntity> existingUser = userRepository.findById(userEntity.getId());
             if (existingUser.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
@@ -119,8 +122,12 @@ public class UserServiceImpl implements IUserServiceImpl {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
             }
 
+            userEntity.setStatus(existingUser.get().getStatus());
+            userEntity.setLastLogin(existingUser.get().getLastLogin());
             userEntity.setPassword(existingUser.get().getPassword());
-            UserEntity createdUser = userRepository.save(userEntity);
+            userEntity.setRoleBeans(existingUser.get().getRoleBeans());
+
+            UserEntity createdUser = userRepository.saveAndFlush(userEntity);
 
             return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.OK, "Usuario actualizo correctamente"), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -139,6 +146,10 @@ public class UserServiceImpl implements IUserServiceImpl {
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> deleteAgente(Long userId) {
         try {
+            if (userId == null || userId <= 0) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true), HttpStatus.BAD_REQUEST);
+            }
+
             Optional<UserEntity> existingUser = userRepository.findById(userId);
             if (existingUser.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);

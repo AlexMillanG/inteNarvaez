@@ -66,6 +66,9 @@ public class ChannelCategoryService {
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> updateCategoryChannel(ChannelCategoryBean categoryBean) {
         try {
+            if (categoryBean.getId() == null || categoryBean.getId() <= 0) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+            }
 
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(categoryBean.getId());
 
@@ -98,6 +101,9 @@ public class ChannelCategoryService {
     public ResponseEntity<ApiResponse> findOneCategoryChannel(Long id) {
 
         try {
+            if (id == null || id <= 0) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+            }
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(id);
 
             if (foundCategory.isEmpty()) {
@@ -120,6 +126,9 @@ public class ChannelCategoryService {
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByUuid(UUID uuid) {
         try {
+            if (uuid == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uuid no puede ser nulo", true));
+            }
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findByUuid(uuid);
 
             if (foundCategory.isEmpty()) {
@@ -142,6 +151,9 @@ public class ChannelCategoryService {
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> delete(Long id) {
         try {
+            if (id == null || id <= 0) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+            }
             Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findById(id);
 
             if (foundChannelCategory.isEmpty()) {

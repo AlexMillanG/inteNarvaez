@@ -20,16 +20,10 @@ public class LogoBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(columnDefinition = "LONGBLOB")
     private byte[] image;
-
     private String fileExtension;
-
     private UUID uuid;
-
-
-
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonBackReference

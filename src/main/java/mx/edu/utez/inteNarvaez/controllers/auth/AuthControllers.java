@@ -13,6 +13,7 @@ import mx.edu.utez.inteNarvaez.services.security.services.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -36,7 +37,7 @@ public class AuthControllers {
     }
 
     @PostMapping("/registerAgente")
-    private ResponseEntity<ApiResponse> registeUser(@Valid @RequestBody RegisterDTO user,BindingResult result) throws Exception {
+    private ResponseEntity<ApiResponse> registeUser(@Valid @Validated(OnCreate.class)@RequestBody RegisterDTO user, BindingResult result) throws Exception {
         user.setRole("USER");
         if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
 

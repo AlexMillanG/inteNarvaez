@@ -77,8 +77,8 @@ public class ChannelService {
     public ResponseEntity<ApiResponse> updateChannel(ChannelBean channelBean) {
 
         try {
-            if (channelBean.getId() == null) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id del canal no puede ser nulo", true));
+            if (channelBean.getId() == null || channelBean.getId() <= 0) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id del canal no puede ser nulo o menor a cero", true));
             }
 
             Optional<ChannelBean> foundChannel = channelRepository.findById(channelBean.getId());
@@ -122,6 +122,9 @@ public class ChannelService {
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByCategory(Long id) {
         try {
+            if (id == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id de la categoría no puede ser nulo", true));
+            }
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(id);
 
             if (foundCategory.isEmpty()) {
@@ -138,6 +141,9 @@ public class ChannelService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByNumber(Integer number) {
+        if (number == null || number <= 0) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El número del canal no puede ser nulo o menor a Cero", true));
+        }
         Optional<ChannelBean> foundChannel = channelRepository.findByNumberAndStatus(number, true);
         try {
 
@@ -161,6 +167,9 @@ public class ChannelService {
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByName(String name) {
         try {
+            if (name == null || name.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre del canal no puede ser nulo o vacío", true));
+            }
             Optional<ChannelBean> foundChannel = channelRepository.findByName(name);
 
             if (foundChannel.isEmpty()) {
@@ -182,6 +191,9 @@ public class ChannelService {
     public ResponseEntity<ApiResponse> findByUuid(UUID uuid) {
 
         try {
+            if (uuid == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uuid del canal no puede ser nulo", true));
+            }
             Optional<ChannelBean> foundChannel = channelRepository.findByUuid(uuid);
 
             if (foundChannel.isEmpty()) {
@@ -204,6 +216,7 @@ public class ChannelService {
     public ResponseEntity<ApiResponse> saveWithImage(ChannelDTO dto) throws IOException {
 
         try {
+
             ChannelBean channelBean = new ChannelBean();
             channelBean.setName(dto.getName());
             channelBean.setDescription(dto.getDescription());
@@ -265,6 +278,9 @@ public class ChannelService {
 
     public ResponseEntity<ApiResponse> updateWithImage(ChannelDTO dto) throws IOException {
         try {
+            if (dto.getId() == null || dto.getId() <= 0) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id del canal no puede ser nulo o menor a cero", true));
+            }
             Optional<ChannelBean> foundChannelOpt = channelRepository.findById(dto.getId());
             if (foundChannelOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(null, HttpStatus.NOT_FOUND, "El canal no existe", true));
@@ -337,6 +353,9 @@ public class ChannelService {
 
     public ResponseEntity<ApiResponse> delete(Long id) {
         try {
+            if (id == null || id <= 0) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo o menor a cero", true), HttpStatus.BAD_REQUEST);
+            }
             Optional<ChannelBean> foundChannel = channelRepository.findById(id);
 
             if (foundChannel.isEmpty()) {

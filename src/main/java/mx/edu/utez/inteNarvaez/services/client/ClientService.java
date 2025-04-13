@@ -82,6 +82,9 @@ public class ClientService {
     public ResponseEntity<ApiResponse> updateClient(ClientBean clientBean) {
 
         try {
+            if (clientBean.getId() == null || clientBean.getId() <= 0) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+            }
             Optional<ClientBean> foundClient = clientRepository.findById(clientBean.getId());
 
             if (foundClient.isEmpty()) {
@@ -117,7 +120,9 @@ public class ClientService {
     public ResponseEntity<ApiResponse> findByUUID(UUID uuid) {
 
         try {
-            System.err.println("en el servicio: "+uuid);
+            if (uuid == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uuid no puede ser nulo", true));
+            }
 
             Optional<ClientBean> foundClient = clientRepository.findByUuid(uuid.toString());
 
@@ -138,6 +143,9 @@ public class ClientService {
     public ResponseEntity<ApiResponse> delete (Long id){
     try {
 
+        if (id == null || id <= 0) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+        }
         Optional<ClientBean> foundClient = clientRepository.findById(id);
 
         if (foundClient.isEmpty()) {
