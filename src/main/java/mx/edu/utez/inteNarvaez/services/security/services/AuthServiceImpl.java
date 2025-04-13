@@ -2,7 +2,6 @@ package mx.edu.utez.inteNarvaez.services.security.services;
 
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
-import mx.edu.utez.inteNarvaez.controllers.auth.RegisterDTO;
 import mx.edu.utez.inteNarvaez.models.email.Emails;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
@@ -109,9 +108,6 @@ public class AuthServiceImpl implements IAuthService {
     }
 
 
-
-
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> forwardPassword(String email) throws Exception {
@@ -139,6 +135,7 @@ public class AuthServiceImpl implements IAuthService {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> forwardPass(String password ,Long id) throws Exception {
         try {

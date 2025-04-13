@@ -33,7 +33,7 @@ public class LogoBean {
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonBackReference
-    @JsonIgnore  // Evita que se serialice el canal de vuelta
+    @JsonIgnore
 
     @JoinColumn(name = "channel_id", referencedColumnName = "id")
     private ChannelBean channel;
@@ -41,6 +41,6 @@ public class LogoBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id); // Solo el ID
+        return Objects.hash(this.id);
     }
 }

@@ -57,7 +57,6 @@ public class SalePackageService {
             if (findObjc.isPresent()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.FOUND,"Ya existe un paquete con ese nombre",true), HttpStatus.FOUND);}
 
 
-
             Optional<ChannelPackageBean> findChannelPackage = channelPackageRepository.findChannelPackageBeanByNameAndStatus(dto.getChannel_package_name(),ChannelPackageStatus.DISPONIBLE);
             if (findChannelPackage.isEmpty()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El paquete de canales no fue encontrado",true), HttpStatus.NOT_FOUND);}
 

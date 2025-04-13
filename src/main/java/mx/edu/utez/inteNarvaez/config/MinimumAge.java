@@ -15,5 +15,5 @@ public @interface MinimumAge {
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 
-    int value(); // edad mínima
+    int value();
 }

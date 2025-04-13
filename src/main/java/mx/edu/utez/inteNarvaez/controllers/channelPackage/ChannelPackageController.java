@@ -1,6 +1,5 @@
 package mx.edu.utez.inteNarvaez.controllers.channelPackage;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.services.channelPackage.ChannelPackageService;
@@ -8,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 

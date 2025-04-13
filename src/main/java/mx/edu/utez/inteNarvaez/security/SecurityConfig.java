@@ -26,8 +26,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final IJWTUtilityService jwtUtilityService;
-    private final CustomUserDetailsService customUserDetailsService;
-    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

@@ -10,8 +10,6 @@ import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,7 +18,6 @@ import java.util.UUID;
 public class InitialConfig {
 
     private final ChannelCategoryRepository channelCategoryRepository;
-
     private final ChannelRepository channelRepository;
     private final RoleRepository roleRepository;
 
@@ -45,11 +42,8 @@ public class InitialConfig {
 
 
     private void createCategoryChannel(String name){
-
         Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findByName(name);
-
         if (foundChannelCategory.isEmpty()){
-
             ChannelCategoryBean categoryBean = new ChannelCategoryBean();
             categoryBean.setName(name);
             channelCategoryRepository.save(categoryBean);

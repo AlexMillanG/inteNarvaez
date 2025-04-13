@@ -33,6 +33,7 @@ public class ChannelPackageService {
     private final SalesPackageRepository salesPackageRepository;
 
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> save(ChannelPackageBean channelPackageBean) {
         try {
             Optional<ChannelPackageBean> foundPackageName = channelPackageRepository.findChannelPackageBeanByNameAndStatus(channelPackageBean.getName(),ChannelPackageStatus.DISPONIBLE);
@@ -74,6 +75,7 @@ public class ChannelPackageService {
         }
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> update(ChannelPackageBean channelPackageBean) {
         try {
 
@@ -128,7 +130,6 @@ public class ChannelPackageService {
             }
 
 
-            // Actualiza solo los campos permitidos
             channelPackageBean.setUuid(foundPackage.get().getUuid());
             existing.setName(channelPackageBean.getName());
             existing.setDescription(channelPackageBean.getDescription());
@@ -150,6 +151,7 @@ public class ChannelPackageService {
         }
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByUuid(UUID uuid){
 
         Optional<ChannelPackageBean> foundPackage = channelPackageRepository.findChannelPackageBeanByUuid(uuid);
@@ -161,6 +163,7 @@ public class ChannelPackageService {
         return new ResponseEntity<>(new ApiResponse(foundPackage.get(),HttpStatus.OK,null,false),HttpStatus.OK);
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAll() {
         try {
             List<ChannelPackageBean> disponibles = channelPackageRepository.findAllByStatus(ChannelPackageStatus.DISPONIBLE);
@@ -170,15 +173,19 @@ public class ChannelPackageService {
         }
     }
 
+
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse>FindAllDescontinuado(){
 
         return new ResponseEntity<>(new ApiResponse(channelPackageRepository.findAllByStatus(ChannelPackageStatus.DESCONTINUADO),HttpStatus.OK,null,false),HttpStatus.OK);
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse>findAllObsoleto(){
         return new ResponseEntity<>(new ApiResponse(channelPackageRepository.findAllByStatus(ChannelPackageStatus.OBSOLETO),HttpStatus.OK,null,false),HttpStatus.OK);
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> setDescontinuado(Long id){
         if (id == null){
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el id es requerido", true), HttpStatus.BAD_REQUEST);
@@ -198,6 +205,7 @@ public class ChannelPackageService {
 
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> setDisponile(Long id){
         if (id == null){
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el id es requerido", true), HttpStatus.BAD_REQUEST);
@@ -217,6 +225,7 @@ public class ChannelPackageService {
 
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> delete(Long id){
 
         if (id == null){
@@ -244,6 +253,7 @@ public class ChannelPackageService {
 
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> countDisponible(){
         try{
             return new ResponseEntity<>(new ApiResponse(channelPackageRepository.countByStatus(ChannelPackageStatus.DISPONIBLE),HttpStatus.OK,null,false),HttpStatus.OK);
@@ -253,6 +263,7 @@ public class ChannelPackageService {
         }
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> countDescontinuado(){
         try{
             return new ResponseEntity<>(new ApiResponse(channelPackageRepository.countByStatus(ChannelPackageStatus.DESCONTINUADO),HttpStatus.OK,null,false),HttpStatus.OK);
@@ -262,6 +273,7 @@ public class ChannelPackageService {
         }
     }
 
+    @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> countObsoleto(){
         try {
             return new ResponseEntity<>(new ApiResponse(channelPackageRepository.countByStatus(ChannelPackageStatus.OBSOLETO),HttpStatus.OK,null,false),HttpStatus.OK);

@@ -6,6 +6,8 @@ import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,107 +25,156 @@ public class ChannelCategoryService {
 
     private final ChannelCategoryRepository channelCategoryRepository;
     private final ChannelRepository channelRepository;
+    private static final Logger logger = LogManager.getLogger(ChannelCategoryService.class);
 
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> saveCategoryChannel(ChannelCategoryBean categoryBean) {
+        try {
 
-    public ResponseEntity<ApiResponse> saveCategoryChannel(ChannelCategoryBean categoryBean){
+            if (categoryBean.getName().equals("") || categoryBean.getName() == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la categoria no puede ser nulo", true));
+            }
 
-        if (categoryBean.getName().equals("") || categoryBean.getName() == null) {
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la categoria no puede ser nulo", true));
+            Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findByName(capitalize(categoryBean.getName()));
+
+            if (foundChannelCategory.isPresent())
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria ya existe", true));
+
+            categoryBean.setName(capitalize(categoryBean.getName().trim()));
+            categoryBean.setStatus(true);
+
+            return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.save(categoryBean), HttpStatus.OK, "Categoria creada correctamente", false));
+        } catch (Exception e) {
+            logger.error("Error al guardar la categoria: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al guardar la categoria", true));
         }
-
-        Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findByName(capitalize(categoryBean.getName()));
-
-        if(foundChannelCategory.isPresent())
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria ya existe", true));
-
-        categoryBean.setName(capitalize(categoryBean.getName().trim()));
-        categoryBean.setStatus(true);
-
-        return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.save(categoryBean), HttpStatus.OK, "Categoria creada correctamente", false));
     }
 
-    public ResponseEntity<ApiResponse> findAllCategoryChannel(){
-        return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.findByStatus(true), HttpStatus.OK, null, false));
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> findAllCategoryChannel() {
+        try {
+            return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.findByStatus(true), HttpStatus.OK, null, false));
+
+        } catch (Exception e) {
+            logger.error("Error al consultar los datos: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
+        }
     }
 
-    public ResponseEntity<ApiResponse> updateCategoryChannel(ChannelCategoryBean categoryBean){
-        Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(categoryBean.getId());
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> updateCategoryChannel(ChannelCategoryBean categoryBean) {
+        try {
+
+            Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(categoryBean.getId());
 
 
-        if (foundCategory.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+            if (foundCategory.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+            }
+
+            if (!foundCategory.get().getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, no puede actulizar una categoria eliminada", true), HttpStatus.CONFLICT);
+            }
+
+            if (categoryBean.getName().equals("") || categoryBean.getName() == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la categoria no puede ser nulo", true));
+            }
+
+            categoryBean.setStatus(foundCategory.get().getStatus());
+
+            categoryBean.setUuid(foundCategory.get().getUuid());
+            return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.save(categoryBean), HttpStatus.OK, "Categoria actualizada correctamente", false));
+        } catch (Exception e) {
+            logger.error("Error al consultar los datos: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
         }
 
-        if (!foundCategory.get().getStatus()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no puede actulizar una categoria eliminada",true), HttpStatus.CONFLICT);
-        }
-
-        if (categoryBean.getName().equals("") || categoryBean.getName() == null) {
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la categoria no puede ser nulo", true));
-        }
-
-        categoryBean.setStatus(foundCategory.get().getStatus());
-
-        categoryBean.setUuid(foundCategory.get().getUuid());
-        return ResponseEntity.ok(new ApiResponse(channelCategoryRepository.save(categoryBean), HttpStatus.OK, "Categoria actualizada correctamente", false));
     }
 
-    public ResponseEntity<ApiResponse> findOneCategoryChannel(Long id){
-        Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(id);
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> findOneCategoryChannel(Long id) {
 
-        if (foundCategory.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+        try {
+            Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(id);
+
+            if (foundCategory.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+            }
+
+            if (!foundCategory.get().getStatus()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria se ha eliminado", true));
+
+            }
+
+            return ResponseEntity.ok(new ApiResponse(foundCategory.get(), HttpStatus.OK, null, false));
+        } catch (Exception e) {
+            logger.error("Error al consultar los datos: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
         }
-
-        if (!foundCategory.get().getStatus()){
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria se ha eliminado", true));
-
-        }
-
-        return ResponseEntity.ok(new ApiResponse(foundCategory.get(), HttpStatus.OK, null, false));
     }
 
-    public ResponseEntity<ApiResponse> findByUuid(UUID uuid){
-        Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findByUuid(uuid);
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> findByUuid(UUID uuid) {
+        try {
+            Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findByUuid(uuid);
 
-        if (foundCategory.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+            if (foundCategory.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+            }
+
+            if (!foundCategory.get().getStatus()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria esta eliminada", true));
+            }
+
+            return ResponseEntity.ok(new ApiResponse(foundCategory.get(), HttpStatus.OK, null, false));
+        } catch (Exception e) {
+            logger.error("Error al consultar los datos: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
         }
 
-        if (!foundCategory.get().getStatus()) {
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria esta eliminada", true));
-        }
-
-        return ResponseEntity.ok(new ApiResponse(foundCategory.get(), HttpStatus.OK, null, false));
     }
 
-    public ResponseEntity<ApiResponse> delete (Long id){
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> delete(Long id) {
+        try {
+            Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findById(id);
 
-        Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findById(id);
+            if (foundChannelCategory.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+            }
 
-        if (foundChannelCategory.isEmpty()){
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+            if (!foundChannelCategory.get().getStatus()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria ya ha sido eliminada", true));
+            }
+
+            List<ChannelBean> foundChannels = channelRepository.findByCategoryAndStatus(foundChannelCategory.get(), true);
+
+            if (!foundChannels.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, no se puede eliminar esta catagoria, tiene canales activos relacionados", true), HttpStatus.CONFLICT);
+            }
+
+            ChannelCategoryBean c = foundChannelCategory.get();
+
+            c.setStatus(false);
+
+            channelCategoryRepository.saveAndFlush(c);
+
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "la categoría " + c.getName() + ", ha sido eliminada con éxito", false), HttpStatus.OK);
+
+
+        } catch (Exception e) {
+            logger.error("Error al consultar los datos: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
         }
 
-        if (!foundChannelCategory.get().getStatus()){
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria ya ha sido eliminada", true));
-        }
 
-        List<ChannelBean> foundChannels = channelRepository.findByCategoryAndStatus(foundChannelCategory.get(),true);
-
-        if (!foundChannels.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no se puede eliminar esta catagoria, tiene canales activos relacionados",true), HttpStatus.CONFLICT);
-        }
-
-        ChannelCategoryBean c = foundChannelCategory.get();
-
-        c.setStatus(false);
-
-        channelCategoryRepository.saveAndFlush(c);
-
-        return new ResponseEntity<>(new ApiResponse(null,HttpStatus.OK,"la categoría " + c.getName() +", ha sido eliminada con éxito",false),HttpStatus.OK);
     }
-
 
 
     public static String capitalize(String str) {

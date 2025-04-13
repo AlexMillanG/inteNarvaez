@@ -82,7 +82,7 @@ public class RegisterDTO {
         user.setRfc(this.rfc);
         user.setPhone(this.phone);
         user.setBirthdate(this.birthdate);
-        user.setPassword(this.password);
+        //user.setPassword(this.password);
         user.setStatus(true);
         user.setTemporalPassword(false);
         Set<RoleBean> roles = new HashSet<>();

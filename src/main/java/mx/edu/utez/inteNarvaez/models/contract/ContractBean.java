@@ -39,16 +39,6 @@ public class ContractBean {
     @JoinColumn(name = "sales_agent_id", nullable = false)
     private UserEntity salesAgent;
 
-    // Modifica el constructor para incluir el agente de ventas
-    public ContractBean(Date creationDate, UUID uuid,
-                        AddressBean address, SalesPackageEntity salesPackageEntity,
-                        UserEntity salesAgent) {
-        this.creationDate = creationDate;
-        this.uuid = uuid;
-        this.address = address;
-        this.salesPackageEntity = salesPackageEntity;
-        this.salesAgent = salesAgent;
-    }
 
 
     public ContractBean() {
