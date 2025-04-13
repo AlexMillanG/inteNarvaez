@@ -1,6 +1,7 @@
 package mx.edu.utez.inteNarvaez.config;
 
 import lombok.AllArgsConstructor;
+import mx.edu.utez.inteNarvaez.controllers.auth.RegisterDTO;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelBean;
 import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
@@ -8,7 +9,7 @@ import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryRepository;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
-import mx.edu.utez.inteNarvaez.models.user.UserRepository;
+import mx.edu.utez.inteNarvaez.services.security.services.UserServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,15 +17,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
+
 
 @AllArgsConstructor
 @Component
 public class InitialConfig {
 
     private final ChannelCategoryRepository channelCategoryRepository;
-    private final PasswordEncoder passwordEncoder;
-    private UserRepository userRepository;
+    private final UserServiceImpl userService;
+
     private final ChannelRepository channelRepository;
     private final RoleRepository roleRepository;
 
@@ -49,16 +54,45 @@ public class InitialConfig {
             createChannel("FOX", "nose, ya no lo veo",45435,"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Fox_Channel_logo.svg/2560px-Fox_Channel_logo.svg.png",3L);
 
 
+
+            RegisterDTO crateUserAdmin = new RegisterDTO();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date birthdate = sdf.parse("2000-01-16");
+            crateUserAdmin.setFirstName("Juan");
+            crateUserAdmin.setLastName("Perez");
+            crateUserAdmin.setSurname("Cardenas");
+            crateUserAdmin.setEmail("juanCardens@example.com");
+            crateUserAdmin.setRfc("JPCG950215H22");
+            crateUserAdmin.setPhone("7774236328");
+            crateUserAdmin.setBirthdate(birthdate);
+            crateUserAdmin.setRole("ADMIN");
+            crateUserAdmin.setPassword("Segura#2024");
+            userService.registerAgente(crateUserAdmin.toUserEntity());
+
+            RegisterDTO createUser = new RegisterDTO();
+            SimpleDateFormat sdff = new SimpleDateFormat("yyyy-MM-dd");
+            Date birthdateUser = sdff.parse("2004-01-16");
+            createUser.setFirstName("Valeria");
+            createUser.setLastName("Santos");
+            createUser.setSurname("Delgado");
+            createUser.setEmail("valeria.s.delgado@example.com");
+            createUser.setRfc("SADV910305MZ2");
+            createUser.setPhone("5567891234");
+            createUser.setBirthdate(birthdateUser);
+            createUser.setRole("USER");
+            createUser.setPassword("Valeria#2025");
+            userService.registerAgente(createUser.toUserEntity());
+
+
         };
+
+
     }
 
 
     private void createCategoryChannel(String name){
-
         Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findByName(name);
-
         if (foundChannelCategory.isEmpty()){
-
             ChannelCategoryBean categoryBean = new ChannelCategoryBean();
             categoryBean.setName(name);
             categoryBean.setStatus(true);
@@ -74,8 +108,6 @@ public class InitialConfig {
         if (foundRole.isEmpty()){
             roleRepository.save(role);
             System.err.println("Rol " + role.getName() + " creado correctamente");
-        } else {
-            System.err.println("Rol " + role.getName() + " ya existe");
         }
     }
 

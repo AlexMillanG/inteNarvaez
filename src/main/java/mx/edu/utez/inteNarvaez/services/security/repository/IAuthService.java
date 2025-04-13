@@ -13,7 +13,6 @@ public interface IAuthService {
 
     public HashMap<String,String> login(LoginDTO loginDTO) throws Exception;
     public ResponseEntity<ApiResponse> register(UserDTO.RegisterDTO user) throws Exception;
-    //public ResponseEntity<ApiResponse> registerAgente(UserEntity user) throws Exception;
     public ResponseEntity<ApiResponse> forwardPassword(String email) throws Exception;
 
     }

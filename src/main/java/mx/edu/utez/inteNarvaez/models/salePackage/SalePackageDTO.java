@@ -6,12 +6,15 @@ import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.constraints.*;
 
+
 import java.util.UUID;
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 public class SalePackageDTO {
+
+    private  Long id;
 
     @NotBlank(message = "El nombre no puede estar vacío.")
     @Pattern(regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s.]+$",message = "El nombre solo puede contener letras, números, puntos y espacios.")

@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -46,17 +43,14 @@ public class UserServiceImpl implements IUserServiceImpl {
         password.append(SPECIAL.charAt(random.nextInt(SPECIAL.length())));
         password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
 
-
         for (int i = 3; i < PASSWORD_LENGTH; i++) {
             password.append(ALL_CHARACTERS.charAt(random.nextInt(ALL_CHARACTERS.length())));
         }
-
         List<Character> passwordChars = new ArrayList<>();
         for (char c : password.toString().toCharArray()) {
             passwordChars.add(c);
         }
         Collections.shuffle(passwordChars);
-
         StringBuilder finalPassword = new StringBuilder();
         for (char c : passwordChars) {
             finalPassword.append(c);
@@ -82,7 +76,6 @@ public class UserServiceImpl implements IUserServiceImpl {
     public ResponseEntity<ApiResponse> registerAgente(UserEntity userEntity) {
 
         try {
-
             Optional<UserEntity> existingUser = userRepository.findByEmail(userEntity.getEmail());
             if (existingUser.isPresent()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uasurio ya esta registrado", true), HttpStatus.BAD_REQUEST);
@@ -91,9 +84,12 @@ public class UserServiceImpl implements IUserServiceImpl {
             if (role.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
             }
+
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
             userEntity.setPassword(encoder.encode(userEntity.getPassword()));
             UserEntity createdUser = userRepository.save(userEntity);
+
             userRepository.insertRoles(createdUser.getId(), role.get().getId());
 
 
@@ -110,9 +106,13 @@ public class UserServiceImpl implements IUserServiceImpl {
         }
 
     }
+
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> updateAgente(UserEntity userEntity) {
         try {
+            if (userEntity.getId() == null || userEntity.getId() <= 0 ) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nullo", true), HttpStatus.BAD_REQUEST);
+            }
             Optional<UserEntity> existingUser = userRepository.findById(userEntity.getId());
             if (existingUser.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
@@ -121,9 +121,13 @@ public class UserServiceImpl implements IUserServiceImpl {
             if (role.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
             }
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-            userEntity.setPassword(encoder.encode(userEntity.getPassword()));
-            UserEntity createdUser = userRepository.save(userEntity);
+
+            userEntity.setStatus(existingUser.get().getStatus());
+            userEntity.setLastLogin(existingUser.get().getLastLogin());
+            userEntity.setPassword(existingUser.get().getPassword());
+            userEntity.setRoleBeans(existingUser.get().getRoleBeans());
+
+            UserEntity createdUser = userRepository.saveAndFlush(userEntity);
 
             return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.OK, "Usuario actualizo correctamente"), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -138,6 +142,30 @@ public class UserServiceImpl implements IUserServiceImpl {
         }
 
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse> deleteAgente(Long userId) {
+        try {
+            if (userId == null || userId <= 0) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true), HttpStatus.BAD_REQUEST);
+            }
+
+            Optional<UserEntity> existingUser = userRepository.findById(userId);
+            if (existingUser.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
+            }
+            existingUser.get().setStatus(false);
+            userRepository.saveAndFlush(existingUser.get());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Usuario desabilitado correctamente"), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            logger.error(e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, e.getMessage(), true), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.error(e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR,"Algo salio mal"+ e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
 

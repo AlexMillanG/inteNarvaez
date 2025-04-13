@@ -20,20 +20,14 @@ public class LogoBean {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(columnDefinition = "LONGBLOB")
     private byte[] image;
-
     private String fileExtension;
-
     private UUID uuid;
-
-
-
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonBackReference
-    @JsonIgnore  // Evita que se serialice el canal de vuelta
+    @JsonIgnore
 
     @JoinColumn(name = "channel_id", referencedColumnName = "id")
     private ChannelBean channel;
@@ -41,6 +35,6 @@ public class LogoBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id); // Solo el ID
+        return Objects.hash(this.id);
     }
 }

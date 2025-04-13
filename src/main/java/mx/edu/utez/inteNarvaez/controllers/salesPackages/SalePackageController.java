@@ -23,8 +23,13 @@ public class SalePackageController {
 
     @PostMapping("/save") public ResponseEntity<ApiResponse> save(@Valid @RequestBody SalePackageDTO dto , BindingResult result){
         if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
-
         return  service.save(dto);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<ApiResponse> update(@Valid @RequestBody SalePackageDTO dto , BindingResult result){
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
+        return service.update(dto);
     }
 
     @DeleteMapping("/delete/{id}")

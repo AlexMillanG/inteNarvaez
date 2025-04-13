@@ -6,7 +6,6 @@ import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import mx.edu.utez.inteNarvaez.models.address.AddressRepository;
 import mx.edu.utez.inteNarvaez.models.client.ClientBean;
 import mx.edu.utez.inteNarvaez.models.client.ClientRepository;
-import mx.edu.utez.inteNarvaez.models.client.ClientValidation;
 import mx.edu.utez.inteNarvaez.services.contract.ContractService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,11 +47,7 @@ public class ClientService {
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> saveClient(ClientBean clientBean) {
-        ApiResponse validationResponse = ClientValidation.validate(clientBean);
 
-        if (validationResponse.isError()) {
-            return new ResponseEntity<>(validationResponse, HttpStatus.BAD_REQUEST);
-        }
 
         try {
             Optional<ClientBean> foundRfc = clientRepository.findByRfc(clientBean.getRfc());
@@ -85,13 +80,11 @@ public class ClientService {
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> updateClient(ClientBean clientBean) {
-        ApiResponse validationResponse = ClientValidation.validate(clientBean);
 
-        if (validationResponse.isError()) {
-            logger.warn("Error en el fromato de datos ");
-            return new ResponseEntity<>(validationResponse, HttpStatus.BAD_REQUEST);
-        }
         try {
+            if (clientBean.getId() == null || clientBean.getId() <= 0) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+            }
             Optional<ClientBean> foundClient = clientRepository.findById(clientBean.getId());
 
             if (foundClient.isEmpty()) {
@@ -104,7 +97,6 @@ public class ClientService {
             if (foundEmail.isPresent() && !foundEmail.get().getId().equals(clientBean.getId())) {
                 return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya hay un usuario registrado con el correo: " + clientBean.getEmail(), true));
             }
-
 
             clientBean.setId(foundClient.get().getId());
             clientBean.setUuid(foundClient.get().getUuid());
@@ -126,20 +118,34 @@ public class ClientService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByUUID(UUID uuid) {
-        System.err.println("en el servicio: "+uuid);
 
-        Optional<ClientBean> foundClient = clientRepository.findByUuid(uuid.toString());
+        try {
+            if (uuid == null) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uuid no puede ser nulo", true));
+            }
 
-        if (foundClient.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true));
+            Optional<ClientBean> foundClient = clientRepository.findByUuid(uuid.toString());
+
+            if (foundClient.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true));
+            }
+
+            return ResponseEntity.ok(new ApiResponse(foundClient.get(), HttpStatus.OK, null, false));
+        }catch (Exception e) {
+            logger.error("Error al consultar los datos: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
         }
 
-        return ResponseEntity.ok(new ApiResponse(foundClient.get(), HttpStatus.OK, null, false));
     }
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> delete (Long id){
+    try {
 
+        if (id == null || id <= 0) {
+            return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+        }
         Optional<ClientBean> foundClient = clientRepository.findById(id);
 
         if (foundClient.isEmpty()) {
@@ -159,6 +165,11 @@ public class ClientService {
         clientRepository.saveAndFlush(clientBean);
 
         return ResponseEntity.ok(new ApiResponse(clientBean, HttpStatus.OK, "Cliente eliminado correctamente", false));
+    }catch (Exception e) {
+        logger.error("Error al eliminar el cliente: ", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al eliminar el cliente", true));
+    }
     }
 
     @Transactional(rollbackFor = SQLException.class)

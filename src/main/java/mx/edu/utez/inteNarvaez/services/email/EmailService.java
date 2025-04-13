@@ -4,7 +4,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
-import mx.edu.utez.inteNarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.inteNarvaez.models.channelPackage.ChannelPackageBean;
 import mx.edu.utez.inteNarvaez.models.email.Emails;
 import org.apache.logging.log4j.LogManager;
@@ -17,10 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.List;
 
 
@@ -70,29 +65,7 @@ public  class EmailService  {
     public ResponseEntity<ApiResponse> UpdatePackageEmail(List<String> destinatarios , ChannelPackageBean packageBean) throws MessagingException {
         try {
             Context context = new Context();
-
-            // Ruta de la imagen por defecto
-            String defaultImagePath = "src/main/resources/image/default.jpg";
-            var ref = new Object() {
-                String defaultImageBase64 = "";
-            };
-
-            // Convertir la imagen a Base64
-            try {
-                byte[] imageBytes = Files.readAllBytes(Paths.get(defaultImagePath));
-                ref.defaultImageBase64 = Base64.getEncoder().encodeToString(imageBytes);
-            } catch (Exception e) {
-                logger.error("Error al leer la imagen por defecto: " + e.getMessage());
-            }
-
-         /*   // Asignar imagen por defecto a los canales con logo null
-            packageBean.getChannels().forEach(channel -> {
-                if (channel.getLogoBean() == null) {
-                    channel.getLogoBean("data:image/jpeg;base64,");
-                }
-            });*/
-
-            context.setVariable("channels", packageBean.getChannels());
+               context.setVariable("channels", packageBean.getChannels());
 
             String htmlContent = templateEngine.process("updatePackage", context);
             MimeMessage message = javaMailSender.createMimeMessage();

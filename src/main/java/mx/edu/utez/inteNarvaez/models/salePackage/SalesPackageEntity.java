@@ -35,10 +35,6 @@ public class SalesPackageEntity {
     private ChannelPackageBean channelPackage;
 
 
-
-
-
-
     @OneToMany(mappedBy = "salesPackageEntity")
     @JsonIgnore
     private Set<ContractBean> contracts = new HashSet<>();
@@ -49,11 +45,4 @@ public class SalesPackageEntity {
         }
     }
 
-    public SalesPackageEntity(String name, Double totalAmount, UUID uuid, ChannelPackageBean channelPackage,String speed) {
-        this.name = name;
-        this.totalAmount = totalAmount;
-        this.uuid = uuid;
-        this.channelPackage = channelPackage;
-        this.speed = speed;
-    }
 }

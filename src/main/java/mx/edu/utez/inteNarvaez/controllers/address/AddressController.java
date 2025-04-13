@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
 import mx.edu.utez.inteNarvaez.controllers.address.dto.AddressDTO;
 import mx.edu.utez.inteNarvaez.services.address.AddressService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
@@ -23,10 +22,8 @@ public class AddressController {
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> save(@Valid @RequestBody AddressDTO dto, BindingResult result) {
         if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
-
         return addressService.save(dto);
     }
-
 
     @GetMapping("/")
     public ResponseEntity<ApiResponse> findAll() {
@@ -51,7 +48,6 @@ public class AddressController {
     @PutMapping("/update")
     public ResponseEntity<ApiResponse> update(@Valid @RequestBody AddressDTO dto, BindingResult result) {
         if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
-
         return addressService.update(dto.toEntity());
     }
 

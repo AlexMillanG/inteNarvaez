@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -39,172 +40,169 @@ public class AddressService {
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> save(AddressDTO dto) {
+        try {
+            AddressBean addressBean = dto.toEntity();
 
-        AddressBean addressBean = dto.toEntity();
+            Optional<ClientBean> foundClient = clientRepository.findById(addressBean.getClient().getId());
 
-        if (addressBean.getName().equals("") || addressBean.getName() == null) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la dirección no puede ser nulo o vacío", true), HttpStatus.BAD_REQUEST);
+            if (foundClient.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);
+            }
+
+            if (!foundClient.get().getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, no se puede asignar una dirección a un cliente eliminado", true), HttpStatus.CONFLICT);
+            }
+
+            addressBean.setUuid(UUID.randomUUID().toString());
+            addressBean.setStatus(true);
+            return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean), HttpStatus.OK, "dirección guardada correctamente", false), HttpStatus.OK);
+
+        } catch (Exception e) {
+            logger.error("Error al guardar la dirección: ", e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (addressBean.getStreet().equals("") || addressBean.getStreet() == null) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La calle no puede ser nula o vacía", true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (addressBean.getState().equals("") || addressBean.getState() == null) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El estado no puede ser nulo o vacío", true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (addressBean.getZipCode() == null) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El código postal no puede ser nulo", true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (addressBean.getNumber() == null) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El número no puede ser nulo", true), HttpStatus.BAD_REQUEST);
-        }
-
-        Optional<ClientBean> foundClient = clientRepository.findById(addressBean.getClient().getId());
-
-        if (foundClient.isEmpty()) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (!foundClient.get().getStatus()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no se puede asignar una dirección a un cliente eliminado",true), HttpStatus.CONFLICT);
-        }
-
-        addressBean.setUuid(UUID.randomUUID().toString());
-        addressBean.setStatus(true);
-
-        return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean), HttpStatus.OK, "dirección guardada correctamente", false), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> findByUuid(UUID uuid){
-        Optional<AddressBean> foundAddress = addressRepository.findByUuid(uuid.toString());
+    public ResponseEntity<ApiResponse> findByUuid(UUID uuid) {
 
-        if (foundAddress.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"La dirección no existe",true), HttpStatus.NOT_FOUND);
+        try {
+            Optional<AddressBean> foundAddress = addressRepository.findByUuid(uuid.toString());
+
+            if (foundAddress.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "La dirección no existe", true), HttpStatus.NOT_FOUND);
+            }
+
+            if (foundAddress.get().getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, esta dirección ha sido eliminada", true), HttpStatus.CONFLICT);
+            }
+
+            return new ResponseEntity<>(new ApiResponse(foundAddress.get(), HttpStatus.OK, null, false), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error de direccion: ", e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (foundAddress.get().getStatus()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, esta dirección ha sido eliminada",true), HttpStatus.CONFLICT);
-        }
-
-        return new ResponseEntity<>(new ApiResponse(foundAddress.get(),HttpStatus.OK,null,false), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> update(AddressBean addressBean){
-        Optional<AddressBean> foundAddress = addressRepository.findById(addressBean.getId());
+    public ResponseEntity<ApiResponse> update(AddressBean addressBean) {
 
+        try {
+            if (addressBean.getId() == null) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true), HttpStatus.BAD_REQUEST);
+            }
+            Optional<AddressBean> foundAddress = addressRepository.findById(addressBean.getId());
 
-        if (foundAddress.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"La dirección no existe",true), HttpStatus.NOT_FOUND);
+            if (foundAddress.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "La dirección no existe", true), HttpStatus.NOT_FOUND);
+            }
+            if (!foundAddress.get().getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, no puede actulizar una dirección eliminada", true), HttpStatus.CONFLICT);
+
+            }
+            addressBean.setUuid(foundAddress.get().getUuid());
+
+            Optional<ClientBean> foundClient = clientRepository.findById(addressBean.getClient().getId());
+
+            if (foundClient.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);
+            }
+
+            if (!foundClient.get().getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, no se puede asignar una dirección a un cliente eliminado", true), HttpStatus.CONFLICT);
+            }
+
+            addressBean.setUuid(foundAddress.get().getUuid());
+            return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean), HttpStatus.OK, "Dirección actualizada correctamente", false), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error al actualizar la dirección: ", e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        if (!foundAddress.get().getStatus()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no puede actulizar una dirección eliminada",true), HttpStatus.CONFLICT);
-
-        }
-
-        addressBean.setUuid(foundAddress.get().getUuid());
-
-        if (addressBean.getCity().equals("") || addressBean.getCity() == null){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"La ciudad no puede ser nula o vacía",true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (addressBean.getName().equals("") || addressBean.getName() == null){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El nombre de la dirección no puede ser nulo o vacío",true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (addressBean.getStreet().equals("") || addressBean.getStreet() == null){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"La calle no puede ser nula o vacía",true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (addressBean.getState().equals("") || addressBean.getState() == null){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El estado no puede ser nulo o vacío",true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (addressBean.getZipCode() == null){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El código postal no puede ser nulo",true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (addressBean.getNumber() == null){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El número no puede ser nulo",true), HttpStatus.BAD_REQUEST);
-        }
-
-        Optional<ClientBean> foundClient = clientRepository.findById(addressBean.getClient().getId());
-
-        if (foundClient.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.BAD_REQUEST,"El cliente no existe",true), HttpStatus.BAD_REQUEST);
-        }
-
-        if (!foundClient.get().getStatus()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no se puede asignar una dirección a un cliente eliminado",true), HttpStatus.CONFLICT);
-        }
-
-
-        addressBean.setUuid(foundAddress.get().getUuid());
-
-        return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean),HttpStatus.OK,"Dirección actualizada correctamente",false), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> findByClientId(Long clientId){
-        Optional<ClientBean> foundClient = clientRepository.findById(clientId);
+    public ResponseEntity<ApiResponse> findByClientId(Long clientId) {
 
-        if (foundClient.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El cliente no existe",true), HttpStatus.NOT_FOUND);
+        try {
+            if (clientId == null) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "error, id no proporcionado"), HttpStatus.BAD_REQUEST);
+            }
+            Optional<ClientBean> foundClient = clientRepository.findById(clientId);
+
+            if (foundClient.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El cliente no existe", true), HttpStatus.NOT_FOUND);
+            }
+
+            if (!foundClient.get().getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, el cliente ha sido eliminado", true), HttpStatus.CONFLICT);
+            }
+
+            if (addressRepository.findByStatusAndClient(true, foundClient.get()).isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El cliente no tiene direcciones", true), HttpStatus.NOT_FOUND);
+            }
+
+            return new ResponseEntity<>(new ApiResponse(addressRepository.findByStatusAndClient(true, foundClient.get()), HttpStatus.OK, null, false), HttpStatus.OK);
+
+
+        } catch (Exception e) {
+            logger.error("Error al buscar direcciones por ID de cliente: ", e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (!foundClient.get().getStatus()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, el cliente ha sido eliminado",true), HttpStatus.CONFLICT);
-        }
-
-        if (addressRepository.findByStatusAndClient(true,foundClient.get()).isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El cliente no tiene direcciones",true), HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(new ApiResponse(addressRepository.findByStatusAndClient(true,foundClient.get()),HttpStatus.OK,null,false), HttpStatus.OK);
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> deleteAddress(Long id){
-        if (id == null){
-            return new ResponseEntity<>(new ApiResponse(null,null,"error, id no proporcionado"),HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse> deleteAddress(Long id) {
+        try {
+            if (id == null) {
+                return new ResponseEntity<>(new ApiResponse(null, null, "error, id no proporcionado"), HttpStatus.BAD_REQUEST);
+            }
+
+            Optional<AddressBean> foundAddress = addressRepository.findById(id);
+            if (foundAddress.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "error, id no proporcionado", true), HttpStatus.NOT_FOUND);
+            }
+
+            List<ContractBean> foundContracts = contractRepository.findByAddress(foundAddress.get());
+
+            if (!foundContracts.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, no se puede eliminar una dirección con contratos", true), HttpStatus.CONFLICT);
+            }
+
+            AddressBean addressBean = foundAddress.get();
+            addressBean.setStatus(false);
+
+            return new ResponseEntity<>(new ApiResponse(addressRepository.saveAndFlush(addressBean), HttpStatus.OK, "dirección eliminada con exito", false), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error al eliminar la dirección: ", e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        Optional<AddressBean> foundAddress = addressRepository.findById(id);
-        if (foundAddress.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"error, id no proporcionado",true),HttpStatus.NOT_FOUND);
-        }
 
-
-        List<ContractBean> foundContracts = contractRepository.findByAddress(foundAddress.get());
-
-        if (!foundContracts.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"ERROR, no se puede eliminar una dirección con contratos",true), HttpStatus.CONFLICT);
-        }
-
-
-        AddressBean addressBean = foundAddress.get();
-        addressBean.setStatus(false);
-
-        return new ResponseEntity<>(new ApiResponse(addressRepository.saveAndFlush(addressBean),HttpStatus.OK,"dirección eliminada con exito",false),HttpStatus.OK);
     }
 
-    public ResponseEntity<ApiResponse> findById(Long id){
-        Optional<AddressBean> foundAddress = addressRepository.findById(id);
+    @Transactional(readOnly = true)
+    public ResponseEntity<ApiResponse> findById(Long id) {
+        try {
+            if (id == null) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "error, id no proporcionado"), HttpStatus.BAD_REQUEST);
+            }
+            Optional<AddressBean> foundAddress = addressRepository.findById(id);
 
-        if (foundAddress.isEmpty()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"no se encotró la dirección"),HttpStatus.NOT_FOUND);
+            if (foundAddress.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "no se encotró la dirección"), HttpStatus.NOT_FOUND);
+            }
+
+            if (foundAddress.get().getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "esta dirección esta eliminada"), HttpStatus.CONFLICT);
+            }
+
+            return new ResponseEntity<>(new ApiResponse(foundAddress.get(), HttpStatus.OK, null, false), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error el la busqueda: ", e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        if (foundAddress.get().getStatus()){
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.CONFLICT,"esta dirección esta eliminada"),HttpStatus.CONFLICT);
-        }
-
-        return new ResponseEntity<>(new ApiResponse(foundAddress.get(),HttpStatus.OK,null,false),HttpStatus.OK);
-
     }
 }

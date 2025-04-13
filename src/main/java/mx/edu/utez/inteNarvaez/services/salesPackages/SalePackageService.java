@@ -47,6 +47,7 @@ public class SalePackageService {
             );
         }
     }
+
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> save(SalePackageDTO dto){
 
@@ -55,7 +56,6 @@ public class SalePackageService {
             Optional<SalesPackageEntity> findObjc = repository.findByName(dto.getName());
 
             if (findObjc.isPresent()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.FOUND,"Ya existe un paquete con ese nombre",true), HttpStatus.FOUND);}
-
 
 
             Optional<ChannelPackageBean> findChannelPackage = channelPackageRepository.findChannelPackageBeanByNameAndStatus(dto.getChannel_package_name(),ChannelPackageStatus.DISPONIBLE);
@@ -84,6 +84,48 @@ public class SalePackageService {
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"Algo salio mal"+ex,true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse> update(SalePackageDTO dto) {
+        try {
+            if (dto.getId() == null || dto.getId() <= 0 ) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nullo", true), HttpStatus.BAD_REQUEST);
+            }
+
+            Optional<SalesPackageEntity> findObjc = repository.findById(dto.getId());
+            if (findObjc.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "No se encontró el paquete de ventas", true), HttpStatus.NOT_FOUND);
+            }
+
+            Optional<ChannelPackageBean> findChannelPackage = channelPackageRepository.findChannelPackageBeanByNameAndStatus(dto.getChannel_package_name(), ChannelPackageStatus.DISPONIBLE);
+            if (findChannelPackage.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El paquete de canales no fue encontrado", true), HttpStatus.NOT_FOUND);
+            }
+
+
+            SalesPackageEntity salesPackage = findObjc.get();
+            if (!findObjc.get().getName().equals(dto.getName())) {
+
+                Optional<SalesPackageEntity> findSales = repository.findByName(dto.getName());
+                if (findSales.isPresent()) {
+                    return new ResponseEntity<>(new ApiResponse(null, HttpStatus.FOUND, "Ya existe otro paquete de ventas con ese nombre", true), HttpStatus.FOUND);
+                }
+                salesPackage.setName(dto.getName());
+            }else {
+                salesPackage.setName(findObjc.get().getName());
+            }
+
+            salesPackage.setTotalAmount(dto.getTotalAmount());
+            salesPackage.setSpeed(dto.getSpeed());
+            salesPackage.setChannelPackage(findChannelPackage.get());
+
+            SalesPackageEntity obj = repository.saveAndFlush(salesPackage);
+            return new ResponseEntity<>(new ApiResponse(obj, HttpStatus.OK, "Paquete actualizado exitosamente", false), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error al actualizar el paquete de ventas", e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salió mal", true), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
