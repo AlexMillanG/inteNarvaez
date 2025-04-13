@@ -69,17 +69,17 @@ public class ChannelPackageController {
     }
 
 
-    @GetMapping("/countAvailable")
+    @GetMapping("/AvailableCount/")
     public ResponseEntity<ApiResponse> countAvailable(){
         return channelPackageService.countDisponible();
     }
 
-    @GetMapping("/countObsolete")
+    @GetMapping("/ObsoleteCount/")
     public ResponseEntity<ApiResponse> countObsolete(){
         return channelPackageService.countObsoleto();
     }
 
-    @GetMapping("/countDiscontinued")
+    @GetMapping("/DiscontinuedCount/")
     public ResponseEntity<ApiResponse> countDiscontinued(){
         return channelPackageService.countDescontinuado();
     }

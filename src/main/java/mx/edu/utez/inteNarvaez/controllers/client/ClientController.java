@@ -34,7 +34,6 @@ public class ClientController {
 
         return clientService.updateClient(dto.toEntityUpdate());
     }
-
     @GetMapping("/uuid/{uuid}")
     public ResponseEntity<ApiResponse> findOneClient(@PathVariable UUID uuid){
         return clientService.findByUUID(uuid);
@@ -43,5 +42,10 @@ public class ClientController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> deleteClient(@PathVariable Long id){
         return clientService.delete(id);
+    }
+
+    @GetMapping("/clientCount/")
+    public ResponseEntity<ApiResponse> clientCount(){
+        return clientService.clientCount();
     }
 }
