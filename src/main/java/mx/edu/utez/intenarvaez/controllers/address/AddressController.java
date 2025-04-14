@@ -34,7 +34,7 @@ public class AddressController {
     }
 
     @GetMapping("/find-by-client/{clientId}")
-    public ResponseEntity<ApiResponse> findByClient(@PathVariable Long clientId) {
+    public ResponseEntity<ApiResponse> findByClient(@PathVariable("clientId") Long clientId) {
         return addressService.findByClientId(clientId);
     }
 

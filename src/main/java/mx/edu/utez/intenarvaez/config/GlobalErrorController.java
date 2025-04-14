@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 
 @RestControllerAdvice
 public class GlobalErrorController {
+/*
+
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ApiResponse> handleNotFound404(NoHandlerFoundException ex) {
@@ -87,6 +89,7 @@ public class GlobalErrorController {
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
+*/
 
 
 }
