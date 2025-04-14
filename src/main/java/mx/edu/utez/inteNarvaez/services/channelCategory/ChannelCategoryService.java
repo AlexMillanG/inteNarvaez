@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Transactional(rollbackFor = SQLException.class)
@@ -124,7 +123,7 @@ public class ChannelCategoryService {
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> findByUuid(UUID uuid) {
+    public ResponseEntity<ApiResponse> findByUuid(String uuid) {
         try {
             if (uuid == null) {
                 return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El uuid no puede ser nulo", true));
@@ -187,7 +186,6 @@ public class ChannelCategoryService {
 
 
     }
-
 
     public static String capitalize(String str) {
         if (str == null || str.isEmpty()) {

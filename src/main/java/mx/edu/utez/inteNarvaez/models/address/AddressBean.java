@@ -61,14 +61,5 @@ public class AddressBean {
         }
     }
 
-    public AddressBean(String name, String street, String number, String city, String state, Integer zipCode, UUID uuid, ClientBean client) {
-        this.name = name;
-        this.street = street;
-        this.number = number;
-        this.city = city;
-        this.state = state;
-        this.zipCode = zipCode;
-        this.uuid = uuid.toString();
-        this.client = client;
-    }
+
 }

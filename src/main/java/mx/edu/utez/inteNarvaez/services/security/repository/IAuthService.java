@@ -1,10 +1,8 @@
 package mx.edu.utez.inteNarvaez.services.security.repository;
 
 import mx.edu.utez.inteNarvaez.config.ApiResponse;
-import mx.edu.utez.inteNarvaez.controllers.auth.RegisterDTO;
 import mx.edu.utez.inteNarvaez.models.user.UserDTO;
-import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
-import mx.edu.utez.inteNarvaez.models.user.UserEntity;
+import mx.edu.utez.inteNarvaez.models.Auth.LoginDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;

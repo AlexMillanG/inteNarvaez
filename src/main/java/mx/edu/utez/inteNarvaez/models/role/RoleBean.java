@@ -8,7 +8,6 @@ import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -24,7 +23,7 @@ public class RoleBean {
     @Column(length = 10, unique = true)
     private String name;
     @Column(length = 36, unique = true)
-    private UUID uuid;
+    private String uuid;
 
     @ManyToMany()
     @JoinTable(
@@ -35,7 +34,7 @@ public class RoleBean {
     @JsonIgnore
     private Set<UserEntity> userEntities = new HashSet<>();
 
-    public RoleBean( String name, UUID uuid) {
+    public RoleBean( String name, String uuid) {
         this.name = name;
         this.uuid = uuid;
     }

@@ -27,8 +27,8 @@ public class ChannelBean {
     private Integer number;
     @Column(nullable = false)
     private Boolean status = true;
-    @Column(length = 36, unique = true)
-    private UUID uuid;
+    @Column(unique = true)
+    private String uuid;
 
     
 
@@ -49,14 +49,14 @@ public class ChannelBean {
 
     public ChannelBean() {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = UUID.randomUUID().toString();
         }
     }
 
     @PrePersist
     protected void onCreate() {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = UUID.randomUUID().toString();
         }
     }
 

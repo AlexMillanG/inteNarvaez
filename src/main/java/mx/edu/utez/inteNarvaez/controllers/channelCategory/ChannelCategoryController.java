@@ -43,7 +43,7 @@ public class ChannelCategoryController {
     }
 
     @GetMapping("findByUuid/{uuid}")
-    public ResponseEntity<ApiResponse> findByUuid(@PathVariable UUID uuid){
+    public ResponseEntity<ApiResponse> findByUuid(@PathVariable String uuid){
         return channelCategoryService.findByUuid(uuid);
     }
 

@@ -26,6 +26,12 @@ public class ContractController {
         return service.saveContract(dto);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<ApiResponse> UpdateContract(@Valid @RequestBody ContractDTO dto , BindingResult result) {
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
+        return service.updateContract(dto);
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> deleteContract(@PathVariable Long id) {
         return service.delete(id);

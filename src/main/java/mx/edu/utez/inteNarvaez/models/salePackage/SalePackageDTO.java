@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.constraints.*;
 
-
-import java.util.UUID;
 @Data
 @Getter
 @Setter
@@ -24,7 +22,7 @@ public class SalePackageDTO {
     @PositiveOrZero(message = "El monto total debe ser mayor o igual a 0.")
     private Double totalAmount;
 
-    private UUID uuid;
+    private String uuid;
 
     @NotBlank(message = "La velocidad no puede estar vacía.")
     @Pattern(regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s]+$",message = "La velocidad solo puede contener letras, números y espacios.")

@@ -1,7 +1,6 @@
 package mx.edu.utez.inteNarvaez.models.contract;
 
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
-import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,12 +9,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface ContractRepository extends JpaRepository<ContractBean,Long> {
 
-    Optional<ContractBean> findAllByUuid(UUID uuid);
+    Optional<ContractBean> findAllByUuid(String uuid);
 
     List<ContractBean> findByAddress(AddressBean addressBean);
 

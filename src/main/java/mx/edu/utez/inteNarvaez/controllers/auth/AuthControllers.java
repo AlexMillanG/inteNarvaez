@@ -12,7 +12,7 @@ import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 import mx.edu.utez.inteNarvaez.models.user.UserRepository;
 import mx.edu.utez.inteNarvaez.services.BitacoraAcceso.BitacoraAccesoService;
 import mx.edu.utez.inteNarvaez.services.security.repository.IAuthService;
-import mx.edu.utez.inteNarvaez.models.dtos.LoginDTO;
+import mx.edu.utez.inteNarvaez.models.Auth.LoginDTO;
 import mx.edu.utez.inteNarvaez.services.security.services.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

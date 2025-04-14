@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -65,10 +64,10 @@ public class AddressService {
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> findByUuid(UUID uuid) {
+    public ResponseEntity<ApiResponse> findByUuid(String uuid) {
 
         try {
-            Optional<AddressBean> foundAddress = addressRepository.findByUuid(uuid.toString());
+            Optional<AddressBean> foundAddress = addressRepository.findByUuid(uuid);
 
             if (foundAddress.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "La dirección no existe", true), HttpStatus.NOT_FOUND);

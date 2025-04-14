@@ -24,7 +24,7 @@ public class ContractBean {
     @Column(nullable = false)
     private boolean status;
     @Column(length = 36, unique = true)
-    private UUID uuid;
+    private String uuid;
 
     @ManyToOne
     @JoinColumn(name = "address_id", nullable = false)
@@ -43,14 +43,14 @@ public class ContractBean {
 
     public ContractBean() {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = UUID.randomUUID().toString();
         }
     }
 
     @PrePersist
     protected void onCreate() {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = UUID.randomUUID().toString();
         }
     }
 }

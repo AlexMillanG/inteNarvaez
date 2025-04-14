@@ -23,7 +23,7 @@ public class ChannelCategoryBean {
     private String name;
 
     @Column(length = 36, unique = true)
-    private UUID uuid;
+    private String uuid;
 
     private Boolean status;
 
@@ -35,14 +35,14 @@ public class ChannelCategoryBean {
 
     public ChannelCategoryBean() {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = UUID.randomUUID().toString();
         }
     }
 
     @PrePersist
     protected void onCreate() {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = UUID.randomUUID().toString();
         }
     }
 }

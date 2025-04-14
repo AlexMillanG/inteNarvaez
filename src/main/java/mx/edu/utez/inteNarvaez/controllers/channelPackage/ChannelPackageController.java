@@ -23,7 +23,7 @@ public class ChannelPackageController {
     }
 
     @GetMapping("/findByUuid/{uuid}")
-    public ResponseEntity<ApiResponse> findByUuid(@PathVariable UUID uuid){
+    public ResponseEntity<ApiResponse> findByUuid(@PathVariable String uuid){
         return channelPackageService.findByUuid(uuid);
     }
 

@@ -26,7 +26,7 @@ public class ChannelDTO {
     @Pattern(regexp = "^[0-9]+$", message = "El campo solo puede contener números.")
     private Integer number;
 
-    private UUID uuid;
+    private String uuid;
 
     @NotNull(message = "El ID de categoría no puede ser nulo.")
     private Long categoryId;

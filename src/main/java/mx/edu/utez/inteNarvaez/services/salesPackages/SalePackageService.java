@@ -57,7 +57,6 @@ public class SalePackageService {
 
             if (findObjc.isPresent()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.FOUND,"Ya existe un paquete con ese nombre",true), HttpStatus.FOUND);}
 
-
             Optional<ChannelPackageBean> findChannelPackage = channelPackageRepository.findChannelPackageBeanByNameAndStatus(dto.getChannel_package_name(),ChannelPackageStatus.DISPONIBLE);
             if (findChannelPackage.isEmpty()){return new ResponseEntity<>(new ApiResponse(null,HttpStatus.NOT_FOUND,"El paquete de canales no fue encontrado",true), HttpStatus.NOT_FOUND);}
 
@@ -66,13 +65,12 @@ public class SalePackageService {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.FORBIDDEN, "El paquete de canales no está disponible", true), HttpStatus.FORBIDDEN);
             }
 
-
             SalesPackageEntity salesPackage = new SalesPackageEntity();
 
             salesPackage.setStatus(true);
             salesPackage.setName(dto.getName());
             salesPackage.setTotalAmount(dto.getTotalAmount());
-            salesPackage.setUuid(UUID.randomUUID());
+            salesPackage.setUuid(UUID.randomUUID().toString());
             salesPackage.setChannelPackage(findChannelPackage.get());
             salesPackage.setSpeed(dto.getSpeed());
 

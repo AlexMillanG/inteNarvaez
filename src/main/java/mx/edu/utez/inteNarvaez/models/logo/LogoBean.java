@@ -23,7 +23,7 @@ public class LogoBean {
     @Column(columnDefinition = "LONGBLOB")
     private byte[] image;
     private String fileExtension;
-    private UUID uuid;
+    private String uuid;
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonBackReference

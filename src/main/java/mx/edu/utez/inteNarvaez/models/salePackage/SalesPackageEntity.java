@@ -25,7 +25,7 @@ public class SalesPackageEntity {
     @Column(nullable = false)
     private boolean status;
     @Column(length = 36, unique = true)
-    private UUID uuid;
+    private String uuid;
 
     private String speed;
 
@@ -41,7 +41,7 @@ public class SalesPackageEntity {
 
     public SalesPackageEntity() {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = UUID.randomUUID().toString();
         }
     }
 

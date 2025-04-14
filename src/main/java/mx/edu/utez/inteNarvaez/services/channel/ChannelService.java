@@ -9,7 +9,6 @@ import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryRepository;
 import mx.edu.utez.inteNarvaez.models.logo.LogoBean;
 import mx.edu.utez.inteNarvaez.models.logo.LogoRepository;
-import mx.edu.utez.inteNarvaez.services.contract.ContractService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -37,36 +36,6 @@ public class ChannelService {
 
     private static final Logger logger = LogManager.getLogger(ChannelService.class);
 
-    @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> saveChannel(ChannelBean channelBean) {
-
-        try {
-
-
-            Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(channelBean.getCategory().getId());
-            if (foundCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoría del canal no existe", true));
-            }
-            Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(channelBean.getNumber(), true);
-
-            if (foundNumber.isPresent()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el número " + channelBean.getNumber(), true));
-            }
-            Optional<ChannelBean> foundName = channelRepository.findByName(capitalize(channelBean.getName()));
-            if (foundName.isPresent()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el nombre " + channelBean.getName(), true));
-            }
-            channelBean.setName(capitalize(channelBean.getName()));
-            channelBean.setStatus(true);
-            return ResponseEntity.ok(new ApiResponse(channelRepository.save(channelBean), HttpStatus.OK, "Canal guardado correctamente", false));
-
-        } catch (Exception e) {
-
-            logger.error("Error al guardar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al guardar el canal", true));
-        }
-
-    }
 
     @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse> findAllChannel() {
@@ -188,7 +157,7 @@ public class ChannelService {
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> findByUuid(UUID uuid) {
+    public ResponseEntity<ApiResponse> findByUuid(String uuid) {
 
         try {
             if (uuid == null) {
@@ -221,7 +190,7 @@ public class ChannelService {
             channelBean.setName(dto.getName());
             channelBean.setDescription(dto.getDescription());
             channelBean.setNumber(dto.getNumber());
-            channelBean.setUuid(UUID.randomUUID());
+            channelBean.setUuid(UUID.randomUUID().toString());
 
             ChannelCategoryBean channelCategoryBean = new ChannelCategoryBean();
             channelCategoryBean.setId(dto.getCategoryId());

@@ -37,8 +37,8 @@ public class InitialConfig {
     public CommandLineRunner initData() {
         return args -> {
 
-            roles(new RoleBean("ADMIN", UUID.randomUUID()));
-            roles(new RoleBean("USER", UUID.randomUUID()));
+            roles(new RoleBean("ADMIN", UUID.randomUUID().toString()));
+            roles(new RoleBean("USER", UUID.randomUUID().toString()));
 
 
 

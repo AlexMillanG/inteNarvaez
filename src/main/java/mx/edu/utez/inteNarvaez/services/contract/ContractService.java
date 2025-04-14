@@ -101,7 +101,7 @@ public class ContractService {
             contract.setCreationDate(new Date());
             contract.setStatus(true);
             contract.setAddress(findAddress.get());
-            contract.setUuid(UUID.randomUUID());
+            contract.setUuid(UUID.randomUUID().toString());
             contract.setSalesPackageEntity(findSalepackage.get());
             contract.setSalesAgent(foundUser.get());
 

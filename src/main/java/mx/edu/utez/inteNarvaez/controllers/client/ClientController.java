@@ -35,7 +35,7 @@ public class ClientController {
         return clientService.updateClient(dto.toEntityUpdate());
     }
     @GetMapping("/uuid/{uuid}")
-    public ResponseEntity<ApiResponse> findOneClient(@PathVariable UUID uuid){
+    public ResponseEntity<ApiResponse> findOneClient(@PathVariable String uuid){
         return clientService.findByUUID(uuid);
     }
 

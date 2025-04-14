@@ -15,9 +15,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ContractWithSalesPackagelDTO {
     private Long id;
-    private String creationDate; // cambio aquí
+    private String creationDate;
     private boolean status;
-    private UUID uuid;
+    private String uuid;
     private AddressBean address;
 
     private Double totalAmount;

@@ -31,7 +31,7 @@ public class AddressController {
     }
 
     @GetMapping("/uuid/{uuid}")
-    public ResponseEntity<ApiResponse>findByUuid(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse>findByUuid(@PathVariable String uuid) {
         return addressService.findByUuid(uuid);
     }
 

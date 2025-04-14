@@ -24,7 +24,7 @@ public class ChannelPackageBean {
     @Enumerated(EnumType.STRING)
     private ChannelPackageStatus status;
     @Column(length = 36, unique = true)
-    private UUID uuid;
+    private String uuid;
 
 
     @OneToMany(mappedBy = "channelPackage")
@@ -55,12 +55,6 @@ public class ChannelPackageBean {
         this.channels = channels;
     }
 
-    public ChannelPackageBean(Long id, String name, String description, Double amount, Set<ChannelBean> channels) {
-        if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
-        }
-    }
-
     public ChannelPackageBean() {
 
     }
@@ -68,12 +62,12 @@ public class ChannelPackageBean {
     @PrePersist
     protected void onCreate() {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = UUID.randomUUID().toString();
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id); // ✅ Solo usa campos inmutables o identificadores únicos
+        return Objects.hash(id);
     }
 }

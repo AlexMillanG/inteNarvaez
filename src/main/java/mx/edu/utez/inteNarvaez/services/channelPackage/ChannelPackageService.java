@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 
 @Service
 @Transactional(rollbackFor = SQLException.class)
@@ -156,7 +156,7 @@ public class ChannelPackageService {
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> findByUuid(UUID uuid) {
+    public ResponseEntity<ApiResponse> findByUuid(String uuid) {
         try {
             if (uuid == null) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "error, el uuid es requerido", true), HttpStatus.BAD_REQUEST);

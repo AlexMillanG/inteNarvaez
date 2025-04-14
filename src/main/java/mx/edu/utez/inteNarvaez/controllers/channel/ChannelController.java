@@ -45,7 +45,7 @@ public class ChannelController {
     }
 
     @GetMapping("/uuid/{uuid}")
-    public ResponseEntity<ApiResponse> findOneChannel(@PathVariable UUID uuid){
+    public ResponseEntity<ApiResponse> findOneChannel(@PathVariable String uuid){
         return channelService.findByUuid(uuid);
     }
 
@@ -65,7 +65,7 @@ public class ChannelController {
     }
 
     @GetMapping("/findByUuid/{uuid}")
-    public ResponseEntity<ApiResponse> findByUuid(@PathVariable UUID uuid){
+    public ResponseEntity<ApiResponse> findByUuid(@PathVariable String uuid){
         return channelService.findByUuid(uuid);
     }
 

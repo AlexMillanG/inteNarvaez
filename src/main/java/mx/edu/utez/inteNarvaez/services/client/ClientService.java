@@ -117,7 +117,7 @@ public class ClientService {
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> findByUUID(UUID uuid) {
+    public ResponseEntity<ApiResponse> findByUUID(String uuid) {
 
         try {
             if (uuid == null) {

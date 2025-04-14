@@ -1,4 +1,4 @@
-package mx.edu.utez.inteNarvaez.models.dtos;
+package mx.edu.utez.inteNarvaez.models.Auth;
 
 
 import lombok.AllArgsConstructor;

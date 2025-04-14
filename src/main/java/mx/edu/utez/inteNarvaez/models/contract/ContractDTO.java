@@ -11,7 +11,6 @@ import jakarta.validation.constraints.*;
 public class ContractDTO {
 
 
-
     @NotNull(message = "La dirección no puede ser nula.")
     @Positive(message = "El ID de dirección debe ser un ser mayor a 0")
     private Long address;
