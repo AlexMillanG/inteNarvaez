@@ -6,7 +6,6 @@ import mx.edu.utez.intenarvaez.models.address.AddressBean;
 import mx.edu.utez.intenarvaez.models.address.AddressRepository;
 import mx.edu.utez.intenarvaez.models.client.ClientBean;
 import mx.edu.utez.intenarvaez.models.client.ClientRepository;
-import mx.edu.utez.intenarvaez.services.contract.ContractService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
