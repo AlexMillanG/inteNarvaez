@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class InteNarvaezApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(InteNarvaezApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(InteNarvaezApplication.class, args);
+    }
 
 }
