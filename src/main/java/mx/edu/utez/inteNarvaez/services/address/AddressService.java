@@ -26,12 +26,14 @@ import java.util.UUID;
 @Transactional(rollbackFor = SQLException.class)
 @AllArgsConstructor
 public class AddressService {
+    private  final String noClientExistingMessage ="el cliente no existe";
+    private final String noGaveId ="error, id no proporcionado";
 
     private final AddressRepository addressRepository;
     private final ClientRepository clientRepository;
     private final ContractRepository contractRepository;
 
-    private static final Logger logger = LogManager.getLogger(ContractService.class);
+    private static final Logger logger = LogManager.getLogger(AddressService.class);
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAll() {
@@ -46,7 +48,7 @@ public class AddressService {
             Optional<ClientBean> foundClient = clientRepository.findById(addressBean.getClient().getId());
 
             if (foundClient.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, noClientExistingMessage, true), HttpStatus.BAD_REQUEST);
             }
 
             if (!foundClient.get().getStatus()) {
@@ -107,7 +109,7 @@ public class AddressService {
             Optional<ClientBean> foundClient = clientRepository.findById(addressBean.getClient().getId());
 
             if (foundClient.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, noClientExistingMessage, true), HttpStatus.BAD_REQUEST);
             }
 
             if (!foundClient.get().getStatus()) {
@@ -127,12 +129,12 @@ public class AddressService {
 
         try {
             if (clientId == null) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "error, id no proporcionado"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, noGaveId), HttpStatus.BAD_REQUEST);
             }
             Optional<ClientBean> foundClient = clientRepository.findById(clientId);
 
             if (foundClient.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El cliente no existe", true), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, noClientExistingMessage, true), HttpStatus.NOT_FOUND);
             }
 
             if (!foundClient.get().getStatus()) {
@@ -157,12 +159,12 @@ public class AddressService {
     public ResponseEntity<ApiResponse> deleteAddress(Long id) {
         try {
             if (id == null) {
-                return new ResponseEntity<>(new ApiResponse(null, null, "error, id no proporcionado"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(null, null, noGaveId), HttpStatus.BAD_REQUEST);
             }
 
             Optional<AddressBean> foundAddress = addressRepository.findById(id);
             if (foundAddress.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "error, id no proporcionado", true), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, noGaveId, true), HttpStatus.NOT_FOUND);
             }
 
             List<ContractBean> foundContracts = contractRepository.findByAddress(foundAddress.get());
@@ -187,7 +189,7 @@ public class AddressService {
     public ResponseEntity<ApiResponse> findById(Long id) {
         try {
             if (id == null) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "error, id no proporcionado"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, noGaveId), HttpStatus.BAD_REQUEST);
             }
             Optional<AddressBean> foundAddress = addressRepository.findById(id);
 

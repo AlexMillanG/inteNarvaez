@@ -23,6 +23,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ChannelCategoryService {
 
+    private final String serverErrorMessage = "Ocurrió un error al solicitar la información";
+    private final String nullIdMessage = "El id no puede ser nulo";
+    private final String notExistingCategoryMessage = "La categoría no existe";
+    
     private final ChannelCategoryRepository channelCategoryRepository;
     private final ChannelRepository channelRepository;
     private static final Logger logger = LogManager.getLogger(ChannelCategoryService.class);
@@ -59,7 +63,7 @@ public class ChannelCategoryService {
         } catch (Exception e) {
             logger.error("Error al consultar los datos: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, serverErrorMessage, true));
         }
     }
 
@@ -67,14 +71,14 @@ public class ChannelCategoryService {
     public ResponseEntity<ApiResponse> updateCategoryChannel(ChannelCategoryBean categoryBean) {
         try {
             if (categoryBean.getId() == null || categoryBean.getId() <= 0) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, nullIdMessage, true));
             }
 
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(categoryBean.getId());
 
 
             if (foundCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, notExistingCategoryMessage, true));
             }
 
             if (!foundCategory.get().getStatus()) {
@@ -92,7 +96,7 @@ public class ChannelCategoryService {
         } catch (Exception e) {
             logger.error("Error al consultar los datos: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, serverErrorMessage, true));
         }
 
     }
@@ -102,12 +106,12 @@ public class ChannelCategoryService {
 
         try {
             if (id == null || id <= 0) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, nullIdMessage, true));
             }
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(id);
 
             if (foundCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, notExistingCategoryMessage, true));
             }
 
             if (!foundCategory.get().getStatus()) {
@@ -119,7 +123,7 @@ public class ChannelCategoryService {
         } catch (Exception e) {
             logger.error("Error al consultar los datos: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, serverErrorMessage, true));
         }
     }
 
@@ -132,7 +136,7 @@ public class ChannelCategoryService {
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findByUuid(uuid);
 
             if (foundCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, notExistingCategoryMessage, true));
             }
 
             if (!foundCategory.get().getStatus()) {
@@ -143,7 +147,7 @@ public class ChannelCategoryService {
         } catch (Exception e) {
             logger.error("Error al consultar los datos: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, serverErrorMessage, true));
         }
 
     }
@@ -152,12 +156,12 @@ public class ChannelCategoryService {
     public ResponseEntity<ApiResponse> delete(Long id) {
         try {
             if (id == null || id <= 0) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, nullIdMessage, true));
             }
             Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findById(id);
 
             if (foundChannelCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoria no existe", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, notExistingCategoryMessage, true));
             }
 
             if (!foundChannelCategory.get().getStatus()) {
@@ -182,7 +186,7 @@ public class ChannelCategoryService {
         } catch (Exception e) {
             logger.error("Error al consultar los datos: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al solicitar la información", true));
+                    .body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, serverErrorMessage, true));
         }
 
 

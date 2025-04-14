@@ -24,6 +24,9 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class SalePackageService {
+
+    private final String serverErrorMessage = "algo salió mal";
+
     private final SalesPackageRepository repository;
     private final ChannelPackageRepository channelPackageRepository;
     private static final Logger logger = LogManager.getLogger(SalePackageService.class);
@@ -42,7 +45,7 @@ public class SalePackageService {
         } catch (Exception e) {
             logger.error("Error al obtener paquetes de ventas", e);
             return new ResponseEntity<>(
-                    new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salió mal", true),
+                    new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, serverErrorMessage, true),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -124,7 +127,7 @@ public class SalePackageService {
             return new ResponseEntity<>(new ApiResponse(obj, HttpStatus.OK, "Paquete actualizado exitosamente", false), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error al actualizar el paquete de ventas", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salió mal", true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, serverErrorMessage, true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -148,7 +151,7 @@ public class SalePackageService {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Paquete eliminado exitosamente", false), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error al eliminar el paquete de ventas", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salió mal", true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, serverErrorMessage, true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -29,12 +29,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChannelPackageService {
 
+    private final String notFoundPackage ="Error: no se encontró el paquete que intentas eliminar";
+    private final String generalErrorMessage = "algo salio mal ";
+    private final String requiredIdMessage = "Error, el id es requerido";
+
     private final ChannelPackageRepository channelPackageRepository;
     private final ChannelRepository channelRepository;
     private final EmailService emailService;
     private final ContractRepository contractRepository;
     private final SalesPackageRepository salesPackageRepository;
-    private static final Logger logger = LogManager.getLogger(ChannelCategoryService.class);
+    private static final Logger logger = LogManager.getLogger(ChannelPackageService.class);
 
 
     @Transactional(rollbackFor = SQLException.class)
@@ -83,12 +87,9 @@ public class ChannelPackageService {
     public ResponseEntity<ApiResponse> update(ChannelPackageBean channelPackageBean) {
         try {
 
-            for (ChannelBean channelBean : channelPackageBean.getChannels()) {
-                System.err.println("id del paquete de canal " + channelBean.getId());
-            }
 
             if (channelPackageBean.getId() == null) {
-                return new ResponseEntity<>(new ApiResponse(channelPackageBean, HttpStatus.BAD_REQUEST, "error, el id es requerido,", true), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(channelPackageBean, HttpStatus.BAD_REQUEST, "error, el id es requerido", true), HttpStatus.BAD_REQUEST);
             }
 
             Optional<ChannelPackageBean> foundPackage = channelPackageRepository.findById(channelPackageBean.getId());
@@ -169,7 +170,7 @@ public class ChannelPackageService {
 
             return new ResponseEntity<>(new ApiResponse(foundPackage.get(), HttpStatus.OK, null, false), HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("algo salio mal ", e);
+            logger.error(generalErrorMessage, e);
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al obtener el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -205,13 +206,13 @@ public class ChannelPackageService {
         try {
 
             if (id == null) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el id es requerido", true), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, requiredIdMessage, true), HttpStatus.BAD_REQUEST);
             }
 
             Optional<ChannelPackageBean> foundChannelPackage = channelPackageRepository.findById(id);
 
             if (foundChannelPackage.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: no se encontró el paquete que intentas eliminar", true), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, notFoundPackage, true), HttpStatus.NOT_FOUND);
             }
 
             ChannelPackageBean channelPackageBean = foundChannelPackage.get();
@@ -221,8 +222,8 @@ public class ChannelPackageService {
             return new ResponseEntity<>(new ApiResponse(channelPackageRepository.save(channelPackageBean), HttpStatus.OK, "Se actualizó el paquete de canales a descontinuado", false), HttpStatus.OK);
 
         } catch (Exception e) {
-            logger.error("algo salio mal ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error(generalErrorMessage, e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el estado de el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -232,13 +233,13 @@ public class ChannelPackageService {
 
 
             if (id == null) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el id es requerido", true), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, requiredIdMessage, true), HttpStatus.BAD_REQUEST);
             }
 
             Optional<ChannelPackageBean> foundChannelPackage = channelPackageRepository.findById(id);
 
             if (foundChannelPackage.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: no se encontró el paquete que intentas eliminar", true), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, notFoundPackage, true), HttpStatus.NOT_FOUND);
             }
 
             ChannelPackageBean channelPackageBean = foundChannelPackage.get();
@@ -248,8 +249,8 @@ public class ChannelPackageService {
             return new ResponseEntity<>(new ApiResponse(channelPackageRepository.save(channelPackageBean), HttpStatus.OK, "Se actualizó el paquete de canales a disponible", false), HttpStatus.OK);
 
         } catch (Exception e) {
-            logger.error("algo salio mal ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error(generalErrorMessage, e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al activar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -258,14 +259,14 @@ public class ChannelPackageService {
 
         try {
             if (id == null) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el id es requerido", true), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, requiredIdMessage, true), HttpStatus.BAD_REQUEST);
             }
 
             Optional<ChannelPackageBean> foundChannelPackage = channelPackageRepository.findById(id);
 
 
             if (foundChannelPackage.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: no se encontró el paquete que intentas eliminar", true), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, notFoundPackage, true), HttpStatus.NOT_FOUND);
             }
 
             ChannelPackageBean channelPackageBean = foundChannelPackage.get();
@@ -281,7 +282,7 @@ public class ChannelPackageService {
             return new ResponseEntity<>(new ApiResponse(channelPackageRepository.save(channelPackageBean), HttpStatus.OK, "Se elimino este paquete con éxito", false), HttpStatus.OK);
 
         } catch (Exception e) {
-            logger.error("algo salio mal ", e);
+            logger.error(generalErrorMessage, e);
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al eliminar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

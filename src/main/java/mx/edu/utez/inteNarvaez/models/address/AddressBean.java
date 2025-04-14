@@ -55,20 +55,4 @@ public class AddressBean {
     @JsonIgnore
     private Set<ContractBean> contracts = new HashSet<>();
 
-    public AddressBean(String name, String street, String number, String city, String state, Integer zipCode, Long uuid) {
-        if (this.uuid == null) {
-            this.uuid = UUID.randomUUID().toString();
-        }
-    }
-
-    public AddressBean(String name, String street, String number, String city, String state, Integer zipCode, UUID uuid, ClientBean client) {
-        this.name = name;
-        this.street = street;
-        this.number = number;
-        this.city = city;
-        this.state = state;
-        this.zipCode = zipCode;
-        this.uuid = uuid.toString();
-        this.client = client;
-    }
 }

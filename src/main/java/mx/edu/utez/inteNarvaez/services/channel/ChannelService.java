@@ -28,6 +28,15 @@ import static mx.edu.utez.inteNarvaez.services.channelCategory.ChannelCategorySe
 @Transactional(rollbackFor = SQLException.class)
 @AllArgsConstructor
 public class ChannelService {
+    private final String saveImageError = "error al guardar el canal";
+
+    private final String deletedChannelMessage = "El canal ha sido eliminado";
+
+    private final String queryErrorMessage ="ocurrió un error al consultar el canal";
+
+    private final String existingNumberChannel ="ya existe un canal con el número: ";
+
+    private final String noExistingCategory ="la categoría del canal no existe";
 
     private final ChannelRepository channelRepository;
 
@@ -37,36 +46,7 @@ public class ChannelService {
 
     private static final Logger logger = LogManager.getLogger(ChannelService.class);
 
-    @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> saveChannel(ChannelBean channelBean) {
 
-        try {
-
-
-            Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(channelBean.getCategory().getId());
-            if (foundCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoría del canal no existe", true));
-            }
-            Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(channelBean.getNumber(), true);
-
-            if (foundNumber.isPresent()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el número " + channelBean.getNumber(), true));
-            }
-            Optional<ChannelBean> foundName = channelRepository.findByName(capitalize(channelBean.getName()));
-            if (foundName.isPresent()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el nombre " + channelBean.getName(), true));
-            }
-            channelBean.setName(capitalize(channelBean.getName()));
-            channelBean.setStatus(true);
-            return ResponseEntity.ok(new ApiResponse(channelRepository.save(channelBean), HttpStatus.OK, "Canal guardado correctamente", false));
-
-        } catch (Exception e) {
-
-            logger.error("Error al guardar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al guardar el canal", true));
-        }
-
-    }
 
     @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse> findAllChannel() {
@@ -90,14 +70,14 @@ public class ChannelService {
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(channelBean.getCategory().getId());
 
             if (foundCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoría del canal no existe", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, noExistingCategory, true));
             }
 
 
             Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(channelBean.getNumber(), true);
 
             if (foundNumber.isPresent()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el número " + channelBean.getNumber(), true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, existingNumberChannel + channelBean.getNumber(), true));
             }
 
 
@@ -110,7 +90,7 @@ public class ChannelService {
             channelBean.setUuid(foundChannel.get().getUuid());
             channelBean.setStatus(foundChannel.get().getStatus());
 
-            return ResponseEntity.ok(new ApiResponse(channelRepository.save(channelBean), HttpStatus.OK, "Canal guardado correctamente", false));
+            return ResponseEntity.ok(new ApiResponse(channelRepository.save(channelBean), HttpStatus.OK, "Canal actualizado correctamente", false));
 
         } catch (Exception e) {
             logger.error("Error al actualizar el canal: ", e);
@@ -134,7 +114,7 @@ public class ChannelService {
             return ResponseEntity.ok(new ApiResponse(channelRepository.findByCategoryAndStatus(foundCategory.get(), true), HttpStatus.OK, "Canales encontrados", false));
         } catch (Exception e) {
             logger.error("Error al consultar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al consultar el canal", true));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, queryErrorMessage, true));
         }
 
     }
@@ -152,15 +132,15 @@ public class ChannelService {
             }
 
             if (!foundChannel.get().getStatus()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal ha sido eliminado", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, deletedChannelMessage, true));
 
             }
 
-            return ResponseEntity.ok(new ApiResponse(foundChannel.get(), HttpStatus.OK, "Canal encontrado", false));
+            return ResponseEntity.ok(new ApiResponse(foundChannel.get(), HttpStatus.OK, null, false));
 
         } catch (Exception e) {
             logger.error("Error al consultar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al consultar el canal", true));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, queryErrorMessage, true));
         }
     }
 
@@ -177,13 +157,13 @@ public class ChannelService {
             }
 
             if (!foundChannel.get().getStatus()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal ha sido eliminado", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, deletedChannelMessage, true));
             }
 
-            return ResponseEntity.ok(new ApiResponse(foundChannel.get(), HttpStatus.OK, "Canal encontrado", false));
+            return ResponseEntity.ok(new ApiResponse(foundChannel.get(), HttpStatus.OK, null, false));
         } catch (Exception e) {
             logger.error("Error al consultar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al consultar el canal", true));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, queryErrorMessage, true));
         }
     }
 
@@ -201,14 +181,14 @@ public class ChannelService {
             }
 
             if (!foundChannel.get().getStatus()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal ha sido eliminado", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, deletedChannelMessage, true));
 
             }
 
-            return ResponseEntity.ok(new ApiResponse(foundChannel.get(), HttpStatus.OK, "Canal encontrado", false));
+            return ResponseEntity.ok(new ApiResponse(foundChannel.get(), HttpStatus.OK, null, false));
         } catch (Exception e) {
             logger.error("Error al consultar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al consultar el canal", true));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, queryErrorMessage, true));
         }
     }
 
@@ -230,12 +210,12 @@ public class ChannelService {
 
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(channelBean.getCategory().getId());
             if (foundCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoría del canal no existe", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, noExistingCategory, true));
             }
 
             Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(channelBean.getNumber(), true);
             if (foundNumber.isPresent()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el número " + channelBean.getNumber(), true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, existingNumberChannel + channelBean.getNumber(), true));
             }
 
             Optional<ChannelBean> foundName = channelRepository.findByName(capitalize(channelBean.getName()));
@@ -270,8 +250,8 @@ public class ChannelService {
             return ResponseEntity.ok(new ApiResponse(savedChannel, HttpStatus.OK, "Canal guardado correctamente", false));
 
         } catch (Exception e) {
-            logger.error("Error al guardar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al guardar el canal", true));
+            logger.error(saveImageError, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un "+saveImageError, true));
         }
 
     }
@@ -303,12 +283,12 @@ public class ChannelService {
 
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(dto.getCategoryId());
             if (foundCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoría del canal no existe", true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, noExistingCategory, true));
             }
 
             Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(dto.getNumber(), true);
             if (foundNumber.isPresent() && !foundNumber.get().getId().equals(channelBean.getId())) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con el número " + dto.getNumber(), true));
+                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, existingNumberChannel + dto.getNumber(), true));
             }
 
             Optional<ChannelBean> foundName = channelRepository.findByName(capitalize(dto.getName()));
@@ -325,7 +305,7 @@ public class ChannelService {
             ChannelBean updatedChannel = channelRepository.save(channelBean);
 
             if (dto.getImage() == null) {
-                System.err.println("no llegó la imagen");
+                logger.error("no hay una imagen asignada");
             }
 
             if (dto.getImage() != null && !dto.getImage().isEmpty()) {
@@ -346,8 +326,8 @@ public class ChannelService {
 
             return ResponseEntity.ok(new ApiResponse(updatedChannel, HttpStatus.OK, "Canal actualizado correctamente", false));
         } catch (Exception e) {
-            logger.error("Error al guardar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al guardar el canal", true));
+            logger.error("Error al actualizar el canal: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al actualizar el canal", true));
         }
     }
 

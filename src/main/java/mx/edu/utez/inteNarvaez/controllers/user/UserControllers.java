@@ -21,23 +21,23 @@ public class UserControllers {
 
 
     @GetMapping("/find-all")
-    private ResponseEntity<ApiResponse> getAllUsers() {
+    public ResponseEntity<ApiResponse> getAllUsers() {
         return new ResponseEntity<>(new ApiResponse(userService.findAll(),HttpStatus.OK,"Lista de usuarios"), HttpStatus.OK);
     }
     @PostMapping("/forward-password")
-    private ResponseEntity<ApiResponse> forwardPassword(@RequestParam String password ,@RequestParam Long userId) throws Exception {
+    public ResponseEntity<ApiResponse> forwardPassword(@RequestParam String password ,@RequestParam Long userId) throws Exception {
         return   authService.forwardPass(password ,userId);
     }
 
     @PutMapping("/UpdateAgente")
-    private ResponseEntity<ApiResponse> updateAgente(@Valid @RequestBody RegisterDTO user, BindingResult result) throws Exception {
+    public ResponseEntity<ApiResponse> updateAgente(@Valid @RequestBody RegisterDTO user, BindingResult result) throws Exception {
         user.setRole("USER");
         if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
         return userService.updateAgente(user.toUserEntityUpdate());
     }
 
     @DeleteMapping("/deleteAgente/{id}")
-    private ResponseEntity<ApiResponse> deleteAgente(@PathVariable Long id) throws Exception {
+    public ResponseEntity<ApiResponse> deleteAgente(@PathVariable Long id) throws Exception {
         return userService.deleteAgente(id);
     }
 

@@ -8,7 +8,10 @@ import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.inteNarvaez.models.channelCategory.ChannelCategoryRepository;
 import mx.edu.utez.inteNarvaez.models.role.RoleBean;
 import mx.edu.utez.inteNarvaez.models.role.RoleRepository;
+import mx.edu.utez.inteNarvaez.services.channel.ChannelService;
 import mx.edu.utez.inteNarvaez.services.security.services.UserServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -26,8 +29,8 @@ import java.util.UUID;
 public class InitialConfig {
 
     private final ChannelCategoryRepository channelCategoryRepository;
+    private static final Logger logger = LogManager.getLogger(InitialConfig.class);
     private final UserServiceImpl userService;
-
     private final ChannelRepository channelRepository;
     private final RoleRepository roleRepository;
 
@@ -46,9 +49,9 @@ public class InitialConfig {
             createCategoryChannel("Deportes");
             createCategoryChannel("Peliculas");
 
-            createChannel("Nickelodeon","Un canal de caricaturas naranja",132,"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Nickelodeon_2023_logo_%28outline%29.svg/1200px-Nickelodeon_2023_logo_%28outline%29.svg.png",1L);
-            createChannel("ESPN","ahí pasan futbol picante", 234,"https://static.wikia.nocookie.net/telepedia-es/images/9/99/ESPN_logo.png/revision/latest?cb=20210826204726&path-prefix=es",2L);
-            createChannel("FOX", "nose, ya no lo veo",45435,"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Fox_Channel_logo.svg/2560px-Fox_Channel_logo.svg.png",3L);
+            createChannel("Nickelodeon","Un canal de caricaturas naranja",132,1L);
+            createChannel("ESPN","ahí pasan futbol picante", 234,2L);
+            createChannel("FOX", "nose, ya no lo veo",45435,3L);
 
 
 
@@ -94,7 +97,7 @@ public class InitialConfig {
             categoryBean.setName(name);
             categoryBean.setStatus(true);
             channelCategoryRepository.save(categoryBean);
-            System.err.println("categoria de canal "+  name +" creada");
+            logger.info("Categoría "+categoryBean.getName()+" creada");
         }
 
     }
@@ -104,11 +107,11 @@ public class InitialConfig {
 
         if (foundRole.isEmpty()){
             roleRepository.save(role);
-            System.err.println("Rol " + role.getName() + " creado correctamente");
+            logger.info("rol "+ role.getName()+" creado");
         }
     }
 
-    private void createChannel(String name, String description, Integer number, String image, Long categoryId) {
+    private void createChannel(String name, String description, Integer number, Long categoryId) {
         Optional<ChannelBean> foundChannel = channelRepository.findByName(name);
         if (foundChannel.isEmpty()) {
             Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(categoryId);
@@ -121,9 +124,10 @@ public class InitialConfig {
                 channel.setCategory(foundCategory.get());
 
                 channelRepository.save(channel);
-                System.err.println("Canal " + name + " insertado");
+                logger.info("canal "+ channel.getName()+" creado");
             } else {
-                System.err.println("Error: La categoría con ID " + categoryId + " no existe");
+                logger.info("la categoría con id "+categoryId+" no existe");
+
             }
         }
     }

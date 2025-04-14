@@ -5,6 +5,8 @@ import mx.edu.utez.inteNarvaez.models.address.AddressBean;
 import mx.edu.utez.inteNarvaez.models.client.ClientBean;
 import jakarta.validation.constraints.*;
 
+import java.util.UUID;
+
 @Data
 public class AddressDTO {
 
@@ -21,7 +23,7 @@ public class AddressDTO {
 
     @NotBlank(message = "El número no puede estar vacío")
     @Size(max = 5, message = "El número no debe exceder los 5 caracteres")
-    @Pattern(regexp = "^[0-9]+$", message = "El campo solo puede contener números.")
+    @Pattern(regexp = "^\\d+$", message = "El campo solo puede contener números.")
     private String number;
 
     @NotBlank(message = "La ciudad no puede estar vacía")
@@ -44,7 +46,7 @@ public class AddressDTO {
 
 
     public AddressBean toEntity() {
-        AddressBean addressBean = new AddressBean(name,  street,  number,  city,  state,  zipCode,clientId);
+        AddressBean addressBean = new AddressBean();
         addressBean.setId(this.id);
         addressBean.setName(this.name);
         addressBean.setStreet(this.street);
@@ -52,6 +54,7 @@ public class AddressDTO {
         addressBean.setCity(this.city);
         addressBean.setState(this.state);
         addressBean.setZipCode(this.zipCode);
+        addressBean.setUuid(UUID.randomUUID().toString());
 
         ClientBean clientBean = new ClientBean();
         clientBean.setId(this.clientId);

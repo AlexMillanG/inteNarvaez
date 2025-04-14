@@ -48,13 +48,12 @@ public  class EmailService  {
             helper.setFrom("utezdoces@gmail.com");
 
             javaMailSender.send(message);
-            System.out.println("Correo HTML enviado con éxito a " + email.getDestinatario());
+            logger.info("Correo HTML enviado con éxito a " + email.getDestinatario());
 
             return new ResponseEntity<>(new ApiResponse(email, HttpStatus.OK, "El email se envio correctamente"), HttpStatus.OK);
 
         } catch (Exception e) {
 
-            System.out.println(e);
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "No se envio el email"), HttpStatus.OK);
 
         }
@@ -79,7 +78,6 @@ public  class EmailService  {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "El email se envió correctamente"), HttpStatus.OK);
 
         } catch (Exception e) {
-            System.out.println(e);
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "No se envió el email"), HttpStatus.OK);
         }
     }

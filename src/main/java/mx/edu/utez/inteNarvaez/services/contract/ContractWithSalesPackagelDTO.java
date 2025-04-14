@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mx.edu.utez.inteNarvaez.models.address.AddressBean;
-import mx.edu.utez.inteNarvaez.models.salePackage.SalesPackageEntity;
-import mx.edu.utez.inteNarvaez.models.user.UserEntity;
 
-import java.util.Date;
 import java.util.UUID;
 
 @Data

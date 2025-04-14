@@ -27,10 +27,11 @@ import static mx.edu.utez.inteNarvaez.services.channelCategory.ChannelCategorySe
 @AllArgsConstructor
 public class ClientService {
 
+
     private final ClientRepository clientRepository;
     private final AddressRepository addressRepository;
 
-    private static final Logger logger = LogManager.getLogger(ContractService.class);
+    private static final Logger logger = LogManager.getLogger(ClientService.class);
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAllClient() {
