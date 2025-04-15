@@ -45,24 +45,30 @@ public class AuthServiceImpl implements IAuthService {
             Optional<UserEntity> user = userRepository.findByEmail(loginDTO.getEmail());
 
             if (user.isEmpty()) {
-                jwt.put("error", "User not registered!");
+                jwt.put("error", "Usuario no registrado");
                 return jwt;
             }
 
-            if (verifyPassword(loginDTO.getPassword(), user.get().getPassword())) {
-                UserDTO userDTO = new UserDTO(user.get());
+            if (!user.get().getStatus()) {
+                jwt.put("error", "El usuario ya no está activo");
+                return jwt;
+            }
 
-                jwt.put("jwt", jwtUtilityService.genareteJWT(
-                        userDTO.getId(),
-                        userDTO.getRoles().stream().collect(Collectors.toList())
-                ));
+                if (verifyPassword(loginDTO.getPassword(), user.get().getPassword())) {
+                    UserDTO userDTO = new UserDTO(user.get());
 
-                if (user.get().isTemporalPassword()) {
-                    jwt.put("temporal", "true");
-                }
+                    jwt.put("jwt", jwtUtilityService.genareteJWT(
+                            userDTO.getId(),
+                            userDTO.getRoles().stream().collect(Collectors.toList())
+                    ));
 
-            } else {
-                jwt.put("error", "Authentication failed!");
+                    if (user.get().isTemporalPassword()) {
+                        jwt.put("temporal", "true");
+                    }
+
+                } else {
+                    jwt.put("error", "Authentication failed!");
+
             }
 
             return jwt;

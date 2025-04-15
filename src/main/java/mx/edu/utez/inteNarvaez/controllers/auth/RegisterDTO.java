@@ -54,6 +54,7 @@ public class RegisterDTO {
     groups = OnCreate.class
     )
     private String password;
+    private Boolean status;
     private String role;
 
     public UserEntity toUserEntity() {
@@ -86,7 +87,7 @@ public class RegisterDTO {
         user.setRfc(this.rfc);
         user.setPhone(this.phone);
         user.setBirthdate(this.birthdate);
-        user.setStatus(true);
+        user.setStatus(this.status);
         user.setTemporalPassword(false);
 
         Set<RoleBean> roles = new HashSet<>();
