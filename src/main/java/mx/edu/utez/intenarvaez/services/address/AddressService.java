@@ -38,11 +38,17 @@ public class AddressService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+
     public ResponseEntity<ApiResponse> save(AddressDTO dto) {
         try {
             AddressBean addressBean = dto.toEntity();
 
             Optional<ClientBean> foundClient = clientRepository.findById(addressBean.getClient().getId());
+            Optional<AddressBean> foundAddress = addressRepository.findByNameAndClient_Id(addressBean.getName(),addressBean.getClient().getId());
+
+            if (foundAddress.isPresent()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya tienes una direccion con ese nombre", true), HttpStatus.BAD_REQUEST);
+            }
 
             if (foundClient.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El cliente no existe", true), HttpStatus.BAD_REQUEST);

@@ -43,7 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/api/channelPackage/**").hasRole(ADMIN)
                                 .requestMatchers("/api/channelCategory/**").hasRole(ADMIN)
-                                .requestMatchers("/api/channel/**").hasRole("ADMI")
+                                .requestMatchers("/api/channel/**").hasRole(ADMIN)
                                 .requestMatchers("/api/user/**").hasAnyRole(USER,ADMIN)
                                 .requestMatchers("/api/product/**").hasRole(ADMIN)
                                 .requestMatchers("/api/contract/**").hasAnyRole(USER,ADMIN)

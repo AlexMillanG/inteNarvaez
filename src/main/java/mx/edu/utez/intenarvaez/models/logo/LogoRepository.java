@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface LogoRepository extends JpaRepository<LogoBean,Long> {
 
     Optional<LogoBean> findByChannel_Id(Long id);
+
+
 }

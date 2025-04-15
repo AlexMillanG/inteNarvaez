@@ -2,6 +2,7 @@ package mx.edu.utez.intenarvaez.controllers.channel.dto;
 
 import lombok.Data;
 import jakarta.validation.constraints.*;
+import mx.edu.utez.intenarvaez.config.anotations.ValidFileSize;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
@@ -21,7 +22,7 @@ public class ChannelDTO {
 
     @NotNull(message = "El número no puede ser nulo.")
     @Digits(integer = 3, fraction = 0, message = "El número debe ser un entero de hasta 3 dígitos.")
-    @Pattern(regexp = "^\\d+$", message = "El campo solo puede contener números.")
+    @Min(value = 1, message = "El número debe ser mayor o igual a 1")
     private Integer number;
 
     private String uuid;
@@ -29,10 +30,10 @@ public class ChannelDTO {
     @NotNull(message = "El ID de categoría no puede ser nulo.")
     private Long categoryId;
 
-    @NotNull(message = "La imagen no puede ser nula.")
-    @Size(max = 10485760, message = "La imagen no puede exceder los 10MB.")  // Tamaño máximo de 10MB
+    @ValidFileSize(maxSize = 1048576, message = "El tamaño del archivo debe ser menor a 1MB.")
     private MultipartFile image;
 
+    private Boolean keepImage;
 
 
 }

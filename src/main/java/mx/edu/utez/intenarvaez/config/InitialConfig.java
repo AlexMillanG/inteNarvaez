@@ -2,12 +2,14 @@ package mx.edu.utez.intenarvaez.config;
 
 import lombok.AllArgsConstructor;
 import mx.edu.utez.intenarvaez.controllers.auth.RegisterDTO;
+import mx.edu.utez.intenarvaez.controllers.channel.dto.ChannelDTO;
 import mx.edu.utez.intenarvaez.models.channel.ChannelBean;
 import mx.edu.utez.intenarvaez.models.channel.ChannelRepository;
 import mx.edu.utez.intenarvaez.models.channelCategory.ChannelCategoryBean;
 import mx.edu.utez.intenarvaez.models.channelCategory.ChannelCategoryRepository;
 import mx.edu.utez.intenarvaez.models.role.RoleBean;
 import mx.edu.utez.intenarvaez.models.role.RoleRepository;
+import mx.edu.utez.intenarvaez.services.channel.ChannelService;
 import mx.edu.utez.intenarvaez.services.security.services.UserServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,12 +17,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-
+import org.springframework.core.io.ClassPathResource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.mock.web.MockMultipartFile;
 
 
 @AllArgsConstructor
@@ -31,6 +34,7 @@ public class InitialConfig {
     private final UserServiceImpl userService;
     private static final Logger logger = LogManager.getLogger(InitialConfig.class);
     private final ChannelRepository channelRepository;
+    private final ChannelService channelService;
     private final RoleRepository roleRepository;
 
 
@@ -42,16 +46,52 @@ public class InitialConfig {
             roles(new RoleBean("ADMIN", UUID.randomUUID().toString()));
             roles(new RoleBean("USER", UUID.randomUUID().toString()));
 
-
-
             createCategoryChannel("Infantil");
             createCategoryChannel("Deportes");
             createCategoryChannel("Peliculas");
 
-            createChannel("Nickelodeon","Un canal de caricaturas naranja",132,1L);
-            createChannel("ESPN","ahí pasan futbol picante", 234,2L);
-            createChannel("FOX", "nose, ya no lo veo",45435,3L);
+            ChannelDTO dto = new ChannelDTO();
+            dto.setName("Nickelodeon");
+            dto.setDescription("Un canal de caricaturas naranja");
+            dto.setNumber(132);
+            dto.setCategoryId(1L);
 
+            ClassPathResource imageFile = new ClassPathResource("image/nik.png");
+            MockMultipartFile multipartFile = new MockMultipartFile(
+                    "image",
+                    imageFile.getFilename(),
+                    "image/png",
+                    imageFile.getInputStream()
+            );
+            dto.setImage(multipartFile);
+
+            channelService.saveWithImage(dto);
+
+            ChannelDTO dtoESPN = new ChannelDTO();
+            dtoESPN.setName("ESPN");
+            dtoESPN.setDescription("Ahí pasan futbol picante");
+            dtoESPN.setNumber(234);
+            dtoESPN.setCategoryId(2L);
+
+            ClassPathResource imageFileESPN = new ClassPathResource("image/espn.png");
+            MockMultipartFile multipartFileESPN = new MockMultipartFile(
+                    "image", imageFileESPN.getFilename(), "image/png",
+                    imageFileESPN.getInputStream()
+            );
+
+            dtoESPN.setImage(multipartFileESPN);
+            channelService.saveWithImage(dtoESPN);
+            ChannelDTO dtoFOX = new ChannelDTO();
+            dtoFOX.setName("FOX");
+            dtoFOX.setDescription("No sé, ya no lo veo");
+            dtoFOX.setNumber(45435);
+            dtoFOX.setCategoryId(3L);
+            ClassPathResource imageFileFOX = new ClassPathResource("image/fox.png");
+            MockMultipartFile multipartFileFOX = new MockMultipartFile(
+                    "image", imageFileFOX.getFilename(), "/image/png", imageFileFOX.getInputStream()
+            );
+            dtoFOX.setImage(multipartFileFOX);
+            channelService.saveWithImage(dtoFOX);
 
 
             RegisterDTO crateUserAdmin = new RegisterDTO();
@@ -89,9 +129,9 @@ public class InitialConfig {
     }
 
 
-    private void createCategoryChannel(String name){
+    private void createCategoryChannel(String name) {
         Optional<ChannelCategoryBean> foundChannelCategory = channelCategoryRepository.findByName(name);
-        if (foundChannelCategory.isEmpty()){
+        if (foundChannelCategory.isEmpty()) {
             ChannelCategoryBean categoryBean = new ChannelCategoryBean();
             categoryBean.setName(name);
             categoryBean.setStatus(true);
@@ -102,10 +142,10 @@ public class InitialConfig {
 
     }
 
-    private void roles(RoleBean role){
-        Optional<RoleBean> foundRole = roleRepository.findByName(role.getName()); // Buscar por nombre
+    private void roles(RoleBean role) {
+        Optional<RoleBean> foundRole = roleRepository.findByName(role.getName());
 
-        if (foundRole.isEmpty()){
+        if (foundRole.isEmpty()) {
             roleRepository.save(role);
             logger.info("Creando rol: {}", role.getName());
         }
@@ -132,7 +172,6 @@ public class InitialConfig {
             }
         }
     }
-
 
 
 }

@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utez.intenarvaez.config.MinimumAge;
+import mx.edu.utez.intenarvaez.config.anotations.MinimumAge;
 import mx.edu.utez.intenarvaez.models.role.RoleBean;
 import mx.edu.utez.intenarvaez.models.user.UserEntity;
 

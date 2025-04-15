@@ -20,12 +20,14 @@ public class ChannelController {
 
 
     @PostMapping("/saveImg")
-    public ResponseEntity<ApiResponse> saveChannelImage(@ModelAttribute ChannelDTO dto)  {
+    public ResponseEntity<ApiResponse> saveChannelImage(@Valid @ModelAttribute ChannelDTO dto,BindingResult result)  {
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
         return channelService.saveWithImage(dto);
     }
 
     @PutMapping("/updateImg")
-    public ResponseEntity<ApiResponse> update( @ModelAttribute ChannelDTO dto)  {
+    public ResponseEntity<ApiResponse> update( @Valid @ModelAttribute ChannelDTO dto ,BindingResult result)  {
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
         return channelService.updateWithImage(dto);
     }
 

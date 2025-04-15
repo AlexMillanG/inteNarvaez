@@ -10,10 +10,10 @@ import java.util.Optional;
 @Repository
 public interface AddressRepository extends JpaRepository<AddressBean,Long> {
 
+
+    Optional<AddressBean> findByNameAndClient_Id(String name, Long clientId);
+
     Optional<AddressBean> findByUuid(String uuid);
-
-    Optional<AddressBean> findByName(String name);
-
 
     List<AddressBean> findByStatus(Boolean b);
 

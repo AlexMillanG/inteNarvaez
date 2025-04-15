@@ -1,4 +1,4 @@
-package mx.edu.utez.intenarvaez.config;
+package mx.edu.utez.intenarvaez.config.anotations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
