@@ -113,7 +113,7 @@ public class AuthControllers {
 
 
     @PostMapping("/forward-password")
-    public  ResponseEntity<ApiResponse> forwardPassword(@RequestParam String email) throws AuthException {
+    public  ResponseEntity<ApiResponse> forwardPassword(@RequestParam String email)  {
        return authService.forwardPassword(String.valueOf(email));
     }
 

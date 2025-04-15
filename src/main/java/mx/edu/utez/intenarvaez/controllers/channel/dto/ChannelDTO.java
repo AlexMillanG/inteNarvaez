@@ -21,7 +21,7 @@ public class ChannelDTO {
 
     @NotNull(message = "El número no puede ser nulo.")
     @Digits(integer = 3, fraction = 0, message = "El número debe ser un entero de hasta 3 dígitos.")
-    @Pattern(regexp = "^[0-9]+$", message = "El campo solo puede contener números.")
+    @Pattern(regexp = "^\\d+$", message = "El campo solo puede contener números.")
     private Integer number;
 
     private String uuid;

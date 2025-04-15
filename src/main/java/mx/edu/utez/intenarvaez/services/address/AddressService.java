@@ -30,7 +30,7 @@ public class AddressService {
     private final ClientRepository clientRepository;
     private final ContractRepository contractRepository;
 
-    private static final Logger logger = LogManager.getLogger(ContractService.class);
+    private static final Logger logger = LogManager.getLogger(AddressService.class);
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAll() {

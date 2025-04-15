@@ -46,7 +46,7 @@ public class AuthServiceImpl implements IAuthService {
             }
 
             if (!user.get().getStatus()) {
-                jwt.put("error", "El usuario ya no está activo");
+                jwt.put("Error", "El usuario ya no está activo");
                 return jwt;
             }
 
@@ -67,10 +67,11 @@ public class AuthServiceImpl implements IAuthService {
 
             return jwt;
         } catch (Exception e) {
-            logger.error(e);
-
+            logger.error("Error during login", e);
+            HashMap<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("Fallo", "Ocurrió un error inesperado. Intenta de nuevo más tarde.");
+            return errorResponse;
         }
-        return null;
     }
 
 
@@ -85,7 +86,7 @@ public class AuthServiceImpl implements IAuthService {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
             }
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-            String newPassword = userServiceImpl.generatePassword();
+            String newPassword = UserServiceImpl.generatePassword();
             user.get().setPassword(encoder.encode(newPassword));
             user.get().setTemporalPassword(true);
 

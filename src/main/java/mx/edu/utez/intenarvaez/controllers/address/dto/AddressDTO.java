@@ -21,7 +21,7 @@ public class AddressDTO {
 
     @NotBlank(message = "El número no puede estar vacío")
     @Size(max = 5, message = "El número no debe exceder los 5 caracteres")
-    @Pattern(regexp = "^[0-9]+$", message = "El campo solo puede contener números.")
+    @Pattern(regexp = "^\\d+$", message = "El campo solo puede contener números.")
     private String number;
 
     @NotBlank(message = "La ciudad no puede estar vacía")

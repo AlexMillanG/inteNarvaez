@@ -38,7 +38,7 @@ public class RegisterDTO {
     private String email;
 
     @NotBlank(message = "El RFC no puede estar vacío.")
-    @Pattern(regexp = "^[A-Z&Ñ]{3,4}[0-9]{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])[A-Z0-9]{2}[0-9A]$",message = "El RFC no tiene un formato válido.")
+    @Pattern(regexp = "^[A-Z&Ñ]{3,4}\\d{2}(0[1-9]|1[012])(0[1-9]|[12]\\d|3[01])[A-Z0-9]{2}[0-9A]$",message = "El RFC no tiene un formato válido.")
     private String rfc;
 
     @NotBlank(message = "El número de teléfono no puede estar vacío.")

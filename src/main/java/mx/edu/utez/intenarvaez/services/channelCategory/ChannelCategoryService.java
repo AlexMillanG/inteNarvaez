@@ -30,7 +30,7 @@ public class ChannelCategoryService {
     public ResponseEntity<ApiResponse> saveCategoryChannel(ChannelCategoryBean categoryBean) {
         try {
 
-            if (categoryBean.getName().equals("") || categoryBean.getName() == null) {
+            if (categoryBean.getName().isEmpty()) {
                 return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la categoria no puede ser nulo", true));
             }
 
@@ -80,7 +80,7 @@ public class ChannelCategoryService {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, no puede actulizar una categoria eliminada", true), HttpStatus.CONFLICT);
             }
 
-            if (categoryBean.getName().equals("") || categoryBean.getName() == null) {
+            if (categoryBean.getName().isEmpty()) {
                 return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El nombre de la categoria no puede ser nulo", true));
             }
 
