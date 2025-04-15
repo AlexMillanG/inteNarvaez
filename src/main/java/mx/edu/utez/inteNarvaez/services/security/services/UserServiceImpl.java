@@ -122,7 +122,7 @@ public class UserServiceImpl implements IUserServiceImpl {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El rol no existe", true), HttpStatus.NOT_FOUND);
             }
 
-            userEntity.setStatus(existingUser.get().getStatus());
+            userEntity.setStatus(userEntity.getStatus());
             userEntity.setLastLogin(existingUser.get().getLastLogin());
             userEntity.setPassword(existingUser.get().getPassword());
             userEntity.setRoleBeans(existingUser.get().getRoleBeans());

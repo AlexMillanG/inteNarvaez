@@ -24,6 +24,7 @@ public class UserControllers {
     private ResponseEntity<ApiResponse> getAllUsers() {
         return new ResponseEntity<>(new ApiResponse(userService.findAll(),HttpStatus.OK,"Lista de usuarios"), HttpStatus.OK);
     }
+
     @PostMapping("/forward-password")
     private ResponseEntity<ApiResponse> forwardPassword(@RequestParam String password ,@RequestParam Long userId) throws Exception {
         return   authService.forwardPass(password ,userId);
