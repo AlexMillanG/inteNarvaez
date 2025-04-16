@@ -38,6 +38,7 @@ public class ChannelPackageService {
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> save(ChannelPackageBean channelPackageBean) {
+
         try {
             Optional<ChannelPackageBean> foundPackageName = channelPackageRepository.findChannelPackageBeanByNameAndStatus(channelPackageBean.getName(), ChannelPackageStatus.DISPONIBLE);
 
@@ -53,6 +54,40 @@ public class ChannelPackageService {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: ingresa una descripción válida", true), HttpStatus.BAD_REQUEST);
             }
 
+            if (channelPackageBean.getChannels() == null || channelPackageBean.getChannels().isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el paquete debe contener al menos un canal", true), HttpStatus.BAD_REQUEST);
+            }
+
+            for (ChannelBean channelBean : channelPackageBean.getChannels()) {
+                Optional<ChannelBean> foundChannel = channelRepository.findById(channelBean.getId());
+                if (foundChannel.isEmpty()) {
+                    return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Error: el canal con ID " + channelBean.getId() + " no existe", true), HttpStatus.NOT_FOUND);
+                }
+
+                if (!foundChannel.get().getStatus()) {
+                    return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "ERROR, no puedes asignar canales eliminados, canal eliminado: " + foundChannel.get().getName(), true), HttpStatus.CONFLICT);
+                }
+            }
+            channelPackageBean.setStatus(ChannelPackageStatus.DISPONIBLE);
+            ChannelPackageBean savedPackage = channelPackageRepository.save(channelPackageBean);
+            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete guardado correctamente", false), HttpStatus.CREATED);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @Transactional(rollbackFor = SQLException.class)
+    public ResponseEntity<ApiResponse> update(ChannelPackageBean channelPackageBean) {
+        try {
+            if (channelPackageBean.getId() == null) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el id es requerido", true), HttpStatus.BAD_REQUEST);
+            }
+            Optional<ChannelPackageBean> foundPackage = channelPackageRepository.findById(channelPackageBean.getId());
+            if (foundPackage.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Error: el paquete que intentas actualizar no existe", true), HttpStatus.NOT_FOUND);
+            }
 
             if (channelPackageBean.getChannels() == null || channelPackageBean.getChannels().isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: el paquete debe contener al menos un canal", true), HttpStatus.BAD_REQUEST);
@@ -69,51 +104,30 @@ public class ChannelPackageService {
                 }
             }
 
+            Optional<ChannelPackageBean> findByName = channelPackageRepository.findChannelPackageBeanByName(channelPackageBean.getName());
+            if (findByName.isPresent() && !findByName.get().getId().equals(channelPackageBean.getId())) {
+
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "Ya existe un Paquete de canales con ese nombre " , true), HttpStatus.CONFLICT);
+
+            }
+
+
+            channelPackageBean.setId(foundPackage.get().getId());
+            channelPackageBean.setName(channelPackageBean.getName());
             channelPackageBean.setStatus(ChannelPackageStatus.DISPONIBLE);
-            ChannelPackageBean savedPackage = channelPackageRepository.save(channelPackageBean);
-            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete guardado correctamente", false), HttpStatus.CREATED);
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> update(ChannelPackageBean channelPackageBean) {
-        try {
-            ResponseEntity<ApiResponse> validationError = validateChannelPackage(channelPackageBean);
-            if (validationError != null) {
-                return validationError;
-            }
-
-            Optional<ChannelPackageBean> foundPackage = channelPackageRepository.findById(channelPackageBean.getId());
-            if (foundPackage.isEmpty()) {
-                return createErrorResponse("Error: el paquete que intentas actualizar no existe", HttpStatus.NOT_FOUND);
-            }
-
-            ChannelPackageBean existing = foundPackage.get();
-
-            if (existing.getStatus() == ChannelPackageStatus.OBSOLETO || existing.getStatus() == ChannelPackageStatus.DESCONTINUADO) {
-                return createErrorResponse("Error: no se puede actualizar un paquete que ya no está disponible o fue descontinuado", HttpStatus.CONFLICT);
-            }
-
-            existing.setName(channelPackageBean.getName());
-            existing.setDescription(channelPackageBean.getDescription());
-            existing.setChannels(channelPackageBean.getChannels());
-            existing.setStatus(ChannelPackageStatus.DISPONIBLE);
-
-            ChannelPackageBean savedPackage = channelPackageRepository.save(existing);
+            ChannelPackageBean savedPackage = channelPackageRepository.saveAndFlush(channelPackageBean);
 
             List<String> stringList = contractRepository.findDistinctEmailsByChannelPackage(channelPackageBean.getId());
             emailService.UpdatePackageEmail(stringList, savedPackage);
 
-            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.OK, "Paquete actualizado correctamente", false), HttpStatus.OK);
+
+            return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete actualizado correctamente", false), HttpStatus.CREATED);
 
         } catch (Exception e) {
-            logger.error("Algo salió mal", e);
-            return createErrorResponse("Error al actualizar el paquete de canales: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+
+}
 
 
 

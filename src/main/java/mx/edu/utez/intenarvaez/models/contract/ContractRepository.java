@@ -33,6 +33,8 @@ public interface ContractRepository extends JpaRepository<ContractBean,Long> {
 
     List<ContractBean> findBySalesAgentAndStatus(UserEntity user, Boolean b);
 
+    List<ContractBean> findBySalesAgent_Id(Long id);
+
 
     @Query(value = """
         SELECT c.* 

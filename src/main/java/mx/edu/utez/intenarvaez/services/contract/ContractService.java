@@ -194,15 +194,44 @@ public class ContractService {
 
             List<ContractBean> foundContracts = repository.findBySalesAgentAndStatus(user, true);
 
-
             return new ResponseEntity<>(new ApiResponse(foundContracts, HttpStatus.OK, null, false), HttpStatus.OK);
-
 
         } catch (Exception e) {
             logger.error("Error al obtener la contrato del agente: {}", e.getMessage());
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al obtener la contrato del agente", true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<ApiResponse> findAllContractsByAgent(Long id) {
+
+        try {
+            Optional<UserEntity> foundUser = userRepository.findById(id);
+            if (foundUser.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "Agente no encontrado", true), HttpStatus.NOT_FOUND);
+            }
+
+            UserEntity user = foundUser.get();
+
+            if (!user.getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "Error agente esta inactivo", true), HttpStatus.CONFLICT);
+            }
+
+            List<ContractBean> foundContracts = repository.findBySalesAgent_Id(user.getId());
+
+            return new ResponseEntity<>(new ApiResponse(foundContracts, HttpStatus.OK, null, false), HttpStatus.OK);
+
+        } catch (Exception e) {
+            logger.error("Error : {}", e.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al obtener los contratos del agente", true), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
+
+
 
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> delete(Long id) {
@@ -264,7 +293,6 @@ public class ContractService {
         }
     }
 
-
     public ResponseEntity<ApiResponse> getContractsWithSalesPackage(){
         try {
             return new ResponseEntity<>(new ApiResponse(getContractsWithOnlyTotal(),HttpStatus.OK,null,false),HttpStatus.OK);
@@ -273,7 +301,6 @@ public class ContractService {
             return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"ocurrió un error inesperado al traer los contratos con su paquete de venta"),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     public List<ContractWithSalesPackagelDTO> getContractsWithOnlyTotal() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");

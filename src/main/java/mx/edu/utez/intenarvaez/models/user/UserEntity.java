@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utez.intenarvaez.models.BitacoraAcceso.BitacoraAccesoEntity;
 import mx.edu.utez.intenarvaez.models.contract.ContractBean;
 import mx.edu.utez.intenarvaez.models.role.RoleBean;
 
@@ -33,8 +34,8 @@ public class UserEntity {
     private boolean temporalPassword;
 
     @ManyToMany(mappedBy = "userEntities")
-    private Set<RoleBean> roleBeans = new HashSet<>();
 
+    private Set<RoleBean> roleBeans = new HashSet<>();
 
     @OneToMany(mappedBy = "salesAgent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

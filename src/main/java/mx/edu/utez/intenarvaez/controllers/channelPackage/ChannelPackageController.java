@@ -27,15 +27,14 @@ public class ChannelPackageController {
 
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> save(@Valid @RequestBody ChannelPackageDTO dto, BindingResult result) {
-
         if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
 
         return channelPackageService.save(dto.toEntity());
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse> update(@RequestBody ChannelPackageDTO dto) {
-
+    public ResponseEntity<ApiResponse> update(@Valid @RequestBody ChannelPackageDTO dto, BindingResult result) {
+        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
 
         return channelPackageService.update(dto.toEntityUpdate());
     }

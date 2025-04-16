@@ -10,8 +10,9 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity,Long> {
 
-    @Query(value = "SELECT * FROM user where email = :email",nativeQuery = true)
-    Optional<UserEntity> findByEmail(@Param("email") String email);
+
+    Optional<UserEntity> findByEmail(String email);
+
 
 
     @Modifying
@@ -19,7 +20,10 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
     @Query(value = "INSERT INTO user_has_roles (user_id, role_id) VALUES (:userId, :roleId)", nativeQuery = true)
     void insertRoles(@Param("userId") Long userId, @Param("roleId") Long roleId);
 
-
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM user_has_roles WHERE user_id = :userId AND role_id = :roleId", nativeQuery = true)
+    void deleteUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
 
 
 

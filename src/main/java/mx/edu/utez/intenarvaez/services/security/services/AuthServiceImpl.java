@@ -82,8 +82,12 @@ public class AuthServiceImpl implements IAuthService {
     public ResponseEntity<ApiResponse> forwardPassword(String email) {
         try {
             Optional<UserEntity> user = userRepository.findByEmail(email);
+
             if (user.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
+            }
+            if (!user.get().getStatus()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Cuenta suspendida", true), HttpStatus.BAD_REQUEST);
             }
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
             String newPassword = UserServiceImpl.generatePassword();
@@ -95,7 +99,7 @@ public class AuthServiceImpl implements IAuthService {
            Emails emails = new Emails(user.get().getEmail(), newPassword, "Restauracion de contraseña");
             emailService.sendEmail(emails, 1);
 
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Correo enviado correctamente"), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Correo enviado correctamente",true), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -2,6 +2,10 @@ package mx.edu.utez.intenarvaez.services.security.services;
 
 import lombok.AllArgsConstructor;
 import mx.edu.utez.intenarvaez.config.ApiResponse;
+import mx.edu.utez.intenarvaez.models.BitacoraAcceso.BitacoraAccesoEntity;
+import mx.edu.utez.intenarvaez.models.BitacoraAcceso.BitacoraAccesoRepository;
+import mx.edu.utez.intenarvaez.models.contract.ContractBean;
+import mx.edu.utez.intenarvaez.models.contract.ContractRepository;
 import mx.edu.utez.intenarvaez.models.role.RoleBean;
 import mx.edu.utez.intenarvaez.models.role.RoleRepository;
 import mx.edu.utez.intenarvaez.models.user.UserEntity;
@@ -24,6 +28,8 @@ public class UserServiceImpl implements IUserServiceImpl {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final ContractRepository contractRepository;
+    private final BitacoraAccesoRepository bitacoraRepository;
     private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
     private static final String DIGITS = "0123456789";
@@ -116,6 +122,7 @@ public class UserServiceImpl implements IUserServiceImpl {
             }
 
             userEntity.setStatus(userEntity.getStatus());
+            logger.info("estado del usuario {}", userEntity.getStatus());
             userEntity.setLastLogin(existingUser.get().getLastLogin());
             userEntity.setPassword(existingUser.get().getPassword());
             userEntity.setRoleBeans(existingUser.get().getRoleBeans());
@@ -124,7 +131,7 @@ public class UserServiceImpl implements IUserServiceImpl {
 
             return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.OK, "Usuario actualizo correctamente"), HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Error al registrar el usuario: {}", e.getMessage());
+            logger.error("Error, al registrar el usuario: {}", e.getMessage());
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -141,14 +148,31 @@ public class UserServiceImpl implements IUserServiceImpl {
             if (existingUser.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "El usuario no existe", true), HttpStatus.NOT_FOUND);
             }
-            existingUser.get().setStatus(false);
-            userRepository.saveAndFlush(existingUser.get());
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Usuario desabilitado correctamente"), HttpStatus.OK);
+
+            UserEntity user = existingUser.get();
+
+            List<ContractBean> foundContracts = contractRepository.findBySalesAgentAndStatus(user, true);
+            if (!foundContracts.isEmpty()) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "No se puede eliminar al agente porque tiene contratos activos", true), HttpStatus.CONFLICT);
+            }
+
+            List<BitacoraAccesoEntity> accesos = bitacoraRepository.findAllByUserId(user.getId());
+            for (BitacoraAccesoEntity acceso : accesos) {
+                acceso.setUser(null);
+            }
+            bitacoraRepository.saveAll(accesos);
+
+            userRepository.deleteUserRole(userId, roleRepository.findByName("USER").get().getId());
+
+            userRepository.deleteById(userId);
+
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Usuario eliminado correctamente"), HttpStatus.OK);
         } catch (Exception e) {
-            logger.error(e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR,"Algo salio mal"+ e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error al eliminar al agente: {}", e.getMessage());
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salio mal: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
 
