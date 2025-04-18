@@ -39,6 +39,6 @@ public class ChannelDTO {
 
     private Boolean keepImage;
 
-    public ChannelDTO() {
+    public ChannelDTO() {// Noncompliant - method is empty
     }
 }
