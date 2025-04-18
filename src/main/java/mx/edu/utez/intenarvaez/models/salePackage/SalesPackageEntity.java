@@ -41,6 +41,6 @@ public class SalesPackageEntity {
     @JsonIgnore
     private Set<ContractBean> contracts = new HashSet<>();
 
-    public SalesPackageEntity() {
+    public SalesPackageEntity() {// Noncompliant - method is empty
     }
 }
