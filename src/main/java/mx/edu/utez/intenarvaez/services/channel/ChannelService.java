@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
+
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,54 +39,10 @@ public class ChannelService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse> findAllChannel() {
-        return ResponseEntity.ok(new ApiResponse(channelRepository.findByStatus(true), HttpStatus.OK, "Canales encontrados", false));
+        return ResponseEntity.ok(new ApiResponse(channelRepository.findAll(), HttpStatus.OK, "Canales encontrados", false));
     }
 
-    @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> updateChannel(ChannelBean channelBean) {
 
-        try {
-            if (channelBean.getId() == null || channelBean.getId() <= 0) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id del canal no puede ser nulo o menor a cero", true));
-            }
-
-            Optional<ChannelBean> foundChannel = channelRepository.findById(channelBean.getId());
-
-            if (foundChannel.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El canal que intentas actualizar no existe", true));
-            }
-
-            Optional<ChannelCategoryBean> foundCategory = channelCategoryRepository.findById(channelBean.getCategory().getId());
-
-            if (foundCategory.isEmpty()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "La categoría del canal no exist", true));
-            }
-
-
-            Optional<ChannelBean> foundNumber = channelRepository.findByNumberAndStatus(channelBean.getNumber(), true);
-
-            if (foundNumber.isPresent()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe un canal con ese número " + channelBean.getNumber(), true));
-            }
-
-
-            Optional<ChannelBean> foundName = channelRepository.findByName(capitalize(channelBean.getName()));
-            if (foundName.isPresent()) {
-                return ResponseEntity.badRequest().body(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Ya existe ese canal" + channelBean.getName(), true));
-            }
-
-            channelBean.setName(capitalize(channelBean.getName()));
-            channelBean.setUuid(foundChannel.get().getUuid());
-            channelBean.setStatus(foundChannel.get().getStatus());
-
-            return ResponseEntity.ok(new ApiResponse(channelRepository.save(channelBean), HttpStatus.OK, "Canal guardado correctamente", false));
-
-        } catch (Exception e) {
-            logger.error("Error al actualizar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al actualizar el canal", true));
-        }
-
-    }
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findByCategory(Long id) {
@@ -309,7 +265,7 @@ public class ChannelService {
         }
     }
 
-    public ResponseEntity<ApiResponse> delete(Long id) {
+    public ResponseEntity<ApiResponse> delete(Long id, Long opc) {
         try {
             if (id == null || id <= 0) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "El id no puede ser nulo o menor a cero", true), HttpStatus.BAD_REQUEST);
@@ -317,25 +273,42 @@ public class ChannelService {
             Optional<ChannelBean> foundChannel = channelRepository.findById(id);
 
             if (foundChannel.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "no se encontró el canal que intentas eliminar", true), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "No se encontró el canal  enviado", true), HttpStatus.NOT_FOUND);
             }
-            ChannelBean channel = foundChannel.get();
 
+            ChannelBean channel = foundChannel.get();
             if (!channel.getChannelPackages().isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "error, no se puede eliminar el canal, porque esta asociado a uno  o más paquetes de canales", true), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "Error, no se puede desactivar el canal porque está asociado a uno o más paquetes de canales", true), HttpStatus.CONFLICT);
             }
-            channel.setStatus(false);
-            channelRepository.save(channel);
-            if (!foundChannel.get().getStatus()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "el canal ya ha sido eliminado", true), HttpStatus.BAD_REQUEST);
+
+
+
+            if (opc == 1L) {
+
+                if (!foundChannel.get().getStatus()) {
+                    return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "el canal ya ha sido desactivado", true), HttpStatus.BAD_REQUEST);
+                }
+
+                channel.setStatus(false);
+                channelRepository.save(channel);
+                ChannelBean c = foundChannel.get();
+                c.setStatus(false);
+                channelRepository.saveAndFlush(c);
+
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "el canal " + foundChannel.get().getName() + ", ha sido desactivado ", false), HttpStatus.OK);
+
             }
-            ChannelBean c = foundChannel.get();
-            c.setStatus(false);
-            channelRepository.saveAndFlush(c);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "el canal " + foundChannel.get().getName() + ", ha sido eliminado con éxito", false), HttpStatus.OK);
+
+                channel.setStatus(true);
+                channelRepository.save(channel);
+                ChannelBean c = foundChannel.get();
+                c.setStatus(true);
+                channelRepository.saveAndFlush(c);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "el canal " + foundChannel.get().getName() + ", ha sido Activado ", false), HttpStatus.OK);
+
         } catch (Exception e) {
-            logger.error("Error al eliminar el canal: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error al eliminar el canal", true));
+            logger.error("Error al desactivar el canal: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Ocurrió un error con el canal", true));
         }
     }
 

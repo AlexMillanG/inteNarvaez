@@ -3,6 +3,8 @@ package mx.edu.utez.intenarvaez.models.salePackage;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utez.intenarvaez.models.channelPackage.ChannelPackageBean;
 import mx.edu.utez.intenarvaez.models.contract.ContractBean;
 
@@ -13,6 +15,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "sales_packages")
+@Getter
+@Setter
 public class SalesPackageEntity {
 
     @Id

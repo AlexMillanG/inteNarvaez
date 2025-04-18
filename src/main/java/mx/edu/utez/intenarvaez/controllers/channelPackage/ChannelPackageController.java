@@ -62,7 +62,11 @@ public class ChannelPackageController {
     //lo setea como obsoleto
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
-        return channelPackageService.delete(id);
+        return channelPackageService.delete(id,1L);
+    }
+    @GetMapping("/active/{id}")
+    public ResponseEntity<ApiResponse> active(@PathVariable Long id){
+        return channelPackageService.delete(id,2L);
     }
 
 

@@ -31,17 +31,11 @@ public class ChannelController {
         return channelService.updateWithImage(dto);
     }
 
-
     @GetMapping("/")
     public ResponseEntity<ApiResponse> findAllChannel(){
         return channelService.findAllChannel();
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<ApiResponse> updateChannel(@Valid @RequestBody ChannelBean channelBean, BindingResult result){
-        if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
-        return channelService.updateChannel(channelBean);
-    }
 
     @GetMapping("/uuid/{uuid}")
     public ResponseEntity<ApiResponse> findOneChannel(@PathVariable String uuid){
@@ -70,7 +64,12 @@ public class ChannelController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable Long id){
-        return channelService.delete(id);
+        return channelService.delete(id , 1L);
+    }
+
+    @GetMapping("/active/{id}")
+    public ResponseEntity<ApiResponse> active(@PathVariable Long id){
+        return channelService.delete(id, 2L);
     }
 
     @GetMapping("/channelCount/")

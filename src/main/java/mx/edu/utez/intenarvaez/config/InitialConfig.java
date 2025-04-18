@@ -83,8 +83,8 @@ public class InitialConfig {
             channelService.saveWithImage(dtoESPN);
             ChannelDTO dtoFOX = new ChannelDTO();
             dtoFOX.setName("FOX");
-            dtoFOX.setDescription("No sé, ya no lo veo");
-            dtoFOX.setNumber(45435);
+            dtoFOX.setDescription("No se ya no lo veo");
+            dtoFOX.setNumber(454);
             dtoFOX.setCategoryId(3L);
             ClassPathResource imageFileFOX = new ClassPathResource("image/fox.png");
             MockMultipartFile multipartFileFOX = new MockMultipartFile(

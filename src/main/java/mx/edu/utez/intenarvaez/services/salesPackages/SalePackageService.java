@@ -31,12 +31,8 @@ public class SalePackageService {
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<ApiResponse> findAllSalePackage() {
         try {
-            List<SalesPackageEntity> salePackages = repository.findByStatus(true);
-
-            salePackages.forEach(sp -> Hibernate.initialize(sp.getChannelPackage().getChannels()));
-
             return new ResponseEntity<>(
-                    new ApiResponse(salePackages, HttpStatus.OK, "Paquetes obtenidos exitosamente", false),
+                    new ApiResponse(repository.findAll(), HttpStatus.OK, "Paquetes obtenidos exitosamente", false),
                     HttpStatus.OK
             );
         } catch (Exception e) {
@@ -127,25 +123,31 @@ public class SalePackageService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<ApiResponse> delete(Long id) {
+    public ResponseEntity<ApiResponse> delete(Long id, Long opc) {
         try {
             Optional<SalesPackageEntity> findObjc = repository.findById(id);
             if (findObjc.isEmpty()) {
                 return new ResponseEntity<>(new ApiResponse(null, HttpStatus.NOT_FOUND, "No se encontró el paquete de ventas", true), HttpStatus.NOT_FOUND);
             }
 
-            int contractCount = repository.countContractsBySalesPackageId(id);
-            if (contractCount > 0) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.FORBIDDEN, "No se puede eliminar el paquete de ventas porque tiene contratos asociados", true), HttpStatus.FORBIDDEN);
+            if (opc == 2L) {
+                findObjc.get().setStatus(true);
+                repository.save(findObjc.get());
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Paquete activado exitosamente", false), HttpStatus.OK);
+            }
+
+            boolean contractCount = repository.existsContractsBySalesPackageId(id);
+            if (contractCount) {
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.FORBIDDEN, "No se puede desactivar el paquete de ventas porque tiene contratos asociados", true), HttpStatus.FORBIDDEN);
             }
 
             SalesPackageEntity salesPackage = findObjc.get();
             salesPackage.setStatus(false);
             repository.save(salesPackage);
 
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Paquete eliminado exitosamente", false), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Paquete desactivado exitosamente", false), HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Error al eliminar el paquete de ventas", e);
+            logger.error("Error al desactivar el paquete de ventas", e);
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salió mal", true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -158,7 +158,7 @@ public class ChannelPackageService {
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAll() {
         try {
-            List<ChannelPackageBean> disponibles = channelPackageRepository.findAllByStatus(ChannelPackageStatus.DISPONIBLE);
+            List<ChannelPackageBean> disponibles = channelPackageRepository.findAll();
             return new ResponseEntity<>(new ApiResponse(disponibles, HttpStatus.OK, null, false), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al obtener los paquetes de canales disponibles", true), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -233,7 +233,7 @@ public class ChannelPackageService {
     }
 
     @Transactional(rollbackFor = SQLException.class)
-    public ResponseEntity<ApiResponse> delete(Long id) {
+    public ResponseEntity<ApiResponse> delete(Long id,Long opc) {
 
         try {
             if (id == null) {
@@ -241,27 +241,32 @@ public class ChannelPackageService {
             }
 
             Optional<ChannelPackageBean> foundChannelPackage = channelPackageRepository.findById(id);
-
-
+            
             if (foundChannelPackage.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: no se encontró el paquete que intentas eliminar", true), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.BAD_REQUEST, "Error: no se encontró el paquete que intentas desactivar", true), HttpStatus.NOT_FOUND);
             }
 
             ChannelPackageBean channelPackageBean = foundChannelPackage.get();
 
+            if (opc == 2L) {
+                channelPackageBean.setStatus(ChannelPackageStatus.DISPONIBLE);
+                return new ResponseEntity<>(new ApiResponse(channelPackageRepository.save(channelPackageBean), HttpStatus.OK, "Se activo este paquete con éxito", false), HttpStatus.OK);
+
+            }
+
             List<SalesPackageEntity> foundRelatedSalesPackage = salesPackageRepository.findByChannelPackage(channelPackageBean);
 
             if (!foundRelatedSalesPackage.isEmpty()) {
-                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "Error: no se puede eliminar este paquete de canales porque esta asignado a un paquete de ventas", true), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new ApiResponse(null, HttpStatus.CONFLICT, "Error: no se puede desactivar este paquete de canales porque esta asignado a un paquete de ventas", true), HttpStatus.CONFLICT);
             }
 
             channelPackageBean.setStatus(ChannelPackageStatus.OBSOLETO);
+            return new ResponseEntity<>(new ApiResponse(channelPackageRepository.save(channelPackageBean), HttpStatus.OK, "Se desactivo este paquete con éxito", false), HttpStatus.OK);
 
-            return new ResponseEntity<>(new ApiResponse(channelPackageRepository.save(channelPackageBean), HttpStatus.OK, "Se elimino este paquete con éxito", false), HttpStatus.OK);
 
         } catch (Exception e) {
             logger.error("Error algo salio mal ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al eliminar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al desactivar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

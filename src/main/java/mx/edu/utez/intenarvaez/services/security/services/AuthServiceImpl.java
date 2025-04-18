@@ -27,7 +27,6 @@ import java.util.Optional;
 public class AuthServiceImpl implements IAuthService {
 
     private final UserRepository userRepository;
-    private  final UserServiceImpl userServiceImpl;
     private final IJWTUtilityService jwtUtilityService;
 
     private final EmailService emailService;
@@ -67,7 +66,7 @@ public class AuthServiceImpl implements IAuthService {
 
             return jwt;
         } catch (Exception e) {
-            logger.error("Error during login", e);
+            logger.error("Error al iniciar session", e);
             HashMap<String, String> errorResponse = new HashMap<>();
             errorResponse.put("Fallo", "Ocurrió un error inesperado. Intenta de nuevo más tarde.");
             return errorResponse;

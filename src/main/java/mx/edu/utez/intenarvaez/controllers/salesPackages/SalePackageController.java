@@ -17,9 +17,10 @@ public class SalePackageController {
     private final SalePackageService service;
 
     @GetMapping("/")
-    public ResponseEntity<ApiResponse> getAllSalesPackage() {
+    public ResponseEntity<ApiResponse> getAllSalesPackageActive() {
         return service.findAllSalePackage();
     }
+
 
     @PostMapping("/save") public ResponseEntity<ApiResponse> save(@Valid @RequestBody SalePackageDTO dto , BindingResult result){
         if (ApiResponse.hasValidationErrors(result)) {return ApiResponse.buildErrorResponse(result);}
@@ -34,8 +35,14 @@ public class SalePackageController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
-        return service.delete(id);
+        return service.delete(id,1L);
     }
+
+    @GetMapping("/active/{id}")
+    public ResponseEntity<ApiResponse> active(@PathVariable Long id) {
+        return service.delete(id,2L);
+    }
+
 
     @GetMapping("/salesPackageCount/")
     public ResponseEntity<ApiResponse> countSalesPackages(){
