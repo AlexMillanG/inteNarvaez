@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 @RestControllerAdvice
 public class GlobalErrorController {
-/*
+
 
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -91,6 +91,5 @@ public class GlobalErrorController {
         );
     }
 
-*/
 
 }

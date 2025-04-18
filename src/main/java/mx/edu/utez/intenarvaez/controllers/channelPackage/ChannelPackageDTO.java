@@ -2,7 +2,6 @@ package mx.edu.utez.intenarvaez.controllers.channelPackage;
 
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mx.edu.utez.intenarvaez.models.channel.ChannelBean;
 import mx.edu.utez.intenarvaez.models.channelPackage.ChannelPackageBean;
