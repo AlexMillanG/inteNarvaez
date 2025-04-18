@@ -45,7 +45,7 @@ public  class EmailService  {
             helper.setTo(email.getDestinatario());
 
             helper.setText(htmlContent, true);
-            helper.setFrom("utezdoces@gmail.com");
+            helper.setFrom("ultranet.sa.d.cv@gmail.com");
 
             javaMailSender.send(message);
             logger.info("Correo HTML enviado con exito a {}", email.getDestinatario());
@@ -72,7 +72,7 @@ public  class EmailService  {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(destinatarios.toArray(new String[0]));
             helper.setText(htmlContent, true);
-            helper.setFrom("utezdoces@gmail.com");
+            helper.setFrom("ultranet.sa.d.cv@gmail.com");
             helper.setSubject("Actualización de Paquete de Canales");
             javaMailSender.send(message);
             logger.info("Correo HTML enviado con exito");
