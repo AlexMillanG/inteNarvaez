@@ -2,10 +2,14 @@ package mx.edu.utez.intenarvaez.controllers.channel.dto;
 
 import lombok.Data;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
 import mx.edu.utez.intenarvaez.config.anotations.ValidFileSize;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
+@Getter
+@Setter
 public class ChannelDTO {
 
     private Long id;
@@ -35,5 +39,6 @@ public class ChannelDTO {
 
     private Boolean keepImage;
 
-
+    public ChannelDTO() {
+    }
 }

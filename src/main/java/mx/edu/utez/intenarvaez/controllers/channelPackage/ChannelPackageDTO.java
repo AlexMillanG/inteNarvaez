@@ -1,6 +1,9 @@
 package mx.edu.utez.intenarvaez.controllers.channelPackage;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import mx.edu.utez.intenarvaez.models.channel.ChannelBean;
 import mx.edu.utez.intenarvaez.models.channelPackage.ChannelPackageBean;
 import jakarta.validation.constraints.*;
@@ -10,6 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Getter
+@Setter
 public class ChannelPackageDTO {
 
     private Long id;
@@ -33,4 +38,8 @@ public class ChannelPackageDTO {
     public ChannelPackageBean toEntityUpdate(){
         return new ChannelPackageBean(id,name,description,new ArrayList<>(channels));
     }
+
+
 }
+
+

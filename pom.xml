@@ -164,13 +164,16 @@
 
 	<build>
 		<plugins>
-			<!-- Plugin de compilación con soporte para Lombok -->
+			<!-- Plugin de compilación con soporte para Lombok y parámetros -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
 					<release>17</release>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
@@ -180,11 +183,15 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+
+			<!-- SonarQube Plugin -->
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>3.9.1.2184</version>
 			</plugin>
+
+			<!-- Spring Boot Maven Plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

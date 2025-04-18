@@ -1,11 +1,18 @@
 package mx.edu.utez.intenarvaez.controllers.address.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import mx.edu.utez.intenarvaez.models.address.AddressBean;
 import mx.edu.utez.intenarvaez.models.client.ClientBean;
 import jakarta.validation.constraints.*;
 
 @Data
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class AddressDTO {
 
     private Long id;
@@ -58,4 +65,6 @@ public class AddressDTO {
         addressBean.setClient(clientBean);
         return addressBean;
     }
+
+
 }

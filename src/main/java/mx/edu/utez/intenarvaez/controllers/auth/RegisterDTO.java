@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mx.edu.utez.intenarvaez.config.anotations.MinimumAge;
 import mx.edu.utez.intenarvaez.models.role.RoleBean;
@@ -18,6 +19,8 @@ import java.util.Set;
 @Data
 @Getter
 @Setter
+@NoArgsConstructor
+
 public class RegisterDTO {
 
     private Long id;
@@ -103,8 +106,6 @@ public class RegisterDTO {
         roleBean.setName(role);
         return roleBean;
     }
-
-
 
 
 }

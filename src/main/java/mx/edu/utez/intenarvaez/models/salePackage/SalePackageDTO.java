@@ -1,15 +1,13 @@
 package mx.edu.utez.intenarvaez.models.salePackage;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import jakarta.validation.constraints.*;
 
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class SalePackageDTO {
 
     private  Long id;
@@ -31,5 +29,6 @@ public class SalePackageDTO {
     @NotBlank(message = "El nombre del paquete de canales no puede estar vacío.")
     @Pattern(regexp = "^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s.]+$",message = "El nombre del paquete solo puede contener letras, números,puntos y espacios.")
     private String channel_package_name;
+
 
 }

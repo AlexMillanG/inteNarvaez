@@ -10,7 +10,6 @@ import mx.edu.utez.intenarvaez.models.contract.ContractBean;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -30,7 +29,6 @@ public class SalesPackageEntity {
     private boolean status;
     @Column(length = 36, unique = true)
     private String uuid;
-
     private String speed;
 
 
@@ -43,10 +41,18 @@ public class SalesPackageEntity {
     @JsonIgnore
     private Set<ContractBean> contracts = new HashSet<>();
 
-    public SalesPackageEntity() {
-        if (this.uuid == null) {
-            this.uuid = UUID.randomUUID().toString();
-        }
+
+    public SalesPackageEntity(Long id, String name, Double totalAmount, boolean status, String uuid, String speed, ChannelPackageBean channelPackage, Set<ContractBean> contracts) {
+        this.id = id;
+        this.name = name;
+        this.totalAmount = totalAmount;
+        this.status = status;
+        this.uuid = uuid;
+        this.speed = speed;
+        this.channelPackage = channelPackage;
+        this.contracts = contracts;
     }
 
+    public SalesPackageEntity() {
+    }
 }

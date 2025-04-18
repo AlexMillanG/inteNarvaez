@@ -37,11 +37,11 @@ public class InitialConfig {
     private final ChannelService channelService;
     private final RoleRepository roleRepository;
 
-
     @Bean
     @Transactional
     public CommandLineRunner initData() {
         return args -> {
+             String image ="image";
 
             roles(new RoleBean("ADMIN", UUID.randomUUID().toString()));
             roles(new RoleBean("USER", UUID.randomUUID().toString()));
@@ -58,7 +58,7 @@ public class InitialConfig {
 
             ClassPathResource imageFile = new ClassPathResource("image/nik.png");
             MockMultipartFile multipartFile = new MockMultipartFile(
-                    "image",
+                    image,
                     imageFile.getFilename(),
                     "image/png",
                     imageFile.getInputStream()
@@ -75,7 +75,7 @@ public class InitialConfig {
 
             ClassPathResource imageFileESPN = new ClassPathResource("image/espn.png");
             MockMultipartFile multipartFileESPN = new MockMultipartFile(
-                    "image", imageFileESPN.getFilename(), "image/png",
+                    image, imageFileESPN.getFilename(), "image/png",
                     imageFileESPN.getInputStream()
             );
 
@@ -88,7 +88,7 @@ public class InitialConfig {
             dtoFOX.setCategoryId(3L);
             ClassPathResource imageFileFOX = new ClassPathResource("image/fox.png");
             MockMultipartFile multipartFileFOX = new MockMultipartFile(
-                    "image", imageFileFOX.getFilename(), "/image/png", imageFileFOX.getInputStream()
+                    image, imageFileFOX.getFilename(), "/image/png", imageFileFOX.getInputStream()
             );
             dtoFOX.setImage(multipartFileFOX);
             channelService.saveWithImage(dtoFOX);

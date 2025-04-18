@@ -3,8 +3,8 @@ package mx.edu.utez.intenarvaez.models.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mx.edu.utez.intenarvaez.models.BitacoraAcceso.BitacoraAccesoEntity;
 import mx.edu.utez.intenarvaez.models.contract.ContractBean;
 import mx.edu.utez.intenarvaez.models.role.RoleBean;
 
@@ -14,6 +14,7 @@ import java.util.*;
 @Table(name = "user")
 @Getter
 @Setter
+@NoArgsConstructor
 public class UserEntity {
 
     @Id

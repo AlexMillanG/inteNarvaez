@@ -3,6 +3,7 @@ package mx.edu.utez.intenarvaez.controllers.client;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mx.edu.utez.intenarvaez.config.anotations.MinimumAge;
 import mx.edu.utez.intenarvaez.models.client.ClientBean;
@@ -12,6 +13,7 @@ import java.util.Date;
 @Data
 @Getter
 @Setter
+@NoArgsConstructor
 public class ClientDTO {
     private Long id;
     @NotNull(message = "El nombre no puede ser nulo.")
@@ -57,7 +59,6 @@ public class ClientDTO {
     public ClientBean toEntityUpdate() {
         return new ClientBean(id,name, lastName, surname, rfc, email, phone, birthdate, status, uuid);
     }
-
 
 
 }

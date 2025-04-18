@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mx.edu.utez.intenarvaez.config.ApiResponse;
 import mx.edu.utez.intenarvaez.controllers.channel.dto.ChannelDTO;
-import mx.edu.utez.intenarvaez.models.channel.ChannelBean;
 import mx.edu.utez.intenarvaez.services.channel.ChannelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

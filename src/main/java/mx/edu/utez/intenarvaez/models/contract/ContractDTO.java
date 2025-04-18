@@ -7,7 +7,7 @@ import jakarta.validation.constraints.*;
 @Getter
 @Setter
 @AllArgsConstructor
-
+@NoArgsConstructor
 public class ContractDTO {
 
 

@@ -5,6 +5,7 @@ import jakarta.security.auth.message.AuthException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import mx.edu.utez.intenarvaez.config.ApiResponse;
 import mx.edu.utez.intenarvaez.models.BitacoraAcceso.BitacoraAccesoEntity;
 import mx.edu.utez.intenarvaez.models.BitacoraAcceso.BitacoraAccesoRepository;
@@ -34,6 +35,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
+
+
 public class AuthControllers {
     private final IAuthService authService;
     private final RoleRepository repository;
