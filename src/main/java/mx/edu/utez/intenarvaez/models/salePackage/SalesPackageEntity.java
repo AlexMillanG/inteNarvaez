@@ -41,18 +41,6 @@ public class SalesPackageEntity {
     @JsonIgnore
     private Set<ContractBean> contracts = new HashSet<>();
 
-
-    public SalesPackageEntity(Long id, String name, Double totalAmount, boolean status, String uuid, String speed, ChannelPackageBean channelPackage, Set<ContractBean> contracts) {
-        this.id = id;
-        this.name = name;
-        this.totalAmount = totalAmount;
-        this.status = status;
-        this.uuid = uuid;
-        this.speed = speed;
-        this.channelPackage = channelPackage;
-        this.contracts = contracts;
-    }
-
     public SalesPackageEntity() {
     }
 }
