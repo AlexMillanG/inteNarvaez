@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.core.io.ClassPathResource;
@@ -28,6 +29,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 @AllArgsConstructor
 @Component
+@Order(2)
 public class InitialConfig {
 
     private final ChannelCategoryRepository channelCategoryRepository;

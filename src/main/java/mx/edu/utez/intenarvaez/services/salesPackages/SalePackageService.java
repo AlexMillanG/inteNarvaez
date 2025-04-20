@@ -73,8 +73,8 @@ public class SalePackageService {
             return new ResponseEntity<>(new ApiResponse(obj,HttpStatus.CREATED,"Paquete creado exitosamente",false), HttpStatus.CREATED);
 
         }catch (Exception ex){
-            logger.error("Algo salio mal",ex);
-            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"No se completo la accion error:"+ex,true), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Algo salio mal");
+            return new ResponseEntity<>(new ApiResponse(null,HttpStatus.INTERNAL_SERVER_ERROR,"No se completo la accion error:",true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }

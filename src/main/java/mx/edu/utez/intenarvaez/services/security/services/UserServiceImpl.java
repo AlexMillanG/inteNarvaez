@@ -101,7 +101,7 @@ public class UserServiceImpl implements IUserServiceImpl {
             return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.CREATED, "Usuario creado correctamente"), HttpStatus.CREATED);
         }catch (Exception e) {
             logger.error("Error al registrar el usuario: {}", e.getMessage());
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -132,7 +132,7 @@ public class UserServiceImpl implements IUserServiceImpl {
             return new ResponseEntity<>(new ApiResponse(createdUser, HttpStatus.OK, "Usuario actualizo correctamente"), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error, al registrar el usuario: {}", e.getMessage());
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -169,7 +169,7 @@ public class UserServiceImpl implements IUserServiceImpl {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Usuario eliminado correctamente"), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error al eliminar al agente: {}", e.getMessage());
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salio mal: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salio mal: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

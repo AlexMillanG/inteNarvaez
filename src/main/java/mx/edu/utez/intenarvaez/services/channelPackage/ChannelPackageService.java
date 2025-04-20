@@ -34,7 +34,7 @@ public class ChannelPackageService {
     private final ContractRepository contractRepository;
     private final SalesPackageRepository salesPackageRepository;
     private static final Logger logger = LogManager.getLogger(ChannelPackageService.class);
-
+    private final String message ="Algo salio mal";
 
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> save(ChannelPackageBean channelPackageBean) {
@@ -73,7 +73,7 @@ public class ChannelPackageService {
             return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete guardado correctamente", false), HttpStatus.CREATED);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al guardar el paquete de canales: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -124,7 +124,7 @@ public class ChannelPackageService {
             return new ResponseEntity<>(new ApiResponse(savedPackage, HttpStatus.CREATED, "Paquete actualizado correctamente", false), HttpStatus.CREATED);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el paquete de canales: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 }
@@ -148,8 +148,8 @@ public class ChannelPackageService {
 
             return new ResponseEntity<>(new ApiResponse(foundPackage.get(), HttpStatus.OK, null, false), HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("algo salio mal ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al obtener el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error(message, e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al obtener el paquete de canales: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
@@ -201,7 +201,7 @@ public class ChannelPackageService {
 
         } catch (Exception e) {
             logger.error("algo fallo ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Algo salio mal al actualizar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, message+ "al actualizar el paquete de canales: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -228,7 +228,7 @@ public class ChannelPackageService {
 
         } catch (Exception e) {
             logger.error("algo no funciono como se esperaba", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo actualizar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo actualizar el paquete de canales: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -265,8 +265,8 @@ public class ChannelPackageService {
 
 
         } catch (Exception e) {
-            logger.error("Error algo salio mal ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al desactivar el paquete de canales: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error"+message , e);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error al desactivar el paquete de canales: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

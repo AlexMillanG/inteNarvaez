@@ -31,6 +31,8 @@ public class AddressService {
 
     private static final Logger logger = LogManager.getLogger(AddressService.class);
 
+    private final String message = "algo salio mal";
+
     @Transactional(rollbackFor = SQLException.class)
     public ResponseEntity<ApiResponse> findAll() {
         return new ResponseEntity<>(new ApiResponse(addressRepository.findByStatus(true), HttpStatus.OK, null, false), HttpStatus.OK);
@@ -63,7 +65,7 @@ public class AddressService {
 
         } catch (Exception e) {
             logger.error("Error al guardar la dirección: ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, message,false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -85,7 +87,7 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(foundAddress.get(), HttpStatus.OK, null, false), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error de direccion: ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, message,false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -122,7 +124,7 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(addressRepository.save(addressBean), HttpStatus.OK, "Dirección actualizada correctamente", false), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error al actualizar la dirección: ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, message,false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -152,7 +154,7 @@ public class AddressService {
 
         } catch (Exception e) {
             logger.error("Error al buscar direcciones por ID de cliente: ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, message,false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -181,7 +183,7 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(addressRepository.saveAndFlush(addressBean), HttpStatus.OK, "dirección eliminada con exito", false), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error al eliminar la dirección: ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "",false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
@@ -206,7 +208,7 @@ public class AddressService {
             return new ResponseEntity<>(new ApiResponse(foundAddress.get(), HttpStatus.OK, null, false), HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error el la busqueda: ", e);
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, message,false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

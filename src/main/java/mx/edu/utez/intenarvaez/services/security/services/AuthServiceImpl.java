@@ -100,7 +100,7 @@ public class AuthServiceImpl implements IAuthService {
 
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Correo enviado correctamente",true), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error desconocido: " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -119,7 +119,7 @@ public class AuthServiceImpl implements IAuthService {
             return new ResponseEntity<>(new ApiResponse(null, HttpStatus.OK, "Actualizacion exitosa"), HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error : " + e.getMessage(), true), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error  " , true), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
