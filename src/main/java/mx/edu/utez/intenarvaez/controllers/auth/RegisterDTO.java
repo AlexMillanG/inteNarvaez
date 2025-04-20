@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mx.edu.utez.intenarvaez.config.anotations.MinimumAge;
+import mx.edu.utez.intenarvaez.config.anotations.ValidAgeRange;
 import mx.edu.utez.intenarvaez.models.role.RoleBean;
 import mx.edu.utez.intenarvaez.models.user.UserEntity;
 
@@ -50,7 +50,7 @@ public class RegisterDTO {
 
     @NotNull(message = "La fecha de nacimiento no puede estar vacía.")
     @Past(message = "La fecha de nacimiento debe ser una fecha pasada.")
-    @MinimumAge(value = 18, message = "Debes tener al menos 18 años.")
+    @ValidAgeRange(message = "La edad debe estar entre 18 y 100 años.")
     private Date birthdate;
 
     @Pattern(    regexp = "^[A-Z&Ñ]{3,4}\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])[A-Z\\d]{2}[\\dA]$",message = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.",

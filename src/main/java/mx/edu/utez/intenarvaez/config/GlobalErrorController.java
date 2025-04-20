@@ -14,8 +14,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.SQLException;
-
-
 @RestControllerAdvice
 public class GlobalErrorController {
 
